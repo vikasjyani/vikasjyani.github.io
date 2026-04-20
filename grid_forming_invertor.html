@@ -1,2140 +1,534 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Grid-Forming Inverter — Live Grid Simulation</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --bg: #eef1f7;
-            --surface: #ffffff;
-            --surface2: #f6f8fc;
-            --surface3: #edf0f7;
-            --border: #dde3ee;
-            --border2: #c6cfdf;
-            --text: #0c1424;
-            --text2: #435068;
-            --text3: #8494af;
-            --teal: #0b9488;
-            --teal-lt: #e3f6f4;
-            --teal-med: #8dd4ce;
-            --blue: #2459be;
-            --blue-lt: #ebf1ff;
-            --purple: #6d28d9;
-            --purple-lt: #f0ebff;
-            --purple-med: #b09ae0;
-            --green: #15803d;
-            --green-lt: #dcfce7;
-            --amber: #b45309;
-            --amber-lt: #fef3c7;
-            --red: #be123c;
-            --red-lt: #ffe4e6;
-            --coal: #64748b;
-            --solar: #d97706;
-            --wind: #4f46e5;
-            --shadow: 0 1px 3px rgba(12, 20, 36, 0.07), 0 4px 14px rgba(12, 20, 36, 0.05);
-            --shadow-md: 0 2px 6px rgba(12, 20, 36, 0.09), 0 6px 24px rgba(12, 20, 36, 0.06);
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 14px;
-            min-height: 100vh
-        }
-
-        .app {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 22px 18px 44px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px
-        }
-
-        /* ─── HEADER ─────────────────────────────────────────── */
-        .header {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            flex-wrap: wrap
-        }
-
-        .h-left {
-            display: flex;
-            align-items: center;
-            gap: 12px
-        }
-
-        .h-icon {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--teal-lt), #c8f5f0);
-            border: 1px solid var(--teal-med);
-            border-radius: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0
-        }
-
-        .h-title h1 {
-            font-size: 15.5px;
-            font-weight: 800;
-            color: var(--text);
-            letter-spacing: -.3px
-        }
-
-        .h-title p {
-            font-size: 11px;
-            color: var(--text3);
-            margin-top: 2px
-        }
-
-        .hud {
-            display: flex;
-            gap: 5px
-        }
-
-        .hud-chip {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            padding: 7px 12px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            min-width: 84px
-        }
-
-        .hud-label {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: .9px;
-            color: var(--text3);
-            font-weight: 600
-        }
-
-        .hud-val {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 14.5px;
-            font-weight: 700;
-            color: var(--text);
-            transition: color .25s
-        }
-
-        .hud-val.ok {
-            color: var(--teal)
-        }
-
-        .hud-val.warn {
-            color: var(--amber)
-        }
-
-        .hud-val.danger {
-            color: var(--red)
-        }
-
-        .hud-val.over {
-            color: var(--purple)
-        }
-
-        /* ─── GEN LEGEND ─────────────────────────────────────── */
-        .gen-legend {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px 18px;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 9px
-        }
-
-        .gen-legend h3 {
-            font-size: 10.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            color: var(--text3)
-        }
-
-        .gen-row {
-            display: flex;
-            gap: 7px;
-            flex-wrap: wrap
-        }
-
-        .gen-item {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 11px;
-            flex: 1;
-            min-width: 120px
-        }
-
-        .gen-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 2px;
-            flex-shrink: 0
-        }
-
-        .gen-name {
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--text)
-        }
-
-        .gen-nums {
-            font-size: 10.5px;
-            color: var(--text3);
-            margin-left: auto;
-            font-family: 'IBM Plex Mono', monospace
-        }
-
-        .gen-sep {
-            font-size: 10px;
-            color: var(--text3)
-        }
-
-        .gen-actual {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            font-weight: 700
-        }
-
-        .gen-footer {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding-top: 4px;
-            border-top: 1px solid var(--border)
-        }
-
-        .gen-ft-label {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: var(--text2)
-        }
-
-        .gen-ft-val {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 13px;
-            font-weight: 800
-        }
-
-        /* ─── VIZ ROW ─────────────────────────────────────────── */
-        .viz-row {
-            display: grid;
-            grid-template-columns: 1.15fr .85fr;
-            gap: 14px
-        }
-
-        @media(max-width:740px) {
-            .viz-row {
-                grid-template-columns: 1fr
-            }
-        }
-
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            position: relative
-        }
-
-        .panel-label {
-            position: absolute;
-            top: 11px;
-            left: 13px;
-            font-size: 9.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .9px;
-            color: var(--text3);
-            z-index: 2;
-            pointer-events: none
-        }
-
-        canvas {
-            display: block;
-            width: 100%
-        }
-
-        #topo-canvas {
-            height: 296px
-        }
-
-        .charts-col {
-            display: flex;
-            flex-direction: column
-        }
-
-        .chart-wrap {
-            position: relative;
-            height: 148px;
-            border-bottom: 1px solid var(--border)
-        }
-
-        .chart-wrap:last-child {
-            border-bottom: none
-        }
-
-        .chart-top-label {
-            position: absolute;
-            top: 9px;
-            left: 12px;
-            font-size: 9.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            color: var(--text3);
-            z-index: 2;
-            pointer-events: none
-        }
-
-        .chart-extremum {
-            position: absolute;
-            bottom: 8px;
-            right: 10px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            font-weight: 700;
-            z-index: 2;
-            pointer-events: none;
-            transition: color .3s;
-            color: var(--text3)
-        }
-
-        /* ─── EVENT INFO BAR ─────────────────────────────────── */
-        .event-bar {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 11px 16px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            flex-wrap: wrap;
-            min-height: 52px
-        }
-
-        .ev-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0
-        }
-
-        .ev-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--text3);
-            flex-shrink: 0;
-            transition: background .3s
-        }
-
-        .ev-dot.active-red {
-            background: var(--red);
-            animation: pulse-ev 1s ease-in-out infinite
-        }
-
-        .ev-dot.active-purple {
-            background: var(--purple);
-            animation: pulse-ev 1s ease-in-out infinite
-        }
-
-        @keyframes pulse-ev {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: .35
-            }
-        }
-
-        .ev-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text2);
-            transition: color .25s;
-            white-space: nowrap
-        }
-
-        .ev-label.load-up {
-            color: var(--red)
-        }
-
-        .ev-label.load-dn {
-            color: var(--purple)
-        }
-
-        .ev-desc {
-            font-size: 11.5px;
-            color: var(--text3);
-            line-height: 1.55;
-            flex: 1
-        }
-
-        .ev-rocof {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 7px;
-            border: 1px solid var(--border);
-            background: var(--surface2);
-            white-space: nowrap;
-            flex-shrink: 0
-        }
-
-        /* ─── CONTROLS ───────────────────────────────────────── */
-        .controls {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 13px 16px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            flex-wrap: wrap
-        }
-
-        .mode-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 13px;
-            border-radius: 999px;
-            font-size: 11.5px;
-            font-weight: 700;
-            transition: all .35s;
-            letter-spacing: .1px;
-            flex-shrink: 0
-        }
-
-        .mode-pill.gfl {
-            background: #f1f5f9;
-            border: 1px solid #c8d3e4;
-            color: var(--coal)
-        }
-
-        .mode-pill.gfm {
-            background: var(--teal-lt);
-            border: 1px solid var(--teal-med);
-            color: var(--teal)
-        }
-
-        .mode-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: currentColor
-        }
-
-        .mode-pill.gfm .mode-dot {
-            animation: pdot 1.3s ease-in-out infinite
-        }
-
-        @keyframes pdot {
-            0% {
-                box-shadow: 0 0 0 0 rgba(11, 148, 136, .55)
-            }
-
-            70% {
-                box-shadow: 0 0 0 5px rgba(11, 148, 136, 0)
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(11, 148, 136, 0)
-            }
-        }
-
-        .toggle-row {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            cursor: pointer;
-            user-select: none
-        }
-
-        .toggle-row span {
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--text2)
-        }
-
-        .tgl-track {
-            width: 44px;
-            height: 25px;
-            border-radius: 999px;
-            background: #e2e8f0;
-            border: 1.5px solid #c5d0e0;
-            position: relative;
-            transition: all .3s;
-            cursor: pointer;
-            flex-shrink: 0
-        }
-
-        .tgl-track.on {
-            background: var(--teal-lt);
-            border-color: var(--teal)
-        }
-
-        .tgl-knob {
-            width: 19px;
-            height: 19px;
-            border-radius: 50%;
-            background: #94a3b8;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: all .3s cubic-bezier(.25, 1.4, .5, 1);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .15)
-        }
-
-        .tgl-track.on .tgl-knob {
-            background: var(--teal);
-            transform: translateX(19px)
-        }
-
-        #tgl-lbl {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text3);
-            width: 20px
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 9px;
-            font-size: 11.5px;
-            font-weight: 700;
-            cursor: pointer;
-            border: 1.5px solid;
-            transition: all .18s;
-            letter-spacing: .15px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 5px
-        }
-
-        .btn:disabled {
-            opacity: .38;
-            cursor: not-allowed
-        }
-
-        .btn-load-up {
-            background: var(--red-lt);
-            border-color: #f4a0b0;
-            color: var(--red)
-        }
-
-        .btn-load-up:not(:disabled):hover {
-            background: #ffd5dc;
-            border-color: var(--red)
-        }
-
-        .btn-load-dn {
-            background: var(--purple-lt);
-            border-color: var(--purple-med);
-            color: var(--purple)
-        }
-
-        .btn-load-dn:not(:disabled):hover {
-            background: #e5d9ff;
-            border-color: var(--purple)
-        }
-
-        .btn-replay {
-            background: var(--surface2);
-            border-color: var(--border2);
-            color: var(--text2);
-            margin-left: auto
-        }
-
-        .btn-replay:hover {
-            background: #e8ecf5
-        }
-
-        .divider {
-            width: 1px;
-            height: 28px;
-            background: var(--border);
-            flex-shrink: 0
-        }
-
-        /* ─── EMBED PANEL ────────────────────────────────────── */
-        .embed-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px 18px;
-            box-shadow: var(--shadow);
-        }
-        .embed-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap
-        }
-        .embed-left {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px
-        }
-        .embed-icon {
-            font-size: 18px;
-            flex-shrink: 0;
-            margin-top: 1px
-        }
-        .embed-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text)
-        }
-        .embed-sub {
-            font-size: 11px;
-            color: var(--text3);
-            margin-top: 2px;
-            line-height: 1.5
-        }
-        .embed-toggle-btn {
-            padding: 7px 14px;
-            background: var(--blue-lt);
-            border: 1.5px solid #b0c4f5;
-            color: var(--blue);
-            border-radius: 8px;
-            font-size: 11.5px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: background .18s
-        }
-        .embed-toggle-btn:hover { background: #dce8ff }
-        .embed-body {
-            margin-top: 14px;
-            border-top: 1px solid var(--border);
-            padding-top: 14px
-        }
-        .embed-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 10px
-        }
-        .etab {
-            padding: 5px 12px;
-            border-radius: 7px;
-            border: 1.5px solid var(--border2);
-            background: var(--surface2);
-            font-size: 11.5px;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text2);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: all .18s
-        }
-        .etab.active {
-            background: var(--blue-lt);
-            border-color: #b0c4f5;
-            color: var(--blue)
-        }
-        .embed-hint {
-            font-size: 11px;
-            color: var(--text3);
-            margin-bottom: 8px;
-            line-height: 1.5
-        }
-        .embed-hint code {
-            background: var(--surface3);
-            padding: 1px 5px;
-            border-radius: 4px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10.5px
-        }
-        .embed-code-wrap {
-            position: relative
-        }
-        .embed-code {
-            background: #0f172a;
-            color: #94d8b6;
-            border-radius: 9px;
-            padding: 13px 16px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10.5px;
-            line-height: 1.7;
-            overflow-x: auto;
-            white-space: pre;
-            border: 1px solid #1e293b;
-            margin: 0;
-            padding-right: 70px
-        }
-        .copy-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            padding: 5px 10px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            color: #94a3b8;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: all .18s
-        }
-        .copy-btn:hover { background: #2d3f55; color: #e2e8f0 }
-        .embed-note {
-            font-size: 10.5px;
-            color: var(--text3);
-            margin-top: 8px;
-            line-height: 1.5
-        }
-        .embed-note strong { color: var(--text2) }
-
-        /* Hosting guide */
-        .hosting-guide {
-            margin-top: 16px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border)
-        }
-        .hosting-title {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: var(--text2);
-            margin-bottom: 10px
-        }
-        .hosting-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 9px
-        }
-        @media(max-width:580px) { .hosting-grid { grid-template-columns: 1fr } }
-        .hosting-item {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            padding: 10px 13px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px
-        }
-        .hosting-name {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text)
-        }
-        .hosting-desc {
-            font-size: 10.5px;
-            color: var(--text3);
-            line-height: 1.55;
-            flex: 1
-        }
-        .hosting-link {
-            font-size: 10.5px;
-            font-weight: 600;
-            color: var(--blue);
-            text-decoration: none;
-            margin-top: 4px
-        }
-        .hosting-link:hover { text-decoration: underline }
-
-        /* ─── CEA STRIP ──────────────────────────────────────── */
-        .cea-strip {
-            background: var(--surface);
-            border: 1px solid var(--teal-med);
-            border-left: 4px solid var(--teal);
-            border-radius: 12px;
-            padding: 13px 17px;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 8px
-        }
-
-        .cea-head {
-            display: flex;
-            align-items: center;
-            gap: 9px
-        }
-
-        .cea-tag {
-            background: var(--teal-lt);
-            border: 1px solid var(--teal-med);
-            color: var(--teal);
-            font-size: 9.5px;
-            font-weight: 800;
-            letter-spacing: .7px;
-            padding: 3px 8px;
-            border-radius: 4px
-        }
-
-        .cea-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text)
-        }
-
-        .cea-body {
-            font-size: 11.5px;
-            color: var(--text2);
-            line-height: 1.65
-        }
-
-        .cea-body strong {
-            color: var(--text);
-            font-weight: 700
-        }
-
-        .cea-metrics {
-            display: flex;
-            gap: 7px;
-            flex-wrap: wrap;
-            margin-top: 2px
-        }
-
-        .cea-metric {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 7px 11px;
-            display: flex;
-            flex-direction: column;
-            gap: 1px
-        }
-
-        .cea-mval {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--teal)
-        }
-
-        .cea-mlbl {
-            font-size: 9.5px;
-            color: var(--text3);
-            text-transform: uppercase;
-            letter-spacing: .5px
-        }
-
-        /* ─── CARDS ──────────────────────────────────────────── */
-        .cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px
-        }
-
-        @media(max-width:860px) {
-            .cards {
-                grid-template-columns: 1fr 1fr
-            }
-        }
-
-        @media(max-width:580px) {
-            .cards {
-                grid-template-columns: 1fr
-            }
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 10px
-        }
-
-        .card-head {
-            display: flex;
-            align-items: flex-start;
-            gap: 11px
-        }
-
-        .card-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0
-        }
-
-        .card-title {
-            font-size: 13.5px;
-            font-weight: 700;
-            color: var(--text)
-        }
-
-        .card-sub {
-            font-size: 11px;
-            color: var(--text3);
-            margin-top: 2px
-        }
-
-        .card-body {
-            font-size: 12px;
-            color: var(--text2);
-            line-height: 1.7
-        }
-
-        .card-body strong {
-            color: var(--text);
-            font-weight: 700
-        }
-
-        .steps {
-            display: flex;
-            flex-direction: column;
-            gap: 7px
-        }
-
-        .step {
-            display: flex;
-            gap: 9px;
-            align-items: flex-start
-        }
-
-        .step-n {
-            width: 19px;
-            height: 19px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9.5px;
-            font-weight: 800;
-            flex-shrink: 0;
-            margin-top: 1px
-        }
-
-        .step-t {
-            font-size: 11.5px;
-            color: var(--text2);
-            line-height: 1.6
-        }
-
-        .step-t strong {
-            color: var(--text);
-            font-weight: 700
-        }
-
-        .stats {
-            display: flex;
-            gap: 7px;
-            flex-wrap: wrap
-        }
-
-        .stat {
-            flex: 1;
-            min-width: 64px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px
-        }
-
-        .stat-val {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 13.5px;
-            font-weight: 700
-        }
-
-        .stat-lbl {
-            font-size: 9.5px;
-            color: var(--text3);
-            text-transform: uppercase;
-            letter-spacing: .5px
-        }
-
-        /* ─── RESPONSE COMPARE TABLE ─────────────────────────── */
-        .compare-table {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 16px 18px;
-            box-shadow: var(--shadow)
-        }
-
-        .compare-table h3 {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            color: var(--text3);
-            margin-bottom: 10px
-        }
-
-        .ct-grid {
-            display: grid;
-            grid-template-columns: 1.4fr 1fr 1fr;
-            gap: 1px;
-            background: var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border)
-        }
-
-        .ct-cell {
-            padding: 9px 12px;
-            background: var(--surface);
-            font-size: 11.5px;
-            color: var(--text2)
-        }
-
-        .ct-cell.header {
-            background: var(--surface2);
-            font-weight: 700;
-            color: var(--text3);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: .5px
-        }
-
-        .ct-cell.label {
-            font-weight: 600;
-            color: var(--text)
-        }
-
-        .ct-cell.good {
-            color: var(--teal);
-            font-weight: 700;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px
-        }
-
-        .ct-cell.bad {
-            color: var(--red);
-            font-weight: 700;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px
-        }
-
-        .ct-cell.med {
-            color: var(--amber);
-            font-weight: 700;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GFI Grid Simulation — Vasudha Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1f7;--surface:#ffffff;--surface2:#f6f8fc;--surface3:#edf0f7;
+  --border:#dde3ee;--border2:#c6cfdf;--text:#0c1424;--text2:#435068;--text3:#8494af;
+  --teal:#0b9488;--teal-lt:#e3f6f4;--teal-med:#8dd4ce;
+  --blue:#2459be;--blue-lt:#ebf1ff;
+  --purple:#6d28d9;--purple-lt:#f0ebff;--purple-med:#b09ae0;
+  --green:#15803d;--green-lt:#dcfce7;
+  --amber:#b45309;--amber-lt:#fef3c7;
+  --red:#be123c;--red-lt:#ffe4e6;
+  --coal:#64748b;--solar:#d97706;--wind:#4f46e5;
+  --shadow:0 1px 3px rgba(12,20,36,.07),0 4px 14px rgba(12,20,36,.05);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px}
+
+/* ── APP SHELL ─────────────────────────────────────── */
+.app{max-width:1140px;margin:0 auto;padding:12px 14px 16px;display:flex;flex-direction:column;gap:10px}
+
+/* ── HEADER ────────────────────────────────────────── */
+.header{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;
+  box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.h-left{display:flex;align-items:center;gap:10px}
+.h-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--teal-lt),#c8f5f0);border:1px solid var(--teal-med);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.h-title h1{font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.2px}
+.h-title p{font-size:10.5px;color:var(--text3);margin-top:1px}
+.hud{display:flex;gap:5px;flex-wrap:wrap}
+.hud-chip{display:flex;flex-direction:column;align-items:flex-end;padding:6px 11px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;min-width:78px}
+.hud-label{font-size:9px;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);font-weight:600}
+.hud-val{font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:700;color:var(--text);transition:color .25s}
+.hud-val.ok{color:var(--teal)}.hud-val.warn{color:var(--amber)}.hud-val.danger{color:var(--red)}.hud-val.over{color:var(--purple)}
+
+/* ── GEN LEGEND ─────────────────────────────────────── */
+.gen-legend{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 15px;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.gen-legend h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+.gen-row{display:flex;gap:6px;flex-wrap:wrap}
+.gen-item{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:7px;padding:5px 10px;flex:1;min-width:110px}
+.gen-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.gen-name{font-size:11px;font-weight:600;color:var(--text)}
+.gen-nums{font-size:10px;color:var(--text3);margin-left:auto;font-family:'IBM Plex Mono',monospace}
+.gen-sep{font-size:10px;color:var(--text3)}
+.gen-actual{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:700}
+.gen-footer{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding-top:4px;border-top:1px solid var(--border)}
+.gen-ft-label{font-size:11px;font-weight:700;color:var(--text2)}
+.gen-ft-val{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:800}
+
+/* ── VIZ ROW ─────────────────────────────────────────── */
+.viz-row{display:grid;grid-template-columns:1.15fr .85fr;gap:10px}
+@media(max-width:680px){.viz-row{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  box-shadow:var(--shadow);overflow:hidden;position:relative}
+.panel-label{position:absolute;top:10px;left:12px;font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.9px;color:var(--text3);z-index:2;pointer-events:none}
+canvas{display:block;width:100%}
+#topo-canvas{height:278px}
+.charts-col{display:flex;flex-direction:column}
+.chart-wrap{position:relative;height:139px;border-bottom:1px solid var(--border)}
+.chart-wrap:last-child{border-bottom:none}
+.chart-top-label{position:absolute;top:8px;left:11px;font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--text3);z-index:2;pointer-events:none}
+.chart-extremum{position:absolute;bottom:7px;right:9px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+  font-weight:700;z-index:2;pointer-events:none;transition:color .3s;color:var(--text3)}
+
+/* ── EVENT BAR ──────────────────────────────────────── */
+.event-bar{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 14px;
+  box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;min-height:46px}
+.ev-indicator{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.ev-dot{width:9px;height:9px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
+.ev-dot.active-red{background:var(--red);animation:pulse-ev 1s ease-in-out infinite}
+.ev-dot.active-purple{background:var(--purple);animation:pulse-ev 1s ease-in-out infinite}
+@keyframes pulse-ev{0%,100%{opacity:1}50%{opacity:.35}}
+.ev-label{font-size:11.5px;font-weight:700;color:var(--text2);transition:color .25s;white-space:nowrap}
+.ev-label.load-up{color:var(--red)}.ev-label.load-dn{color:var(--purple)}
+.ev-desc{font-size:11px;color:var(--text3);line-height:1.55;flex:1}
+.ev-rocof{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:700;padding:3px 9px;
+  border-radius:6px;border:1px solid var(--border);background:var(--surface2);white-space:nowrap;flex-shrink:0}
+
+/* ── CONTROLS ─────────────────────────────────────────── */
+.controls{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 14px;
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mode-pill{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;
+  font-size:11px;font-weight:700;transition:all .35s;letter-spacing:.1px;flex-shrink:0}
+.mode-pill.gfl{background:#f1f5f9;border:1px solid #c8d3e4;color:var(--coal)}
+.mode-pill.gfm{background:var(--teal-lt);border:1px solid var(--teal-med);color:var(--teal)}
+.mode-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.mode-pill.gfm .mode-dot{animation:pdot 1.3s ease-in-out infinite}
+@keyframes pdot{0%{box-shadow:0 0 0 0 rgba(11,148,136,.55)}70%{box-shadow:0 0 0 5px rgba(11,148,136,0)}100%{box-shadow:0 0 0 0 rgba(11,148,136,0)}}
+.toggle-row{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.toggle-row span{font-size:11px;font-weight:600;color:var(--text2)}
+.tgl-track{width:42px;height:23px;border-radius:999px;background:#e2e8f0;border:1.5px solid #c5d0e0;
+  position:relative;transition:all .3s;cursor:pointer;flex-shrink:0}
+.tgl-track.on{background:var(--teal-lt);border-color:var(--teal)}
+.tgl-knob{width:17px;height:17px;border-radius:50%;background:#94a3b8;position:absolute;top:2px;left:2px;
+  transition:all .3s cubic-bezier(.25,1.4,.5,1);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tgl-track.on .tgl-knob{background:var(--teal);transform:translateX(18px)}
+#tgl-lbl{font-size:10.5px;font-weight:700;color:var(--text3);width:18px}
+.btn{padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid;
+  transition:all .18s;letter-spacing:.1px;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:4px}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn-load-up{background:var(--red-lt);border-color:#f4a0b0;color:var(--red)}
+.btn-load-up:not(:disabled):hover{background:#ffd5dc;border-color:var(--red)}
+.btn-load-dn{background:var(--purple-lt);border-color:var(--purple-med);color:var(--purple)}
+.btn-load-dn:not(:disabled):hover{background:#e5d9ff;border-color:var(--purple)}
+.btn-replay{background:var(--surface2);border-color:var(--border2);color:var(--text2);margin-left:auto}
+.btn-replay:hover{background:#e8ecf5}
+.divider{width:1px;height:26px;background:var(--border);flex-shrink:0}
+
+/* ── FOOTER ATTRIBUTION ───────────────────────────────── */
+.sim-footer{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 0;flex-wrap:wrap;gap:6px}
+.sim-credit{font-size:10px;color:var(--text3)}
+.sim-credit strong{color:var(--text2);font-weight:700}
+.sim-link{font-size:10px;font-weight:600;color:var(--blue);text-decoration:none;
+  padding:3px 9px;border:1px solid #b0c4f5;border-radius:6px;background:var(--blue-lt);transition:background .18s}
+.sim-link:hover{background:#dce8ff}
+</style>
 </head>
-
 <body>
-    <div class="app">
-
-        <!-- HEADER -->
-        <div class="header">
-            <div class="h-left">
-                <div class="h-icon">⚡</div>
-                <div class="h-title">
-                    <h1>Grid-Forming Inverter (GFI) — Bidirectional Grid Simulation</h1>
-                    <p>India 50 Hz grid · Toggle GFI mode · Test load increase (+300 MW) and generation surplus (−300
-                        MW)</p>
-                </div>
-            </div>
-            <div class="hud">
-                <div class="hud-chip">
-                    <span class="hud-label">Frequency</span>
-                    <span class="hud-val" id="hud-freq">50.00 Hz</span>
-                </div>
-                <div class="hud-chip">
-                    <span class="hud-label">Voltage</span>
-                    <span class="hud-val" id="hud-volt">1.000 pu</span>
-                </div>
-                <div class="hud-chip">
-                    <span class="hud-label">BESS Out</span>
-                    <span class="hud-val ok" id="hud-bess">0.0 MW</span>
-                </div>
-                <div class="hud-chip">
-                    <span class="hud-label">RoCoF</span>
-                    <span class="hud-val" id="hud-rocof">0.00 Hz/s</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- GEN LEGEND -->
-        <div class="gen-legend">
-            <h3>Grid Generation Mix — Installed Capacity × Capacity Factor = Actual Output</h3>
-            <div class="gen-row">
-                <div class="gen-item">
-                    <div class="gen-dot" style="background:#d97706"></div>
-                    <span class="gen-name">☀ Solar</span>
-                    <span class="gen-nums">1,200 MW × 20% CF</span>
-                    <span class="gen-sep">→</span>
-                    <span class="gen-actual" style="color:#d97706">240 MW</span>
-                </div>
-                <div class="gen-item">
-                    <div class="gen-dot" style="background:#4f46e5"></div>
-                    <span class="gen-name">🌬 Wind</span>
-                    <span class="gen-nums">1,200 MW × 35% CF</span>
-                    <span class="gen-sep">→</span>
-                    <span class="gen-actual" style="color:#4f46e5">420 MW</span>
-                </div>
-                <div class="gen-item">
-                    <div class="gen-dot" style="background:#64748b"></div>
-                    <span class="gen-name">🏭 Thermal</span>
-                    <span class="gen-nums">800 MW × 75% PLF</span>
-                    <span class="gen-sep">→</span>
-                    <span class="gen-actual" style="color:#64748b">600 MW</span>
-                </div>
-                <div class="gen-item">
-                    <div class="gen-dot" style="background:var(--teal)"></div>
-                    <span class="gen-name">🔋 BESS</span>
-                    <span class="gen-nums">500 MW GFI-capable</span>
-                    <span class="gen-sep">→</span>
-                    <span class="gen-actual" id="bess-gen-val" style="color:var(--teal)">0 MW</span>
-                </div>
-            </div>
-            <div class="gen-footer">
-                <span class="gen-ft-label">Base Generation:</span>
-                <span class="gen-ft-val" style="color:var(--teal)">1,260 MW</span>
-                <span style="font-size:10.5px;color:var(--text3)"> = </span>
-                <span class="gen-ft-label">City Load:</span>
-                <span class="gen-ft-val" style="color:var(--blue)">1,200 MW</span>
-                <span style="font-size:10.5px;color:var(--text3)">+ 60 MW Reserve</span>
-                <span style="flex:1"></span>
-                <span style="font-size:11px;color:var(--red);font-weight:600">⬆ +300 MW: Load spike →
-                    under-frequency</span>
-                <span style="font-size:10.5px;color:var(--text3);margin:0 6px">|</span>
-                <span style="font-size:11px;color:var(--purple);font-weight:600">⬇ −300 MW: Load drop →
-                    over-frequency</span>
-            </div>
-        </div>
-
-        <!-- VIZ ROW -->
-        <div class="viz-row">
-            <div class="panel">
-                <span class="panel-label">Power Grid Topology</span>
-                <canvas id="topo-canvas"></canvas>
-            </div>
-            <div class="panel charts-col">
-                <div class="chart-wrap">
-                    <span class="chart-top-label">Grid Frequency (Hz)</span>
-                    <span class="chart-extremum" id="freq-ext">—</span>
-                    <canvas id="freq-canvas"></canvas>
-                </div>
-                <div class="chart-wrap">
-                    <span class="chart-top-label">Bus Voltage (pu)</span>
-                    <span class="chart-extremum" id="volt-ext">—</span>
-                    <canvas id="volt-canvas"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- EVENT INFO BAR -->
-        <div class="event-bar" id="event-bar">
-            <div class="ev-indicator">
-                <div class="ev-dot" id="ev-dot"></div>
-                <span class="ev-label" id="ev-label">System Idle</span>
-            </div>
-            <div class="ev-desc" id="ev-desc">
-                Select an event to observe grid response. Toggle GFI mode before triggering to compare Grid-Forming vs
-                Grid-Following inverter behaviour.
-            </div>
-            <div class="ev-rocof" id="ev-rocof" style="color:var(--text3)">RoCoF: — Hz/s</div>
-        </div>
-
-        <!-- CONTROLS -->
-        <div class="controls">
-            <div class="mode-pill gfl" id="mode-pill">
-                <div class="mode-dot"></div>
-                <span id="mode-text">Grid-Following Mode</span>
-            </div>
-            <label class="toggle-row">
-                <span>Enable GFI</span>
-                <div class="tgl-track" id="gfm-toggle">
-                    <div class="tgl-knob"></div>
-                </div>
-                <span id="tgl-lbl">OFF</span>
-            </label>
-            <div class="divider"></div>
-            <button class="btn btn-load-up" id="btn-up">⬆ Trigger +300 MW Load Event</button>
-            <button class="btn btn-load-dn" id="btn-dn">⬇ Trigger −300 MW Load Event</button>
-            <button class="btn btn-replay" id="replay-btn">↺ Auto-Replay</button>
-        </div>
-
-        <!-- CEA STRIP -->
-        <div class="cea-strip">
-            <div class="cea-head">
-                <span class="cea-tag">CEA 2026 REGULATION</span>
-                <span class="cea-title">Mandatory BESS Performance Standards — Effective April 1, 2027</span>
-            </div>
-            <div class="cea-body">
-                The CEA Technical Standards for Construction of Electrical Plants &amp; Electric Lines Regulations 2026
-                (notified <strong>April 16, 2026</strong>) establish India's first mandatory BESS performance
-                benchmarks. All BESS ≥<strong>50 MW</strong> must have Grid-Forming Inverter capability, AGC, and black
-                start capability. <strong>Bidirectional frequency response</strong> — both under-frequency injection and
-                over-frequency absorption — is now a code requirement. Capacity retention: <strong>90% · 80% ·
-                    70%</strong> at years 5 · 10 · 15. Min DoD: <strong>80%</strong>. Min round-trip efficiency:
-                <strong>70%</strong>.
-            </div>
-            <div class="cea-metrics">
-                <div class="cea-metric"><span class="cea-mval">≥50 MW</span><span class="cea-mlbl">GFI Threshold</span>
-                </div>
-                <div class="cea-metric"><span class="cea-mval">90/80/70%</span><span class="cea-mlbl">Capacity Yr
-                        5/10/15</span></div>
-                <div class="cea-metric"><span class="cea-mval">80%</span><span class="cea-mlbl">Min Depth of
-                        Discharge</span></div>
-                <div class="cea-metric"><span class="cea-mval">70%</span><span class="cea-mlbl">Min Round-Trip
-                        Eff.</span></div>
-                <div class="cea-metric"><span class="cea-mval">236 GWh</span><span class="cea-mlbl">BESS Target
-                        2031–32</span></div>
-                <div class="cea-metric"><span class="cea-mval">43.2 GWh</span><span class="cea-mlbl">VGF Projects
-                        Active</span></div>
-            </div>
-        </div>
-
-        <!-- EXPLANATION CARDS -->
-        <div class="cards">
-            <!-- Under-frequency card -->
-            <div class="card">
-                <div class="card-head">
-                    <div class="card-icon" style="background:var(--red-lt);border:1px solid #f4a0b0">⬇</div>
-                    <div>
-                        <div class="card-title">Under-Frequency Response</div>
-                        <div class="card-sub">+300 MW load spike — frequency falls below 50 Hz</div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    A large load connects or a generator trips — demand exceeds supply. Frequency falls. Without
-                    inertia, the fall is steep and fast. <strong>GFI injects active power</strong> from BESS
-                    proportional to frequency deviation within 100–200 ms, mimicking synchronous inertia.
-                </div>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-n" style="background:var(--red-lt);color:var(--red)">1</div>
-                        <div class="step-t">GFI detects phase angle <em>lagging</em> its internal reference — equivalent
-                            to measuring negative RoCoF in real time, without waiting for a frequency filter.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n" style="background:var(--red-lt);color:var(--red)">2</div>
-                        <div class="step-t"><strong>Active power injection</strong> from BESS (positive MW) arrests the
-                            frequency fall — droop and virtual inertia simultaneously.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n" style="background:var(--red-lt);color:var(--red)">3</div>
-                        <div class="step-t">Frequency nadir limited to <strong>~49.7 Hz</strong> vs <strong>~48.9
-                                Hz</strong> without GFI. Relay trip threshold (typically 49.0 Hz) is never reached.
-                        </div>
-                    </div>
-                </div>
-                <div class="stats">
-                    <div class="stat"><span class="stat-val" style="color:var(--red)">1.8 Hz/s</span><span
-                            class="stat-lbl">RoCoF · No GFI</span></div>
-                    <div class="stat"><span class="stat-val" style="color:var(--teal)">0.28 Hz/s</span><span
-                            class="stat-lbl">RoCoF · GFI</span></div>
-                    <div class="stat"><span class="stat-val" style="color:var(--blue)">&lt;200 ms</span><span
-                            class="stat-lbl">Response</span></div>
-                </div>
-            </div>
-
-            <!-- Over-frequency card -->
-            <div class="card">
-                <div class="card-head">
-                    <div class="card-icon" style="background:var(--purple-lt);border:1px solid var(--purple-med)">⬆
-                    </div>
-                    <div>
-                        <div class="card-title">Over-Frequency Response</div>
-                        <div class="card-sub">−300 MW load drop — frequency rises above 50 Hz</div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    A large load disconnects or excess RE generation ramps in — supply exceeds demand. Frequency rises.
-                    Over-frequency is equally dangerous: it triggers turbine over-speed protection and can cause
-                    generator trips. <strong>GFI absorbs active power</strong> into BESS, damping the overshoot.
-                </div>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-n" style="background:var(--purple-lt);color:var(--purple)">1</div>
-                        <div class="step-t">GFI detects phase angle <em>advancing</em> faster than its internal
-                            reference — positive RoCoF. It immediately switches to active power <strong>absorption
-                                mode</strong>.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n" style="background:var(--purple-lt);color:var(--purple)">2</div>
-                        <div class="step-t"><strong>BESS charges</strong> (negative MW output) at rates up to 300–400
-                            MW/s, absorbing the surplus generation that is pushing frequency up.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n" style="background:var(--purple-lt);color:var(--purple)">3</div>
-                        <div class="step-t">Frequency peak limited to <strong>~50.25 Hz</strong> vs <strong>~51.1
-                                Hz</strong> without GFI. Over-frequency relay trips (typically 50.5 Hz) are avoided
-                            entirely.</div>
-                    </div>
-                </div>
-                <div class="stats">
-                    <div class="stat"><span class="stat-val" style="color:var(--red)">+1.7 Hz/s</span><span
-                            class="stat-lbl">RoCoF · No GFI</span></div>
-                    <div class="stat"><span class="stat-val" style="color:var(--teal)">+0.26 Hz/s</span><span
-                            class="stat-lbl">RoCoF · GFI</span></div>
-                    <div class="stat"><span class="stat-val" style="color:var(--purple)">&lt;200 ms</span><span
-                            class="stat-lbl">Absorption</span></div>
-                </div>
-            </div>
-
-            <!-- Voltage & Black Start card -->
-            <div class="card">
-                <div class="card-head">
-                    <div class="card-icon" style="background:var(--teal-lt);border:1px solid var(--teal-med)">🔌</div>
-                    <div>
-                        <div class="card-title">Voltage Support &amp; Black Start</div>
-                        <div class="card-sub">Reactive power — autonomous voltage source</div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    GFI operates as a <strong>voltage source behind an impedance</strong> — its internal virtual EMF is
-                    fixed regardless of grid state. It continuously regulates reactive power to hold terminal voltage.
-                    Grid-following inverters trip below ride-through thresholds; GFI stays connected and corrects.
-                </div>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-n" style="background:var(--teal-lt);color:var(--teal)">1</div>
-                        <div class="step-t">During load increase, reactive power demand rises — GFI injects MVAR
-                            instantly, voltage nadir held to <strong>~0.96 pu</strong> vs ~0.78 pu without GFI.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n" style="background:var(--teal-lt);color:var(--teal)">2</div>
-                        <div class="step-t">During load drop, brief over-voltage — GFI absorbs reactive power
-                            (capacitive to inductive mode switch) keeping voltage at <strong>~1.02 pu</strong> vs ~1.11
-                            pu.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n" style="background:var(--teal-lt);color:var(--teal)">3</div>
-                        <div class="step-t"><strong>Black start</strong>: GFI energises dead network segments without
-                            external reference. Mandated by CEA 2026 for all BESS ≥50 MW.</div>
-                    </div>
-                </div>
-                <div class="stats">
-                    <div class="stat"><span class="stat-val" style="color:var(--red)">0.78 pu</span><span
-                            class="stat-lbl">V Nadir · No GFI</span></div>
-                    <div class="stat"><span class="stat-val" style="color:var(--teal)">0.96 pu</span><span
-                            class="stat-lbl">V Nadir · GFI</span></div>
-                    <div class="stat"><span class="stat-val" style="color:var(--green)">✓</span><span
-                            class="stat-lbl">Black Start</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- RESPONSE COMPARISON TABLE -->
-        <div class="compare-table">
-            <h3>GFI vs Grid-Following Response — Both Event Types at a Glance</h3>
-            <div class="ct-grid">
-                <div class="ct-cell header">Metric</div>
-                <div class="ct-cell header" style="color:var(--teal)">With GFI (Grid-Forming)</div>
-                <div class="ct-cell header" style="color:var(--coal)">Without GFI (Grid-Following)</div>
-
-                <div class="ct-cell label">RoCoF — Load Increase (+300 MW)</div>
-                <div class="ct-cell good">~0.28 Hz/s</div>
-                <div class="ct-cell bad">~1.8 Hz/s</div>
-
-                <div class="ct-cell label">Frequency Nadir — Load Increase</div>
-                <div class="ct-cell good">~49.72 Hz (safe)</div>
-                <div class="ct-cell bad">~48.9 Hz (relay trips)</div>
-
-                <div class="ct-cell label">RoCoF — Load Decrease (−300 MW)</div>
-                <div class="ct-cell good">~0.26 Hz/s</div>
-                <div class="ct-cell bad">~1.7 Hz/s</div>
-
-                <div class="ct-cell label">Frequency Peak — Load Decrease</div>
-                <div class="ct-cell good">~50.25 Hz (safe)</div>
-                <div class="ct-cell bad">~51.1 Hz (relay trips)</div>
-
-                <div class="ct-cell label">Voltage Nadir (load increase)</div>
-                <div class="ct-cell good">~0.96 pu</div>
-                <div class="ct-cell bad">~0.78 pu</div>
-
-                <div class="ct-cell label">Frequency Recovery Time</div>
-                <div class="ct-cell good">&lt; 2 seconds</div>
-                <div class="ct-cell bad">8–15 seconds</div>
-
-                <div class="ct-cell label">BESS Response Speed</div>
-                <div class="ct-cell good">&lt; 200 ms</div>
-                <div class="ct-cell med">2–5 seconds</div>
-
-                <div class="ct-cell label">Black Start Capability</div>
-                <div class="ct-cell good">Yes (CEA mandated)</div>
-                <div class="ct-cell bad">No</div>
-            </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════
-             EMBED PANEL
-        ══════════════════════════════════════════════════ -->
-        <div class="embed-panel" id="embed-panel">
-            <div class="embed-head">
-                <div class="embed-left">
-                    <span class="embed-icon">🔗</span>
-                    <div>
-                        <div class="embed-title">Embed this simulation</div>
-                        <div class="embed-sub">Copy the code below and paste it into any webpage, blog post, or CMS — including WordPress, Notion, Substack, or a plain HTML file.</div>
-                    </div>
-                </div>
-                <button class="embed-toggle-btn" id="embed-toggle-btn" onclick="toggleEmbed()">Show Embed Code</button>
-            </div>
-            <div class="embed-body" id="embed-body" style="display:none">
-                <div class="embed-tabs">
-                    <button class="etab active" onclick="switchTab(this,'iframe')">iframe</button>
-                    <button class="etab" onclick="switchTab(this,'script')">Responsive Snippet</button>
-                </div>
-
-                <!-- IFRAME TAB -->
-                <div class="embed-tab-content" id="tab-iframe">
-                    <div class="embed-hint">Works everywhere — paste inside any <code>&lt;body&gt;</code>. Adjust <code>width</code> and <code>height</code> as needed.</div>
-                    <div class="embed-code-wrap">
-                        <pre class="embed-code" id="code-iframe">&lt;iframe
-  src="YOUR_HOSTED_URL_HERE"
-  width="100%"
-  height="820"
-  style="border:none; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.1);"
-  title="Grid-Forming Inverter — Live Grid Simulation"
-  loading="lazy"
-  allowfullscreen&gt;
-&lt;/iframe&gt;</pre>
-                        <button class="copy-btn" onclick="copyCode('code-iframe',this)">Copy</button>
-                    </div>
-                    <div class="embed-note">💡 Replace <strong>YOUR_HOSTED_URL_HERE</strong> with the URL where you host this file (see hosting options below).</div>
-                </div>
-
-                <!-- RESPONSIVE TAB -->
-                <div class="embed-tab-content" id="tab-script" style="display:none">
-                    <div class="embed-hint">Maintains aspect ratio on all screen sizes. Best for full-width embeds.</div>
-                    <div class="embed-code-wrap">
-                        <pre class="embed-code" id="code-script">&lt;div style="position:relative;padding-bottom:72%;height:0;overflow:hidden;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.1);"&gt;
-  &lt;iframe
-    src="YOUR_HOSTED_URL_HERE"
-    style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
-    title="Grid-Forming Inverter — Live Grid Simulation"
-    loading="lazy"
-    allowfullscreen&gt;
-  &lt;/iframe&gt;
-&lt;/div&gt;</pre>
-                        <button class="copy-btn" onclick="copyCode('code-script',this)">Copy</button>
-                    </div>
-                </div>
-
-                <!-- HOSTING GUIDE -->
-                <div class="hosting-guide">
-                    <div class="hosting-title">📦 Free Hosting Options — Choose One</div>
-                    <div class="hosting-grid">
-                        <div class="hosting-item">
-                            <div class="hosting-name">GitHub Pages</div>
-                            <div class="hosting-desc">Best for organisations. Free, custom domain, version-controlled. Upload this file to a repo → Settings → Pages → Deploy. Ideal for Vasudha Foundation.</div>
-                            <a class="hosting-link" href="https://pages.github.com" target="_blank" rel="noopener">pages.github.com →</a>
-                        </div>
-                        <div class="hosting-item">
-                            <div class="hosting-name">Netlify Drop</div>
-                            <div class="hosting-desc">Drag-and-drop this HTML file at app.netlify.com/drop — live URL in under 30 seconds. No account needed for a quick share link.</div>
-                            <a class="hosting-link" href="https://app.netlify.com/drop" target="_blank" rel="noopener">app.netlify.com/drop →</a>
-                        </div>
-                        <div class="hosting-item">
-                            <div class="hosting-name">Cloudflare Pages</div>
-                            <div class="hosting-desc">Free tier, global CDN, fast load times. Connect a GitHub repo or upload directly. Good option if you already use Cloudflare.</div>
-                            <a class="hosting-link" href="https://pages.cloudflare.com" target="_blank" rel="noopener">pages.cloudflare.com →</a>
-                        </div>
-                        <div class="hosting-item">
-                            <div class="hosting-name">Tiiny.host</div>
-                            <div class="hosting-desc">Simplest option — upload a single HTML file, get a shareable URL instantly. Free tier lasts 48 hrs; paid plan is permanent. Best for demos.</div>
-                            <a class="hosting-link" href="https://tiiny.host" target="_blank" rel="noopener">tiiny.host →</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /app -->
-
-    <script>
-        // ── EMBED PANEL LOGIC ──────────────────────────────────────
-        function toggleEmbed() {
-            const body = document.getElementById('embed-body');
-            const btn  = document.getElementById('embed-toggle-btn');
-            const open = body.style.display !== 'none';
-            body.style.display = open ? 'none' : 'block';
-            btn.textContent    = open ? 'Show Embed Code' : 'Hide Embed Code';
-        }
-        function switchTab(el, tab) {
-            document.querySelectorAll('.etab').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('tab-iframe').style.display  = tab === 'iframe'  ? 'block' : 'none';
-            document.getElementById('tab-script').style.display  = tab === 'script'  ? 'block' : 'none';
-        }
-        function copyCode(id, btn) {
-            const text = document.getElementById(id).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                btn.textContent = '✓ Copied!';
-                setTimeout(() => btn.textContent = 'Copy', 2000);
-            }).catch(() => {
-                // Fallback
-                const ta = document.createElement('textarea');
-                ta.value = text; document.body.appendChild(ta); ta.select();
-                document.execCommand('copy'); document.body.removeChild(ta);
-                btn.textContent = '✓ Copied!';
-                setTimeout(() => btn.textContent = 'Copy', 2000);
-            });
-        }
-    </script>
-
-    <script>
-        // ═══════════════════════════════════════════════════════════
-        // STATE
-        // ═══════════════════════════════════════════════════════════
-        const S = {
-            gfm: false,
-            freq: 50.0, volt: 1.0, bess: 0.0,
-            rocof: 0.0, prevFreq: 50.0,
-            phase: 'idle',        // idle | disturbing | recovering
-            eventDir: 1,          // +1 = load increase, -1 = load decrease
-            t: 0.0,
-            freqHist: new Array(270).fill(50.0),
-            voltHist: new Array(270).fill(1.0),
-            particles: [], ptTimer: 0,
-            autoReplay: false, autoTimer: 0, autoDir: 1,
-            lastTs: null,
-            freqExtreme: 50.0,   // min or max depending on eventDir
-            voltExtreme: 1.0
-        };
-
-        // ═══════════════════════════════════════════════════════════
-        // PHYSICS  (Swing equation: df/dt = f0/(2H) * (Pm - Pe - D*Δf))
-        // ═══════════════════════════════════════════════════════════
-        const P = {
-            H_gfl: 0.48,   // effective inertia constant, high-RE grid, no GFI
-            H_gfm: 4.3,    // emulated inertia with GFI
-            D: 2.1,    // damping coefficient
-            dPpu: 0.238,  // 300 MW / 1260 MW base ≈ 23.8% disturbance
-            f0: 50.0,
-            gfm_delay: 0.11,
-        };
-
-        function physics(dt) {
-            S.prevFreq = S.freq;
-
-            if (S.phase === 'idle') {
-                S.freq += (50 - S.freq) * dt * 4 + (Math.random() - .5) * .005;
-                S.volt += (1.0 - S.volt) * dt * 4 + (Math.random() - .5) * .0012;
-                S.bess *= Math.exp(-dt * 3);
-                S.rocof = (S.freq - S.prevFreq) / dt;
-                return;
-            }
-
-            S.t += dt;
-
-            const dir = S.eventDir;          // +1 or -1
-            const dP = dir * P.dPpu;        // positive = demand > supply → freq falls
-            // negative = supply > demand → freq rises
-            const H = S.gfm ? P.H_gfm : P.H_gfl;
-
-            if (S.phase === 'disturbing') {
-                const df_ss = S.freq - P.f0;   // deviation from nominal
-
-                if (S.gfm) {
-                    // ── GFI ACTIVE ────────────────────────────────────
-                    // Swing equation with GFI synthetic inertia
-                    const kick = S.t > P.gfm_delay ? Math.min(1.0, (S.t - P.gfm_delay) / 0.22) : 0;
-                    // Initial swing from disturbance (damped by GFI)
-                    const swing = -(dP / (2 * H)) * P.f0;
-                    // GFI correction force: pulls freq back toward 50 Hz
-                    const gfi_pull = -df_ss * (2.5 + kick * 4.0);
-                    const damping = -df_ss * P.D * 0.12;
-                    S.freq += (swing * (1 - kick * 0.92) + gfi_pull * kick + damping) * dt;
-
-                    // Voltage: brief excursion then held
-                    if (dir === 1) {
-                        // Load increase: sag
-                        S.volt = 1.0 - 0.04 * Math.exp(-Math.pow(S.t - 0.18, 2) / 0.05)
-                            + (Math.random() - .5) * .003;
-                    } else {
-                        // Load decrease: brief spike
-                        S.volt = 1.0 + 0.025 * Math.exp(-Math.pow(S.t - 0.18, 2) / 0.05)
-                            + (Math.random() - .5) * .003;
-                    }
-
-                    // BESS output: positive = injecting, negative = absorbing
-                    // dir=+1 (load up) → bess positive (injecting)
-                    // dir=-1 (load dn) → bess negative (absorbing)
-                    const bessTarget = S.t > P.gfm_delay
-                        ? dir * Math.min(285, (S.t - P.gfm_delay) * 410)
-                        : dir * S.t * 20;
-                    S.bess += (bessTarget - S.bess) * dt * 10;
-
-                } else {
-                    // ── GFL ONLY (no synthetic inertia) ────────────────
-                    const swing = -(dP / (2 * H)) * P.f0;
-                    const damping = -df_ss * P.D * 0.055;
-                    S.freq += (swing + damping) * dt;
-
-                    if (dir === 1) {
-                        S.volt = 1.0 - 0.25 * Math.exp(-Math.pow(S.t - 0.42, 2) / 0.22)
-                            + (Math.random() - .5) * .009;
-                    } else {
-                        S.volt = 1.0 + 0.115 * Math.exp(-Math.pow(S.t - 0.42, 2) / 0.22)
-                            + (Math.random() - .5) * .009;
-                    }
-
-                    // Slow GFL battery ramp (governor-like, much slower)
-                    const gflTarget = dir * Math.min(20, S.t * 9);
-                    S.bess += (gflTarget - S.bess) * dt * 1.5;
-                }
-
-                S.rocof = (S.freq - S.prevFreq) / dt;
-
-                // Track extremes
-                if (dir === 1) S.freqExtreme = Math.min(S.freqExtreme, S.freq);
-                else S.freqExtreme = Math.max(S.freqExtreme, S.freq);
-                if (dir === 1) S.voltExtreme = Math.min(S.voltExtreme, S.volt);
-                else S.voltExtreme = Math.max(S.voltExtreme, S.volt);
-
-                // Transition to recovery
-                const recoverTime = S.gfm ? 1.2 : 2.9;
-                if (S.t > recoverTime) S.phase = 'recovering';
-            }
-
-            if (S.phase === 'recovering') {
-                const rr = S.gfm ? 5.2 : 0.5;
-                const vr = S.gfm ? 5.5 : 0.6;
-                S.freq += (50 - S.freq) * dt * rr;
-                S.volt += (1.0 - S.volt) * dt * vr;
-                S.bess += (0 - S.bess) * dt * (S.gfm ? 1.6 : 0.35);
-                S.rocof = (S.freq - S.prevFreq) / dt;
-
-                if (S.t > 11 || (Math.abs(S.freq - 50) < 0.011 && Math.abs(S.volt - 1) < 0.005)) {
-                    S.phase = 'idle'; S.t = 0;
-                    if (S.autoReplay) S.autoTimer = 3.2;
-                }
-            }
-        }
-
-        function trigger(dir) {
-            if (S.phase !== 'idle') return;
-            S.eventDir = dir;
-            S.phase = 'disturbing'; S.t = 0;
-            S.freqExtreme = 50.0; S.voltExtreme = 1.0;
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // PARTICLES
-        // ═══════════════════════════════════════════════════════════
-        function updateParticles(dt, W, busY) {
-            S.ptTimer -= dt;
-            if (S.ptTimer < 0) {
-                S.ptTimer = S.gfm ? .05 : .1;
-                // Generation particles (always flowing)
-                S.particles.push({ x: W * .13, y: busY, vx: W * .26, color: '#d97706', life: 1, r: 2.5 });
-                S.particles.push({ x: W * .31, y: busY, vx: W * .26, color: '#6366f1', life: 1, r: 2.5 });
-                // BESS particles
-                const absBess = Math.abs(S.bess);
-                if (absBess > 10) {
-                    const n = S.gfm ? 4 : 1;
-                    const a = Math.min(1, absBess / 240);
-                    for (let i = 0; i < n; i++) {
-                        if (S.bess > 0) {
-                            // Injecting: particles flow up from BESS to bus
-                            S.particles.push({
-                                x: W * .52 + (Math.random() - .5) * 8, y: busY + 22,
-                                vx: (Math.random() - .5) * W * .04, vy: -W * .22 * a,
-                                color: `rgba(11,148,136,${a})`, life: 1, r: 3 + Math.random() * 2, bess: true
-                            });
-                        } else {
-                            // Absorbing: particles flow down from bus to BESS
-                            S.particles.push({
-                                x: W * .52 + (Math.random() - .5) * 8, y: busY,
-                                vx: (Math.random() - .5) * W * .04, vy: W * .18 * a,
-                                color: `rgba(109,40,217,${a})`, life: 1, r: 3 + Math.random() * 2, bess: true
-                            });
-                        }
-                    }
-                }
-            }
-            for (let i = S.particles.length - 1; i >= 0; i--) {
-                const p = S.particles[i];
-                p.x += (p.vx || 0) * dt; p.y += (p.vy || 0) * dt;
-                p.life -= dt * (p.bess ? 2.8 : 1.65);
-                if (p.x > W * .95 || p.x < 0 || p.y > busY + 50 || p.life <= 0) S.particles.splice(i, 1);
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // TOPOLOGY CANVAS
-        // ═══════════════════════════════════════════════════════════
-        const topoC = document.getElementById('topo-canvas');
-        const tCtx = topoC.getContext('2d');
-
-        function resizeTopo() {
-            const dpr = devicePixelRatio || 1;
-            const r = topoC.getBoundingClientRect();
-            topoC.width = r.width * dpr; topoC.height = r.height * dpr;
-            tCtx.scale(dpr, dpr);
-        }
-
-        function drawTopo() {
-            const W = topoC.getBoundingClientRect().width;
-            const H = topoC.getBoundingClientRect().height;
-            const ctx = tCtx;
-            ctx.clearRect(0, 0, W, H);
-
-            // Subtle grid bg
-            ctx.strokeStyle = 'rgba(190,205,225,0.22)'; ctx.lineWidth = 1;
-            for (let i = 1; i < 7; i++) { ctx.beginPath(); ctx.moveTo(0, H * i / 7); ctx.lineTo(W, H * i / 7); ctx.stroke() }
-
-            const busY = H * .45, busL = W * .055, busR = W * .945;
-
-            // Bus glow
-            if (S.gfm) { ctx.shadowColor = 'rgba(11,148,136,0.22)'; ctx.shadowBlur = 12 }
-            ctx.strokeStyle = S.gfm ? 'rgba(11,148,136,0.68)' : 'rgba(94,113,139,0.42)';
-            ctx.lineWidth = 5; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(busL, busY); ctx.lineTo(busR, busY); ctx.stroke();
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = S.gfm ? 'rgba(11,148,136,0.09)' : 'rgba(94,113,139,0.09)';
-            ctx.lineWidth = 14;
-            ctx.beginPath(); ctx.moveTo(busL, busY); ctx.lineTo(busR, busY); ctx.stroke();
-
-            // Vertical legs & bus nodes
-            const legXs = [.13, .31, .52, .72, .87];
-            const legDys = [78, 78, -44, 78, 78];
-            ctx.strokeStyle = 'rgba(148,163,184,0.5)'; ctx.lineWidth = 1.8;
-            legXs.forEach((lx, i) => {
-                ctx.beginPath(); ctx.moveTo(W * lx, busY); ctx.lineTo(W * lx, busY + legDys[i]); ctx.stroke();
-            });
-            legXs.forEach(lx => {
-                ctx.beginPath(); ctx.arc(W * lx, busY, 3.5, 0, Math.PI * 2);
-                ctx.fillStyle = S.gfm ? 'rgba(11,148,136,0.75)' : 'rgba(94,113,139,0.55)'; ctx.fill();
-            });
-
-            // Assets
-            drawSolar(ctx, W * .13, busY - 84, W);
-            drawWind(ctx, W * .31, busY - 90, W);
-            drawBESS(ctx, W * .52, busY + 6, W);
-            drawCity(ctx, W * .72, busY - 86, W);
-            drawPlant(ctx, W * .87, busY - 84, W);
-
-            // Particles
-            updateParticles(0, W, busY);
-            S.particles.forEach(p => {
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life); ctx.fill(); ctx.globalAlpha = 1;
-            });
-
-            // Gauge
-            drawGauge(ctx, W * .83, H * .765, 30, S.freq);
-
-            // Disturbance flash
-            if (S.phase === 'disturbing' && S.t < 0.75) {
-                const a = (1 - S.t / .75) * .6;
-                const isUp = S.eventDir === 1;
-                ctx.strokeStyle = `rgba(${isUp ? '190,18,60' : '109,40,217'},${a})`;
-                ctx.lineWidth = 2.5;
-                const r = (S.t / .75) * 40 + 14;
-                ctx.beginPath(); ctx.arc(W * .72, busY - 15, r, 0, Math.PI * 2); ctx.stroke();
-                ctx.fillStyle = `rgba(${isUp ? '190,18,60' : '109,40,217'},${Math.min(1, a * 1.7)})`;
-                ctx.font = `bold 9.5px 'IBM Plex Mono',monospace`; ctx.textAlign = 'center';
-                ctx.fillText(isUp ? '+300 MW LOAD SPIKE' : '−300 MW LOAD DROP', W * .72, busY - 98);
-            }
-
-            // BESS power arrow (bidirectional)
-            const absBess = Math.abs(S.bess);
-            if (absBess > 10) {
-                const a = Math.min(1, absBess / 200);
-                const arrowH = 18 + absBess * .09;
-                const isInj = S.bess > 0;  // injecting or absorbing
-                const col = isInj ? `rgba(11,148,136,${a})` : `rgba(109,40,217,${a})`;
-                ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2.5;
-                if (isInj) {
-                    // Arrow pointing UP (injection)
-                    ctx.beginPath(); ctx.moveTo(W * .52, busY - 1); ctx.lineTo(W * .52, busY - 1 - arrowH); ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(W * .52, busY - 1 - arrowH);
-                    ctx.lineTo(W * .52 - 5, busY - 1 - arrowH + 9); ctx.lineTo(W * .52 + 5, busY - 1 - arrowH + 9);
-                    ctx.closePath(); ctx.fill();
-                    ctx.font = `bold 9px 'IBM Plex Mono',monospace`; ctx.textAlign = 'center';
-                    ctx.fillText(`+${S.bess.toFixed(0)}MW`, W * .52, busY - arrowH - 12);
-                    ctx.font = `7.5px sans-serif`; ctx.fillStyle = `rgba(11,148,136,${a * .8})`;
-                    ctx.fillText('INJECT', W * .52, busY - arrowH - 3);
-                } else {
-                    // Arrow pointing DOWN (absorption)
-                    ctx.beginPath(); ctx.moveTo(W * .52, busY + 2); ctx.lineTo(W * .52, busY + 2 + arrowH); ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(W * .52, busY + 2 + arrowH);
-                    ctx.lineTo(W * .52 - 5, busY + 2 + arrowH - 9); ctx.lineTo(W * .52 + 5, busY + 2 + arrowH - 9);
-                    ctx.closePath(); ctx.fill();
-                    ctx.font = `bold 9px 'IBM Plex Mono',monospace`; ctx.textAlign = 'center';
-                    ctx.fillText(`${S.bess.toFixed(0)}MW`, W * .52, busY + arrowH + 20);
-                    ctx.font = `7.5px sans-serif`; ctx.fillStyle = `rgba(109,40,217,${a * .8})`;
-                    ctx.fillText('ABSORB', W * .52, busY + arrowH + 29);
-                }
-            }
-        }
-
-        function drawSolar(ctx, x, y, W) {
-            const pw = 13, ph = 8, gap = 2.5, cols = 3, rows = 2;
-            const tw = cols * (pw + gap) - gap;
-            for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-                const px = x - tw / 2 + c * (pw + gap), py = y + r * (ph + gap);
-                ctx.fillStyle = '#0c2a50'; ctx.fillRect(px, py, pw, ph);
-                ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1; ctx.strokeRect(px, py, pw, ph);
-                ctx.strokeStyle = 'rgba(217,119,6,.3)'; ctx.lineWidth = .5;
-                ctx.beginPath(); ctx.moveTo(px + pw / 2, py); ctx.lineTo(px + pw / 2, py + ph);
-                ctx.moveTo(px, py + ph / 2); ctx.lineTo(px + pw, py + ph / 2); ctx.stroke();
-            }
-            lbl(ctx, x, y + rows * (ph + gap) + 4, '☀ Solar Farm', '#64748b', W);
-            lbl(ctx, x, y + rows * (ph + gap) + 15, '240 MW actual', '#d97706', W, true);
-        }
-
-        function drawWind(ctx, x, y, W) {
-            const mast = 36;
-            ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(x, y + mast); ctx.lineTo(x, y + 10); ctx.stroke();
-            [0, 120, 240].forEach(deg => {
-                const a = (deg - 90) * Math.PI / 180;
-                ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
-                ctx.beginPath(); ctx.moveTo(x, y + 10); ctx.lineTo(x + 17 * Math.cos(a), y + 10 + 17 * Math.sin(a)); ctx.stroke();
-            });
-            ctx.beginPath(); ctx.arc(x, y + 10, 2.8, 0, Math.PI * 2); ctx.fillStyle = '#4f46e5'; ctx.fill();
-            lbl(ctx, x, y + mast + 12, '🌬 Wind Farm', '#64748b', W);
-            lbl(ctx, x, y + mast + 23, '420 MW actual', '#4f46e5', W, true);
-        }
-
-        function drawBESS(ctx, x, y, W) {
-            const isAbsorbing = S.bess < -5;
-            const col = S.gfm ? (isAbsorbing ? '#6d28d9' : '#0b9488') : '#94a3b8';
-            const bgC = S.gfm ? (isAbsorbing ? 'rgba(109,40,217,.07)' : 'rgba(11,148,136,.07)') : 'rgba(226,232,240,.4)';
-            const bw = 68, bh = 31;
-            ctx.fillStyle = bgC; ctx.strokeStyle = col; ctx.lineWidth = 1.5;
-            rr(ctx, x - bw / 2, y, bw, bh, 5); ctx.fill(); ctx.stroke();
-            const cells = 5, cw = (bw - 14) / cells - 2;
-            for (let i = 0; i < cells; i++) {
-                const cx2 = x - bw / 2 + 7 + i * (cw + 2);
-                const charge = Math.max(.1, .85 - Math.abs(S.bess) / 350);
-                ctx.fillStyle = col; ctx.globalAlpha = .2 + charge * .55; ctx.fillRect(cx2, y + 7, cw, bh - 14);
-                ctx.globalAlpha = 1; ctx.strokeStyle = col; ctx.lineWidth = .5; ctx.strokeRect(cx2, y + 7, cw, bh - 14);
-            }
-            ctx.fillStyle = col; ctx.font = `bold 10px 'IBM Plex Mono',monospace`; ctx.textAlign = 'center';
-            const modeLabel = !S.gfm ? 'GFL-BESS' : isAbsorbing ? '⬇ GFI-BESS' : '⬆ GFI-BESS';
-            ctx.fillText(modeLabel, x, y - 8);
-            lbl(ctx, x, y + bh + 12, '500 MW · ' + (S.gfm ? (isAbsorbing ? 'Absorbing' : 'Injecting') : 'Grid-Following'), col, W);
-        }
-
-        function drawCity(ctx, x, y, W) {
-            const active = S.phase === 'disturbing' && S.eventDir === 1;
-            const dropping = S.phase === 'disturbing' && S.eventDir === -1;
-            const col = active ? '#be123c' : dropping ? '#6d28d9' : '#2459be';
-            const blds = [38, 26, 46, 30, 20, 34];
-            const bw = 8, gap = 3, tw = blds.length * (bw + gap) - gap;
-            blds.forEach((bh, i) => {
-                const bx = x - tw / 2 + i * (bw + gap), by = y + (50 - bh);
-                ctx.fillStyle = active ? 'rgba(190,18,60,.1)' : dropping ? 'rgba(109,40,217,.08)' : 'rgba(36,89,190,.07)';
-                ctx.strokeStyle = col; ctx.lineWidth = 1;
-                ctx.fillRect(bx, by, bw, bh); ctx.strokeRect(bx, by, bw, bh);
-                ctx.fillStyle = active ? 'rgba(190,18,60,.5)' : dropping ? 'rgba(109,40,217,.4)' : 'rgba(36,89,190,.3)';
-                for (let j = 0; j < Math.floor(bh / 9); j++) { ctx.fillRect(bx + 2, by + 4 + j * 9, 2, 3); ctx.fillRect(bx + 5, by + 4 + j * 9, 2, 3) }
-            });
-            lbl(ctx, x, y + 60, '🏙 City Load', '#64748b', W);
-            const ltxt = active ? '+300 MW SPIKE!' : dropping ? '−300 MW DROP!' : '1,200 MW base';
-            lbl(ctx, x, y + 71, ltxt, col, W, active || dropping);
-        }
-
-        function drawPlant(ctx, x, y, W) {
-            ctx.fillStyle = 'rgba(226,232,240,.5)'; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
-            ctx.fillRect(x - 19, y + 4, 38, 42); ctx.strokeRect(x - 19, y + 4, 38, 42);
-            [[x - 8, y - 12, 7, 18], [x + 3, y - 8, 7, 14]].forEach(([cx2, cy2, cw2, ch2]) => {
-                ctx.fillStyle = '#cbd5e1'; ctx.fillRect(cx2, cy2, cw2, ch2); ctx.strokeRect(cx2, cy2, cw2, ch2);
-            });
-            if (S.phase !== 'disturbing') {
-                ctx.fillStyle = 'rgba(148,163,184,.32)';
-                for (let i = 0; i < 3; i++) {
-                    ctx.beginPath(); ctx.arc(x - 4, y - 16 - i * 5, 2.5 - i * .4, 0, Math.PI * 2); ctx.fill();
-                    ctx.beginPath(); ctx.arc(x + 7, y - 11 - i * 4, 2 - i * .3, 0, Math.PI * 2); ctx.fill();
-                }
-            }
-            lbl(ctx, x, y + 55, '🏭 Thermal Plant', '#64748b', W);
-            lbl(ctx, x, y + 66, '600 MW actual', '#64748b', W, true);
-        }
-
-        function drawGauge(ctx, cx, cy, r, freq) {
-            const sA = Math.PI * .75, sw = Math.PI * 1.5;
-            const minF = 48.8, maxF = 51.2;
-            const prog = Math.max(0, Math.min(1, (freq - minF) / (maxF - minF)));
-            const nA = sA + prog * sw;
-            ctx.beginPath(); ctx.arc(cx, cy, r, sA, sA + sw);
-            ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.stroke();
-            [
-                { lo: 48.8, hi: 49.2, c: 'rgba(190,18,60,.7)' }, { lo: 49.2, hi: 49.5, c: 'rgba(180,83,9,.7)' },
-                { lo: 49.5, hi: 50.5, c: 'rgba(21,128,61,.7)' }, { lo: 50.5, hi: 50.8, c: 'rgba(180,83,9,.7)' },
-                { lo: 50.8, hi: 51.2, c: 'rgba(190,18,60,.7)' }
-            ].forEach(z => {
-                const a1 = sA + ((z.lo - minF) / (maxF - minF)) * sw, a2 = sA + ((z.hi - minF) / (maxF - minF)) * sw;
-                ctx.beginPath(); ctx.arc(cx, cy, r, a1, a2);
-                ctx.strokeStyle = z.c; ctx.lineWidth = 6; ctx.lineCap = 'butt'; ctx.stroke();
-            });
-            const nc = freq < 49.5 ? '#be123c' : freq > 50.5 ? '#6d28d9' : freq < 49.8 || freq > 50.2 ? '#b45309' : '#0b9488';
-            ctx.strokeStyle = nc; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + (r - 6) * Math.cos(nA), cy + (r - 6) * Math.sin(nA)); ctx.stroke();
-            ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fillStyle = '#334155'; ctx.fill();
-            ctx.fillStyle = freq < 49.5 ? '#be123c' : freq > 50.5 ? '#6d28d9' : '#0c1424';
-            ctx.font = `bold 9px 'IBM Plex Mono',monospace`; ctx.textAlign = 'center';
-            ctx.fillText(freq.toFixed(2) + ' Hz', cx, cy + r + 13);
-            ctx.fillStyle = '#94a3b8'; ctx.font = '8px sans-serif';
-            ctx.fillText('Freq. Gauge', cx, cy + r + 22);
-        }
-
-        function lbl(ctx, x, y, text, color, W, bold = false) {
-            ctx.fillStyle = color;
-            ctx.font = (bold ? 'bold ' : '') + `${Math.max(8.5, W * .011)}px 'Plus Jakarta Sans',sans-serif`;
-            ctx.textAlign = 'center'; ctx.fillText(text, x, y);
-        }
-
-        function rr(ctx, x, y, w, h, r) {
-            ctx.beginPath();
-            ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-            ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-            ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-            ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // CHARTS
-        // ═══════════════════════════════════════════════════════════
-        const fC = document.getElementById('freq-canvas'), vC = document.getElementById('volt-canvas');
-        const fCtx = fC.getContext('2d'), vCtx = vC.getContext('2d');
-
-        function resizeCharts() {
-            const dpr = devicePixelRatio || 1;
-            [fC, vC].forEach(c => { const r = c.getBoundingClientRect(); c.width = r.width * dpr; c.height = r.height * dpr });
-            fCtx.scale(dpr, dpr); vCtx.scale(dpr, dpr);
-        }
-
-        function drawChart(ctx, canvas, hist, minY, maxY, refY, zones, lineCol, cur) {
-            const W = canvas.getBoundingClientRect().width, H = canvas.getBoundingClientRect().height;
-            ctx.clearRect(0, 0, W, H);
-            const PL = 44, PR = 8, PT = 22, PB = 14, cW = W - PL - PR, cH = H - PT - PB;
-            const yp = v => PT + (1 - (v - minY) / (maxY - minY)) * cH;
-            const xp = i => PL + (i / (hist.length - 1)) * cW;
-            zones.forEach(z => {
-                ctx.fillStyle = z.color;
-                ctx.fillRect(PL, Math.min(yp(z.lo), PT + cH), cW, Math.max(yp(z.hi), PT) - Math.min(yp(z.lo), PT + cH));
-            });
-            ctx.strokeStyle = 'rgba(195,208,228,.48)'; ctx.lineWidth = .5;
-            const step = (maxY - minY) / 6;
-            for (let i = 0; i <= 6; i++) {
-                const v = minY + i * step, y = yp(v);
-                ctx.beginPath(); ctx.moveTo(PL, y); ctx.lineTo(PL + cW, y); ctx.stroke();
-                ctx.fillStyle = '#94a3b8'; ctx.font = `8.5px 'IBM Plex Mono',monospace`; ctx.textAlign = 'right';
-                ctx.fillText(v.toFixed(2), PL - 4, y + 3.5);
-            }
-            ctx.strokeStyle = 'rgba(100,116,139,.38)'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
-            ctx.beginPath(); ctx.moveTo(PL, yp(refY)); ctx.lineTo(PL + cW, yp(refY)); ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.beginPath(); ctx.strokeStyle = lineCol; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-            hist.forEach((v, i) => i === 0 ? ctx.moveTo(xp(i), yp(v)) : ctx.lineTo(xp(i), yp(v)));
-            ctx.stroke();
-            ctx.beginPath(); ctx.arc(xp(hist.length - 1), yp(cur), 3.5, 0, Math.PI * 2);
-            ctx.fillStyle = lineCol; ctx.fill();
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // HUD + EVENT BAR
-        // ═══════════════════════════════════════════════════════════
-        function updateHUD() {
-            const fe = document.getElementById('hud-freq');
-            const ve = document.getElementById('hud-volt');
-            const be = document.getElementById('hud-bess');
-            const re = document.getElementById('hud-rocof');
-            const bge = document.getElementById('bess-gen-val');
-            const fext = document.getElementById('freq-ext');
-            const vext = document.getElementById('volt-ext');
-            const evDot = document.getElementById('ev-dot');
-            const evLbl = document.getElementById('ev-label');
-            const evDesc = document.getElementById('ev-desc');
-            const evRocof = document.getElementById('ev-rocof');
-
-            fe.textContent = S.freq.toFixed(2) + ' Hz';
-            ve.textContent = S.volt.toFixed(3) + ' pu';
-            be.textContent = (S.bess >= 0 ? '+' : '') + S.bess.toFixed(1) + ' MW';
-            if (bge) bge.textContent = (S.bess >= 0 ? '+' : '') + S.bess.toFixed(0) + ' MW';
-
-            const rocofDisplay = Math.abs(S.rocof) > 0.001 ? (S.rocof >= 0 ? '+' : '') + S.rocof.toFixed(2) + ' Hz/s' : '0.00 Hz/s';
-            re.textContent = rocofDisplay;
-
-            // Frequency colouring
-            if (S.freq < 49.0) fe.className = 'hud-val danger';
-            else if (S.freq < 49.5) fe.className = 'hud-val warn';
-            else if (S.freq > 51.0) fe.className = 'hud-val danger';
-            else if (S.freq > 50.5) fe.className = 'hud-val over';
-            else fe.className = 'hud-val ok';
-
-            if (S.volt < 0.85) ve.className = 'hud-val danger';
-            else if (S.volt < 0.95) ve.className = 'hud-val warn';
-            else if (S.volt > 1.08) ve.className = 'hud-val over';
-            else ve.className = 'hud-val ok';
-
-            be.className = 'hud-val ' + (S.bess > 5 ? 'ok' : S.bess < -5 ? 'over' : '');
-            re.className = 'hud-val ' + (Math.abs(S.rocof) > 1 ? 'danger' : Math.abs(S.rocof) > 0.5 ? 'warn' : 'ok');
-
-            // Extremum display
-            if (S.phase !== 'idle') {
-                if (S.eventDir === 1) {
-                    fext.textContent = S.freqExtreme.toFixed(2) + ' Hz nadir';
-                    fext.style.color = S.freqExtreme < 49.0 ? 'var(--red)' : S.freqExtreme < 49.5 ? 'var(--amber)' : 'var(--teal)';
-                    vext.textContent = S.voltExtreme.toFixed(3) + ' pu nadir';
-                    vext.style.color = S.voltExtreme < 0.85 ? 'var(--red)' : S.voltExtreme < 0.95 ? 'var(--amber)' : 'var(--teal)';
-                } else {
-                    fext.textContent = S.freqExtreme.toFixed(2) + ' Hz peak';
-                    fext.style.color = S.freqExtreme > 51.0 ? 'var(--red)' : S.freqExtreme > 50.5 ? 'var(--amber)' : 'var(--purple)';
-                    vext.textContent = S.voltExtreme.toFixed(3) + ' pu peak';
-                    vext.style.color = S.voltExtreme > 1.08 ? 'var(--red)' : S.voltExtreme > 1.04 ? 'var(--amber)' : 'var(--teal)';
-                }
-            }
-
-            // Event info bar
-            const pDesc = {
-                idle: { dot: '', lbl: 'System Idle', cls: '', desc: 'Select an event to observe grid response. Toggle GFI mode before triggering to compare Grid-Forming vs Grid-Following behaviour.' },
-                disturbing_up_gfm: { dot: 'active-red', lbl: '+300 MW Load Spike', cls: 'load-up', desc: 'GFI detects phase lag → injects active power within 200 ms. Synthetic inertia (H ≈ 4.3 s) limits RoCoF to ~0.28 Hz/s. Watch frequency nadir and BESS injection arrow (⬆).' },
-                disturbing_up_gfl: { dot: 'active-red', lbl: '+300 MW Load Spike', cls: 'load-up', desc: 'No GFI — only thermal governor response (2–5 s delay). Low inertia (H ≈ 0.48 s) drives RoCoF to ~1.8 Hz/s. Frequency may breach 49.0 Hz relay trip threshold.' },
-                disturbing_dn_gfm: { dot: 'active-purple', lbl: '−300 MW Load Drop', cls: 'load-dn', desc: 'GFI detects phase advance → switches to absorption mode within 200 ms. BESS charges (⬇ purple arrow) absorbing surplus generation. Frequency peak held near 50.25 Hz.' },
-                disturbing_dn_gfl: { dot: 'active-purple', lbl: '−300 MW Load Drop', cls: 'load-dn', desc: 'No GFI — surplus generation drives frequency upward at ~1.7 Hz/s. Thermal governor spills over-frequency slowly. Risk of over-frequency relay trips above 50.5 Hz.' },
-                recovering: { dot: '', lbl: S.eventDir === 1 ? '↑ Recovering (Under-Frequency)' : '↓ Recovering (Over-Frequency)', cls: '', desc: 'Grid returning to nominal 50 Hz. ' + (S.gfm ? 'GFI ramps down smoothly as frequency stabilises.' : 'Slow governor-led recovery — GFI would have resolved this in under 2 seconds.') }
-            };
-            let key = 'idle';
-            if (S.phase === 'disturbing') key = `disturbing_${S.eventDir === 1 ? 'up' : 'dn'}_${S.gfm ? 'gfm' : 'gfl'}`;
-            if (S.phase === 'recovering') key = 'recovering';
-            const d = pDesc[key] || pDesc.idle;
-            evDot.className = 'ev-dot ' + (d.dot || '');
-            evLbl.className = 'ev-label ' + (d.cls || '');
-            evLbl.textContent = d.lbl;
-            evDesc.textContent = d.desc;
-            evRocof.textContent = 'RoCoF: ' + rocofDisplay;
-            evRocof.style.color = Math.abs(S.rocof) > 1 ? 'var(--red)' : Math.abs(S.rocof) > 0.5 ? 'var(--amber)' : 'var(--text3)';
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // MAIN LOOP
-        // ═══════════════════════════════════════════════════════════
-        function frame(ts) {
-            if (!S.lastTs) S.lastTs = ts;
-            const dt = Math.min((ts - S.lastTs) / 1000, .05);
-            S.lastTs = ts;
-
-            if (S.autoReplay && S.phase === 'idle') {
-                S.autoTimer -= dt;
-                if (S.autoTimer <= 0) {
-                    S.gfm = !S.gfm; updateToggleUI();
-                    const dir = S.autoDir;
-                    setTimeout(() => trigger(dir), 500);
-                    S.autoDir = (S.autoDir === 1) ? -1 : 1;
-                    S.autoTimer = 12;
-                }
-            }
-
-            physics(dt);
-
-            S.freqHist.push(S.freq); S.voltHist.push(S.volt);
-            if (S.freqHist.length > 270) { S.freqHist.shift(); S.voltHist.shift() }
-
-            drawTopo();
-
-            // Freq chart — y range covers both under and over frequency
-            const fColor = S.freq < 49.5 ? (S.freq < 49.0 ? '#be123c' : '#b45309') : S.freq > 50.5 ? (S.freq > 51.0 ? '#be123c' : '#6d28d9') : '#2459be';
-            drawChart(fCtx, fC, S.freqHist, 48.6, 51.4, 50,
-                [{ lo: 48.6, hi: 49.2, color: 'rgba(190,18,60,.06)' }, { lo: 49.2, hi: 49.5, color: 'rgba(180,83,9,.05)' },
-                { lo: 50.5, hi: 50.8, color: 'rgba(180,83,9,.05)' }, { lo: 50.8, hi: 51.4, color: 'rgba(190,18,60,.06)' }],
-                fColor, S.freq);
-
-            // Volt chart — range covers both sag and spike
-            const vColor = S.volt < 0.95 ? (S.volt < 0.85 ? '#be123c' : '#b45309') : S.volt > 1.06 ? (S.volt > 1.1 ? '#be123c' : '#6d28d9') : '#0b9488';
-            drawChart(vCtx, vC, S.voltHist, 0.7, 1.15, 1.0,
-                [{ lo: .7, hi: .85, color: 'rgba(190,18,60,.06)' }, { lo: .85, hi: .95, color: 'rgba(180,83,9,.05)' },
-                { lo: 1.06, hi: 1.1, color: 'rgba(180,83,9,.05)' }, { lo: 1.1, hi: 1.15, color: 'rgba(190,18,60,.06)' }],
-                vColor, S.volt);
-
-            updateHUD();
-            requestAnimationFrame(frame);
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // CONTROLS
-        // ═══════════════════════════════════════════════════════════
-        function updateToggleUI() {
-            const track = document.getElementById('gfm-toggle');
-            const lbl = document.getElementById('tgl-lbl');
-            const pill = document.getElementById('mode-pill');
-            const txt = document.getElementById('mode-text');
-            if (S.gfm) {
-                track.classList.add('on'); lbl.textContent = 'ON';
-                pill.className = 'mode-pill gfm'; txt.textContent = 'Grid-Forming Mode Active';
-            } else {
-                track.classList.remove('on'); lbl.textContent = 'OFF';
-                pill.className = 'mode-pill gfl'; txt.textContent = 'Grid-Following Mode';
-            }
-            // Update BESS gen label colour
-            const bge = document.getElementById('bess-gen-val');
-            if (bge) bge.style.color = S.gfm ? 'var(--teal)' : '#94a3b8';
-        }
-
-        document.getElementById('gfm-toggle').addEventListener('click', () => { S.gfm = !S.gfm; updateToggleUI() });
-        document.getElementById('btn-up').addEventListener('click', () => trigger(1));
-        document.getElementById('btn-dn').addEventListener('click', () => trigger(-1));
-
-        const rbtn = document.getElementById('replay-btn');
-        rbtn.addEventListener('click', () => {
-            S.autoReplay = !S.autoReplay;
-            rbtn.textContent = S.autoReplay ? '⏹ Stop Auto-Replay' : '↺ Auto-Replay';
-            if (S.autoReplay) { S.autoTimer = .5; S.autoDir = 1 }
-        });
-
-        // ═══════════════════════════════════════════════════════════
-        // RESIZE & BOOT
-        // ═══════════════════════════════════════════════════════════
-        function resize() { resizeTopo(); resizeCharts() }
-        const ro = new ResizeObserver(() => requestAnimationFrame(resize));
-        ro.observe(document.querySelector('.app'));
-        resize();
-        requestAnimationFrame(frame);
-    </script>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="h-left">
+      <div class="h-icon">⚡</div>
+      <div class="h-title">
+        <h1>Grid-Forming Inverter (GFI) — Live Grid Simulation</h1>
+        <p>India 50 Hz grid · Toggle GFI mode · Trigger load events to compare grid response</p>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="hud-chip"><span class="hud-label">Frequency</span><span class="hud-val" id="hud-freq">50.00 Hz</span></div>
+      <div class="hud-chip"><span class="hud-label">Voltage</span><span class="hud-val" id="hud-volt">1.000 pu</span></div>
+      <div class="hud-chip"><span class="hud-label">BESS Out</span><span class="hud-val ok" id="hud-bess">0.0 MW</span></div>
+      <div class="hud-chip"><span class="hud-label">RoCoF</span><span class="hud-val" id="hud-rocof">0.00 Hz/s</span></div>
+    </div>
+  </div>
+
+  <!-- GEN LEGEND -->
+  <div class="gen-legend">
+    <h3>Grid Generation Mix — Installed Capacity × Capacity Factor = Actual Output</h3>
+    <div class="gen-row">
+      <div class="gen-item"><div class="gen-dot" style="background:#d97706"></div><span class="gen-name">☀ Solar</span><span class="gen-nums">1,200 MW × 20% CF</span><span class="gen-sep">→</span><span class="gen-actual" style="color:#d97706">240 MW</span></div>
+      <div class="gen-item"><div class="gen-dot" style="background:#4f46e5"></div><span class="gen-name">🌬 Wind</span><span class="gen-nums">1,200 MW × 35% CF</span><span class="gen-sep">→</span><span class="gen-actual" style="color:#4f46e5">420 MW</span></div>
+      <div class="gen-item"><div class="gen-dot" style="background:#64748b"></div><span class="gen-name">🏭 Thermal</span><span class="gen-nums">800 MW × 75% PLF</span><span class="gen-sep">→</span><span class="gen-actual" style="color:#64748b">600 MW</span></div>
+      <div class="gen-item"><div class="gen-dot" style="background:var(--teal)"></div><span class="gen-name">🔋 BESS</span><span class="gen-nums">500 MW GFI-capable</span><span class="gen-sep">→</span><span class="gen-actual" id="bess-gen-val" style="color:var(--teal)">0 MW</span></div>
+    </div>
+    <div class="gen-footer">
+      <span class="gen-ft-label">Base Generation:</span>
+      <span class="gen-ft-val" style="color:var(--teal)">1,260 MW</span>
+      <span style="font-size:10px;color:var(--text3)"> = City Load:</span>
+      <span class="gen-ft-val" style="color:var(--blue)">1,200 MW</span>
+      <span style="font-size:10px;color:var(--text3)">+ 60 MW Reserve</span>
+      <span style="flex:1"></span>
+      <span style="font-size:10.5px;color:var(--red);font-weight:600">⬆ +300 MW: Load spike → under-frequency</span>
+      <span style="font-size:10px;color:var(--text3);margin:0 5px">|</span>
+      <span style="font-size:10.5px;color:var(--purple);font-weight:600">⬇ −300 MW: Load drop → over-frequency</span>
+    </div>
+  </div>
+
+  <!-- VIZ ROW -->
+  <div class="viz-row">
+    <div class="panel">
+      <span class="panel-label">Power Grid Topology</span>
+      <canvas id="topo-canvas"></canvas>
+    </div>
+    <div class="panel charts-col">
+      <div class="chart-wrap">
+        <span class="chart-top-label">Grid Frequency (Hz)</span>
+        <span class="chart-extremum" id="freq-ext">—</span>
+        <canvas id="freq-canvas"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <span class="chart-top-label">Bus Voltage (pu)</span>
+        <span class="chart-extremum" id="volt-ext">—</span>
+        <canvas id="volt-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENT BAR -->
+  <div class="event-bar" id="event-bar">
+    <div class="ev-indicator">
+      <div class="ev-dot" id="ev-dot"></div>
+      <span class="ev-label" id="ev-label">System Idle</span>
+    </div>
+    <div class="ev-desc" id="ev-desc">Select an event to observe grid response. Toggle GFI mode before triggering to compare Grid-Forming vs Grid-Following behaviour.</div>
+    <div class="ev-rocof" id="ev-rocof" style="color:var(--text3)">RoCoF: — Hz/s</div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="mode-pill gfl" id="mode-pill"><div class="mode-dot"></div><span id="mode-text">Grid-Following Mode</span></div>
+    <label class="toggle-row">
+      <span>Enable GFI</span>
+      <div class="tgl-track" id="gfm-toggle"><div class="tgl-knob"></div></div>
+      <span id="tgl-lbl">OFF</span>
+    </label>
+    <div class="divider"></div>
+    <button class="btn btn-load-up" id="btn-up">⬆ Trigger +300 MW Load Event</button>
+    <button class="btn btn-load-dn" id="btn-dn">⬇ Trigger −300 MW Load Event</button>
+    <button class="btn btn-replay" id="replay-btn">↺ Auto-Replay</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="sim-footer">
+    <span class="sim-credit">Simulation by <strong>Vasudha Foundation</strong> · CEA GFI Mandate — BESS ≥50 MW · Effective April 1, 2027</span>
+    <a class="sim-link" href="https://vasudha-foundation.org" target="_blank" rel="noopener">vasudha-foundation.org →</a>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const S={
+  gfm:false,freq:50.0,volt:1.0,bess:0.0,rocof:0.0,prevFreq:50.0,
+  phase:'idle',eventDir:1,t:0.0,
+  freqHist:new Array(270).fill(50.0),voltHist:new Array(270).fill(1.0),
+  particles:[],ptTimer:0,autoReplay:false,autoTimer:0,autoDir:1,
+  lastTs:null,freqExtreme:50.0,voltExtreme:1.0
+};
+const P={H_gfl:0.48,H_gfm:4.3,D:2.1,dPpu:0.238,f0:50.0,gfm_delay:0.11};
+
+// ═══════════════════════════════════════════════════════════
+// PHYSICS
+// ═══════════════════════════════════════════════════════════
+function physics(dt){
+  S.prevFreq=S.freq;
+  if(S.phase==='idle'){
+    S.freq+=(50-S.freq)*dt*4+(Math.random()-.5)*.005;
+    S.volt+=(1.0-S.volt)*dt*4+(Math.random()-.5)*.0012;
+    S.bess*=Math.exp(-dt*3);S.rocof=(S.freq-S.prevFreq)/dt;return;
+  }
+  S.t+=dt;
+  const dir=S.eventDir,dP=dir*P.dPpu,H=S.gfm?P.H_gfm:P.H_gfl;
+  if(S.phase==='disturbing'){
+    const df_ss=S.freq-P.f0;
+    if(S.gfm){
+      const kick=S.t>P.gfm_delay?Math.min(1.0,(S.t-P.gfm_delay)/0.22):0;
+      const swing=-(dP/(2*H))*P.f0,gfi_pull=-df_ss*(2.5+kick*4.0),damping=-df_ss*P.D*0.12;
+      S.freq+=(swing*(1-kick*0.92)+gfi_pull*kick+damping)*dt;
+      if(dir===1) S.volt=1.0-0.04*Math.exp(-Math.pow(S.t-0.18,2)/0.05)+(Math.random()-.5)*.003;
+      else        S.volt=1.0+0.025*Math.exp(-Math.pow(S.t-0.18,2)/0.05)+(Math.random()-.5)*.003;
+      const bessTarget=S.t>P.gfm_delay?dir*Math.min(285,(S.t-P.gfm_delay)*410):dir*S.t*20;
+      S.bess+=(bessTarget-S.bess)*dt*10;
+    } else {
+      const swing=-(dP/(2*H))*P.f0,damping=-df_ss*P.D*0.055;
+      S.freq+=(swing+damping)*dt;
+      if(dir===1) S.volt=1.0-0.25*Math.exp(-Math.pow(S.t-0.42,2)/0.22)+(Math.random()-.5)*.009;
+      else        S.volt=1.0+0.115*Math.exp(-Math.pow(S.t-0.42,2)/0.22)+(Math.random()-.5)*.009;
+      const gflTarget=dir*Math.min(20,S.t*9);S.bess+=(gflTarget-S.bess)*dt*1.5;
+    }
+    S.rocof=(S.freq-S.prevFreq)/dt;
+    if(dir===1){S.freqExtreme=Math.min(S.freqExtreme,S.freq);S.voltExtreme=Math.min(S.voltExtreme,S.volt);}
+    else       {S.freqExtreme=Math.max(S.freqExtreme,S.freq);S.voltExtreme=Math.max(S.voltExtreme,S.volt);}
+    if(S.t>(S.gfm?1.2:2.9)) S.phase='recovering';
+  }
+  if(S.phase==='recovering'){
+    const rr=S.gfm?5.2:0.5,vr=S.gfm?5.5:0.6;
+    S.freq+=(50-S.freq)*dt*rr;S.volt+=(1.0-S.volt)*dt*vr;
+    S.bess+=(0-S.bess)*dt*(S.gfm?1.6:0.35);S.rocof=(S.freq-S.prevFreq)/dt;
+    if(S.t>11||(Math.abs(S.freq-50)<0.011&&Math.abs(S.volt-1)<0.005)){
+      S.phase='idle';S.t=0;if(S.autoReplay)S.autoTimer=3.2;
+    }
+  }
+}
+function trigger(dir){if(S.phase!=='idle')return;S.eventDir=dir;S.phase='disturbing';S.t=0;S.freqExtreme=50.0;S.voltExtreme=1.0;}
+
+// ═══════════════════════════════════════════════════════════
+// PARTICLES
+// ═══════════════════════════════════════════════════════════
+function updateParticles(dt,W,busY){
+  S.ptTimer-=dt;
+  if(S.ptTimer<0){
+    S.ptTimer=S.gfm?.05:.1;
+    S.particles.push({x:W*.13,y:busY,vx:W*.26,color:'#d97706',life:1,r:2.5});
+    S.particles.push({x:W*.31,y:busY,vx:W*.26,color:'#6366f1',life:1,r:2.5});
+    const absBess=Math.abs(S.bess);
+    if(absBess>10){
+      const n=S.gfm?4:1,a=Math.min(1,absBess/240);
+      for(let i=0;i<n;i++){
+        if(S.bess>0) S.particles.push({x:W*.52+(Math.random()-.5)*8,y:busY+22,vx:(Math.random()-.5)*W*.04,vy:-W*.22*a,color:`rgba(11,148,136,${a})`,life:1,r:3+Math.random()*2,bess:true});
+        else         S.particles.push({x:W*.52+(Math.random()-.5)*8,y:busY,   vx:(Math.random()-.5)*W*.04,vy: W*.18*a,color:`rgba(109,40,217,${a})`,life:1,r:3+Math.random()*2,bess:true});
+      }
+    }
+  }
+  for(let i=S.particles.length-1;i>=0;i--){
+    const p=S.particles[i];p.x+=(p.vx||0)*dt;p.y+=(p.vy||0)*dt;
+    p.life-=dt*(p.bess?2.8:1.65);
+    if(p.x>W*.95||p.x<0||p.y>busY+50||p.life<=0)S.particles.splice(i,1);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOPOLOGY CANVAS
+// ═══════════════════════════════════════════════════════════
+const topoC=document.getElementById('topo-canvas'),tCtx=topoC.getContext('2d');
+function resizeTopo(){const dpr=devicePixelRatio||1,r=topoC.getBoundingClientRect();topoC.width=r.width*dpr;topoC.height=r.height*dpr;tCtx.scale(dpr,dpr);}
+function drawTopo(){
+  const W=topoC.getBoundingClientRect().width,H=topoC.getBoundingClientRect().height,ctx=tCtx;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(190,205,225,0.22)';ctx.lineWidth=1;
+  for(let i=1;i<7;i++){ctx.beginPath();ctx.moveTo(0,H*i/7);ctx.lineTo(W,H*i/7);ctx.stroke()}
+  const busY=H*.45,busL=W*.055,busR=W*.945;
+  if(S.gfm){ctx.shadowColor='rgba(11,148,136,0.22)';ctx.shadowBlur=12}
+  ctx.strokeStyle=S.gfm?'rgba(11,148,136,0.68)':'rgba(94,113,139,0.42)';
+  ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(busL,busY);ctx.lineTo(busR,busY);ctx.stroke();
+  ctx.shadowBlur=0;ctx.strokeStyle=S.gfm?'rgba(11,148,136,0.09)':'rgba(94,113,139,0.09)';ctx.lineWidth=14;
+  ctx.beginPath();ctx.moveTo(busL,busY);ctx.lineTo(busR,busY);ctx.stroke();
+  const legXs=[.13,.31,.52,.72,.87],legDys=[78,78,-44,78,78];
+  ctx.strokeStyle='rgba(148,163,184,0.5)';ctx.lineWidth=1.8;
+  legXs.forEach((lx,i)=>{ctx.beginPath();ctx.moveTo(W*lx,busY);ctx.lineTo(W*lx,busY+legDys[i]);ctx.stroke();});
+  legXs.forEach(lx=>{ctx.beginPath();ctx.arc(W*lx,busY,3.5,0,Math.PI*2);ctx.fillStyle=S.gfm?'rgba(11,148,136,0.75)':'rgba(94,113,139,0.55)';ctx.fill();});
+  drawSolar(ctx,W*.13,busY-84,W);drawWind(ctx,W*.31,busY-90,W);
+  drawBESS(ctx,W*.52,busY+6,W);drawCity(ctx,W*.72,busY-86,W);drawPlant(ctx,W*.87,busY-84,W);
+  updateParticles(0,W,busY);
+  S.particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color;ctx.globalAlpha=Math.max(0,p.life);ctx.fill();ctx.globalAlpha=1;});
+  drawGauge(ctx,W*.83,H*.765,30,S.freq);
+  if(S.phase==='disturbing'&&S.t<0.75){
+    const a=(1-S.t/.75)*.6,isUp=S.eventDir===1;
+    ctx.strokeStyle=`rgba(${isUp?'190,18,60':'109,40,217'},${a})`;ctx.lineWidth=2.5;
+    const r2=(S.t/.75)*40+14;ctx.beginPath();ctx.arc(W*.72,busY-15,r2,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle=`rgba(${isUp?'190,18,60':'109,40,217'},${Math.min(1,a*1.7)})`;
+    ctx.font=`bold 9.5px 'IBM Plex Mono',monospace`;ctx.textAlign='center';
+    ctx.fillText(isUp?'+300 MW LOAD SPIKE':'−300 MW LOAD DROP',W*.72,busY-98);
+  }
+  const absBess=Math.abs(S.bess);
+  if(absBess>10){
+    const a=Math.min(1,absBess/200),arrowH=18+absBess*.09,isInj=S.bess>0;
+    const col=isInj?`rgba(11,148,136,${a})`:`rgba(109,40,217,${a})`;
+    ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=2.5;
+    if(isInj){
+      ctx.beginPath();ctx.moveTo(W*.52,busY-1);ctx.lineTo(W*.52,busY-1-arrowH);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(W*.52,busY-1-arrowH);ctx.lineTo(W*.52-5,busY-1-arrowH+9);ctx.lineTo(W*.52+5,busY-1-arrowH+9);ctx.closePath();ctx.fill();
+      ctx.font=`bold 9px 'IBM Plex Mono',monospace`;ctx.textAlign='center';ctx.fillText(`+${S.bess.toFixed(0)}MW`,W*.52,busY-arrowH-12);
+      ctx.font=`7.5px sans-serif`;ctx.fillStyle=`rgba(11,148,136,${a*.8})`;ctx.fillText('INJECT',W*.52,busY-arrowH-3);
+    } else {
+      ctx.beginPath();ctx.moveTo(W*.52,busY+2);ctx.lineTo(W*.52,busY+2+arrowH);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(W*.52,busY+2+arrowH);ctx.lineTo(W*.52-5,busY+2+arrowH-9);ctx.lineTo(W*.52+5,busY+2+arrowH-9);ctx.closePath();ctx.fill();
+      ctx.font=`bold 9px 'IBM Plex Mono',monospace`;ctx.textAlign='center';ctx.fillText(`${S.bess.toFixed(0)}MW`,W*.52,busY+arrowH+20);
+      ctx.font=`7.5px sans-serif`;ctx.fillStyle=`rgba(109,40,217,${a*.8})`;ctx.fillText('ABSORB',W*.52,busY+arrowH+29);
+    }
+  }
+}
+function drawSolar(ctx,x,y,W){
+  const pw=13,ph=8,gap=2.5,cols=3,rows=2,tw=cols*(pw+gap)-gap;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const px=x-tw/2+c*(pw+gap),py=y+r*(ph+gap);
+    ctx.fillStyle='#0c2a50';ctx.fillRect(px,py,pw,ph);
+    ctx.strokeStyle='#d97706';ctx.lineWidth=1;ctx.strokeRect(px,py,pw,ph);
+    ctx.strokeStyle='rgba(217,119,6,.3)';ctx.lineWidth=.5;
+    ctx.beginPath();ctx.moveTo(px+pw/2,py);ctx.lineTo(px+pw/2,py+ph);ctx.moveTo(px,py+ph/2);ctx.lineTo(px+pw,py+ph/2);ctx.stroke();
+  }
+  lbl(ctx,x,y+rows*(ph+gap)+4,'☀ Solar Farm','#64748b',W);lbl(ctx,x,y+rows*(ph+gap)+15,'240 MW actual','#d97706',W,true);
+}
+function drawWind(ctx,x,y,W){
+  const mast=36;ctx.strokeStyle='#94a3b8';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+mast);ctx.lineTo(x,y+10);ctx.stroke();
+  [0,120,240].forEach(deg=>{const a=(deg-90)*Math.PI/180;ctx.strokeStyle='#4f46e5';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y+10);ctx.lineTo(x+17*Math.cos(a),y+10+17*Math.sin(a));ctx.stroke();});
+  ctx.beginPath();ctx.arc(x,y+10,2.8,0,Math.PI*2);ctx.fillStyle='#4f46e5';ctx.fill();
+  lbl(ctx,x,y+mast+12,'🌬 Wind Farm','#64748b',W);lbl(ctx,x,y+mast+23,'420 MW actual','#4f46e5',W,true);
+}
+function drawBESS(ctx,x,y,W){
+  const isAbsorbing=S.bess<-5,col=S.gfm?(isAbsorbing?'#6d28d9':'#0b9488'):'#94a3b8';
+  const bgC=S.gfm?(isAbsorbing?'rgba(109,40,217,.07)':'rgba(11,148,136,.07)'):'rgba(226,232,240,.4)';
+  const bw=68,bh=31;
+  ctx.fillStyle=bgC;ctx.strokeStyle=col;ctx.lineWidth=1.5;rr(ctx,x-bw/2,y,bw,bh,5);ctx.fill();ctx.stroke();
+  const cells=5,cw=(bw-14)/cells-2;
+  for(let i=0;i<cells;i++){
+    const cx2=x-bw/2+7+i*(cw+2),charge=Math.max(.1,.85-Math.abs(S.bess)/350);
+    ctx.fillStyle=col;ctx.globalAlpha=.2+charge*.55;ctx.fillRect(cx2,y+7,cw,bh-14);
+    ctx.globalAlpha=1;ctx.strokeStyle=col;ctx.lineWidth=.5;ctx.strokeRect(cx2,y+7,cw,bh-14);
+  }
+  ctx.fillStyle=col;ctx.font=`bold 10px 'IBM Plex Mono',monospace`;ctx.textAlign='center';
+  ctx.fillText(!S.gfm?'GFL-BESS':(isAbsorbing?'⬇ GFI-BESS':'⬆ GFI-BESS'),x,y-8);
+  lbl(ctx,x,y+bh+12,'500 MW · '+(S.gfm?(isAbsorbing?'Absorbing':'Injecting'):'Grid-Following'),col,W);
+}
+function drawCity(ctx,x,y,W){
+  const active=S.phase==='disturbing'&&S.eventDir===1,dropping=S.phase==='disturbing'&&S.eventDir===-1;
+  const col=active?'#be123c':dropping?'#6d28d9':'#2459be';
+  const blds=[38,26,46,30,20,34],bw=8,gap=3,tw=blds.length*(bw+gap)-gap;
+  blds.forEach((bh,i)=>{
+    const bx=x-tw/2+i*(bw+gap),by=y+(50-bh);
+    ctx.fillStyle=active?'rgba(190,18,60,.1)':dropping?'rgba(109,40,217,.08)':'rgba(36,89,190,.07)';
+    ctx.strokeStyle=col;ctx.lineWidth=1;ctx.fillRect(bx,by,bw,bh);ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle=active?'rgba(190,18,60,.5)':dropping?'rgba(109,40,217,.4)':'rgba(36,89,190,.3)';
+    for(let j=0;j<Math.floor(bh/9);j++){ctx.fillRect(bx+2,by+4+j*9,2,3);ctx.fillRect(bx+5,by+4+j*9,2,3)}
+  });
+  lbl(ctx,x,y+60,'🏙 City Load','#64748b',W);
+  lbl(ctx,x,y+71,active?'+300 MW SPIKE!':dropping?'−300 MW DROP!':'1,200 MW base',col,W,active||dropping);
+}
+function drawPlant(ctx,x,y,W){
+  ctx.fillStyle='rgba(226,232,240,.5)';ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;
+  ctx.fillRect(x-19,y+4,38,42);ctx.strokeRect(x-19,y+4,38,42);
+  [[x-8,y-12,7,18],[x+3,y-8,7,14]].forEach(([cx2,cy2,cw2,ch2])=>{ctx.fillStyle='#cbd5e1';ctx.fillRect(cx2,cy2,cw2,ch2);ctx.strokeRect(cx2,cy2,cw2,ch2);});
+  if(S.phase!=='disturbing'){ctx.fillStyle='rgba(148,163,184,.32)';for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(x-4,y-16-i*5,2.5-i*.4,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(x+7,y-11-i*4,2-i*.3,0,Math.PI*2);ctx.fill();}}
+  lbl(ctx,x,y+55,'🏭 Thermal Plant','#64748b',W);lbl(ctx,x,y+66,'600 MW actual','#64748b',W,true);
+}
+function drawGauge(ctx,cx,cy,r,freq){
+  const sA=Math.PI*.75,sw=Math.PI*1.5,minF=48.8,maxF=51.2;
+  const prog=Math.max(0,Math.min(1,(freq-minF)/(maxF-minF))),nA=sA+prog*sw;
+  ctx.beginPath();ctx.arc(cx,cy,r,sA,sA+sw);ctx.strokeStyle='#e2e8f0';ctx.lineWidth=6;ctx.lineCap='round';ctx.stroke();
+  [{lo:48.8,hi:49.2,c:'rgba(190,18,60,.7)'},{lo:49.2,hi:49.5,c:'rgba(180,83,9,.7)'},{lo:49.5,hi:50.5,c:'rgba(21,128,61,.7)'},{lo:50.5,hi:50.8,c:'rgba(180,83,9,.7)'},{lo:50.8,hi:51.2,c:'rgba(190,18,60,.7)'}].forEach(z=>{
+    const a1=sA+((z.lo-minF)/(maxF-minF))*sw,a2=sA+((z.hi-minF)/(maxF-minF))*sw;
+    ctx.beginPath();ctx.arc(cx,cy,r,a1,a2);ctx.strokeStyle=z.c;ctx.lineWidth=6;ctx.lineCap='butt';ctx.stroke();
+  });
+  const nc=freq<49.5?'#be123c':freq>50.5?'#6d28d9':freq<49.8||freq>50.2?'#b45309':'#0b9488';
+  ctx.strokeStyle=nc;ctx.lineWidth=2.5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+(r-6)*Math.cos(nA),cy+(r-6)*Math.sin(nA));ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fillStyle='#334155';ctx.fill();
+  ctx.fillStyle=freq<49.5?'#be123c':freq>50.5?'#6d28d9':'#0c1424';
+  ctx.font=`bold 9px 'IBM Plex Mono',monospace`;ctx.textAlign='center';ctx.fillText(freq.toFixed(2)+' Hz',cx,cy+r+13);
+  ctx.fillStyle='#94a3b8';ctx.font='8px sans-serif';ctx.fillText('Freq. Gauge',cx,cy+r+22);
+}
+function lbl(ctx,x,y,text,color,W,bold=false){ctx.fillStyle=color;ctx.font=(bold?'bold ':'')+`${Math.max(8.5,W*.011)}px 'Plus Jakarta Sans',sans-serif`;ctx.textAlign='center';ctx.fillText(text,x,y);}
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+
+// ═══════════════════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════════════════
+const fC=document.getElementById('freq-canvas'),vC=document.getElementById('volt-canvas');
+const fCtx=fC.getContext('2d'),vCtx=vC.getContext('2d');
+function resizeCharts(){const dpr=devicePixelRatio||1;[fC,vC].forEach(c=>{const r=c.getBoundingClientRect();c.width=r.width*dpr;c.height=r.height*dpr});fCtx.scale(dpr,dpr);vCtx.scale(dpr,dpr);}
+function drawChart(ctx,canvas,hist,minY,maxY,refY,zones,lineCol,cur){
+  const W=canvas.getBoundingClientRect().width,H=canvas.getBoundingClientRect().height;
+  ctx.clearRect(0,0,W,H);
+  const PL=44,PR=8,PT=22,PB=14,cW=W-PL-PR,cH=H-PT-PB;
+  const yp=v=>PT+(1-(v-minY)/(maxY-minY))*cH,xp=i=>PL+(i/(hist.length-1))*cW;
+  zones.forEach(z=>{ctx.fillStyle=z.color;ctx.fillRect(PL,Math.min(yp(z.lo),PT+cH),cW,Math.max(yp(z.hi),PT)-Math.min(yp(z.lo),PT+cH));});
+  ctx.strokeStyle='rgba(195,208,228,.48)';ctx.lineWidth=.5;
+  const step=(maxY-minY)/6;
+  for(let i=0;i<=6;i++){const v=minY+i*step,y=yp(v);ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(PL+cW,y);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font=`8.5px 'IBM Plex Mono',monospace`;ctx.textAlign='right';ctx.fillText(v.toFixed(2),PL-4,y+3.5);}
+  ctx.strokeStyle='rgba(100,116,139,.38)';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(PL,yp(refY));ctx.lineTo(PL+cW,yp(refY));ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.strokeStyle=lineCol;ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
+  hist.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));ctx.stroke();
+  ctx.beginPath();ctx.arc(xp(hist.length-1),yp(cur),3.5,0,Math.PI*2);ctx.fillStyle=lineCol;ctx.fill();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HUD + EVENT BAR
+// ═══════════════════════════════════════════════════════════
+function updateHUD(){
+  const fe=document.getElementById('hud-freq'),ve=document.getElementById('hud-volt');
+  const be=document.getElementById('hud-bess'),re=document.getElementById('hud-rocof');
+  const bge=document.getElementById('bess-gen-val');
+  const fext=document.getElementById('freq-ext'),vext=document.getElementById('volt-ext');
+  const evDot=document.getElementById('ev-dot'),evLbl=document.getElementById('ev-label');
+  const evDesc=document.getElementById('ev-desc'),evRocof=document.getElementById('ev-rocof');
+  fe.textContent=S.freq.toFixed(2)+' Hz';ve.textContent=S.volt.toFixed(3)+' pu';
+  be.textContent=(S.bess>=0?'+':'')+S.bess.toFixed(1)+' MW';
+  if(bge)bge.textContent=(S.bess>=0?'+':'')+S.bess.toFixed(0)+' MW';
+  const rocofDisplay=Math.abs(S.rocof)>0.001?(S.rocof>=0?'+':'')+S.rocof.toFixed(2)+' Hz/s':'0.00 Hz/s';
+  re.textContent=rocofDisplay;
+  if(S.freq<49.0)fe.className='hud-val danger';else if(S.freq<49.5)fe.className='hud-val warn';else if(S.freq>51.0)fe.className='hud-val danger';else if(S.freq>50.5)fe.className='hud-val over';else fe.className='hud-val ok';
+  if(S.volt<0.85)ve.className='hud-val danger';else if(S.volt<0.95)ve.className='hud-val warn';else if(S.volt>1.08)ve.className='hud-val over';else ve.className='hud-val ok';
+  be.className='hud-val '+(S.bess>5?'ok':S.bess<-5?'over':'');
+  re.className='hud-val '+(Math.abs(S.rocof)>1?'danger':Math.abs(S.rocof)>0.5?'warn':'ok');
+  if(S.phase!=='idle'){
+    if(S.eventDir===1){fext.textContent=S.freqExtreme.toFixed(2)+' Hz nadir';fext.style.color=S.freqExtreme<49.0?'var(--red)':S.freqExtreme<49.5?'var(--amber)':'var(--teal)';vext.textContent=S.voltExtreme.toFixed(3)+' pu nadir';vext.style.color=S.voltExtreme<0.85?'var(--red)':S.voltExtreme<0.95?'var(--amber)':'var(--teal)';}
+    else{fext.textContent=S.freqExtreme.toFixed(2)+' Hz peak';fext.style.color=S.freqExtreme>51.0?'var(--red)':S.freqExtreme>50.5?'var(--amber)':'var(--purple)';vext.textContent=S.voltExtreme.toFixed(3)+' pu peak';vext.style.color=S.voltExtreme>1.08?'var(--red)':S.voltExtreme>1.04?'var(--amber)':'var(--teal)';}
+  }
+  const pDesc={
+    idle:{dot:'',lbl:'System Idle',cls:'',desc:'Select an event to observe grid response. Toggle GFI mode before triggering to compare Grid-Forming vs Grid-Following behaviour.'},
+    disturbing_up_gfm:{dot:'active-red',lbl:'+300 MW Load Spike',cls:'load-up',desc:'GFI detects phase lag → injects active power within 200 ms. Synthetic inertia (H ≈ 4.3 s) limits RoCoF to ~0.28 Hz/s. Watch frequency nadir and BESS injection arrow (⬆).'},
+    disturbing_up_gfl:{dot:'active-red',lbl:'+300 MW Load Spike',cls:'load-up',desc:'No GFI — only thermal governor response (2–5 s delay). Low inertia (H ≈ 0.48 s) drives RoCoF to ~1.8 Hz/s. Frequency may breach 49.0 Hz relay trip threshold.'},
+    disturbing_dn_gfm:{dot:'active-purple',lbl:'−300 MW Load Drop',cls:'load-dn',desc:'GFI detects phase advance → switches to absorption mode within 200 ms. BESS charges (⬇ purple arrow) absorbing surplus generation. Frequency peak held near 50.25 Hz.'},
+    disturbing_dn_gfl:{dot:'active-purple',lbl:'−300 MW Load Drop',cls:'load-dn',desc:'No GFI — surplus generation drives frequency upward at ~1.7 Hz/s. Thermal governor spills over-frequency slowly. Risk of over-frequency relay trips above 50.5 Hz.'},
+    recovering:{dot:'',lbl:S.eventDir===1?'↑ Recovering (Under-Frequency)':'↓ Recovering (Over-Frequency)',cls:'',desc:'Grid returning to nominal 50 Hz. '+(S.gfm?'GFI ramps down smoothly as frequency stabilises.':'Slow governor-led recovery — GFI would have resolved this in under 2 seconds.')}
+  };
+  let key='idle';
+  if(S.phase==='disturbing')key=`disturbing_${S.eventDir===1?'up':'dn'}_${S.gfm?'gfm':'gfl'}`;
+  if(S.phase==='recovering')key='recovering';
+  const d=pDesc[key]||pDesc.idle;
+  evDot.className='ev-dot '+(d.dot||'');evLbl.className='ev-label '+(d.cls||'');
+  evLbl.textContent=d.lbl;evDesc.textContent=d.desc;
+  evRocof.textContent='RoCoF: '+rocofDisplay;
+  evRocof.style.color=Math.abs(S.rocof)>1?'var(--red)':Math.abs(S.rocof)>0.5?'var(--amber)':'var(--text3)';
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════════════════════════
+function frame(ts){
+  if(!S.lastTs)S.lastTs=ts;
+  const dt=Math.min((ts-S.lastTs)/1000,.05);S.lastTs=ts;
+  if(S.autoReplay&&S.phase==='idle'){
+    S.autoTimer-=dt;
+    if(S.autoTimer<=0){S.gfm=!S.gfm;updateToggleUI();const dir=S.autoDir;setTimeout(()=>trigger(dir),500);S.autoDir=(S.autoDir===1)?-1:1;S.autoTimer=12;}
+  }
+  physics(dt);S.freqHist.push(S.freq);S.voltHist.push(S.volt);
+  if(S.freqHist.length>270){S.freqHist.shift();S.voltHist.shift()}
+  drawTopo();
+  const fColor=S.freq<49.5?(S.freq<49.0?'#be123c':'#b45309'):S.freq>50.5?(S.freq>51.0?'#be123c':'#6d28d9'):'#2459be';
+  drawChart(fCtx,fC,S.freqHist,48.6,51.4,50,[{lo:48.6,hi:49.2,color:'rgba(190,18,60,.06)'},{lo:49.2,hi:49.5,color:'rgba(180,83,9,.05)'},{lo:50.5,hi:50.8,color:'rgba(180,83,9,.05)'},{lo:50.8,hi:51.4,color:'rgba(190,18,60,.06)'}],fColor,S.freq);
+  const vColor=S.volt<0.95?(S.volt<0.85?'#be123c':'#b45309'):S.volt>1.06?(S.volt>1.1?'#be123c':'#6d28d9'):'#0b9488';
+  drawChart(vCtx,vC,S.voltHist,0.7,1.15,1.0,[{lo:.7,hi:.85,color:'rgba(190,18,60,.06)'},{lo:.85,hi:.95,color:'rgba(180,83,9,.05)'},{lo:1.06,hi:1.1,color:'rgba(180,83,9,.05)'},{lo:1.1,hi:1.15,color:'rgba(190,18,60,.06)'}],vColor,S.volt);
+  updateHUD();requestAnimationFrame(frame);
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════════
+function updateToggleUI(){
+  const track=document.getElementById('gfm-toggle'),lbl=document.getElementById('tgl-lbl');
+  const pill=document.getElementById('mode-pill'),txt=document.getElementById('mode-text');
+  if(S.gfm){track.classList.add('on');lbl.textContent='ON';pill.className='mode-pill gfm';txt.textContent='Grid-Forming Mode Active';}
+  else{track.classList.remove('on');lbl.textContent='OFF';pill.className='mode-pill gfl';txt.textContent='Grid-Following Mode';}
+  const bge=document.getElementById('bess-gen-val');if(bge)bge.style.color=S.gfm?'var(--teal)':'#94a3b8';
+}
+document.getElementById('gfm-toggle').addEventListener('click',()=>{S.gfm=!S.gfm;updateToggleUI()});
+document.getElementById('btn-up').addEventListener('click',()=>trigger(1));
+document.getElementById('btn-dn').addEventListener('click',()=>trigger(-1));
+const rbtn=document.getElementById('replay-btn');
+rbtn.addEventListener('click',()=>{S.autoReplay=!S.autoReplay;rbtn.textContent=S.autoReplay?'⏹ Stop Auto-Replay':'↺ Auto-Replay';if(S.autoReplay){S.autoTimer=.5;S.autoDir=1}});
+
+// ═══════════════════════════════════════════════════════════
+// RESIZE & BOOT
+// ═══════════════════════════════════════════════════════════
+function resize(){resizeTopo();resizeCharts()}
+const ro=new ResizeObserver(()=>requestAnimationFrame(resize));
+ro.observe(document.querySelector('.app'));
+resize();requestAnimationFrame(frame);
+</script>
 </body>
-
 </html>
