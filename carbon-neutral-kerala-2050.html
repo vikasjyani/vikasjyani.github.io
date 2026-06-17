@@ -580,38 +580,28 @@
     border-radius: 12px;
     padding: 24px 24px 18px;
     box-shadow: 0 1px 3px rgba(16, 40, 30, .04);
+    overflow: visible !important;
   }
 
   .kcn-alt .kcn-fig {
     box-shadow: 0 1px 3px rgba(16, 40, 30, .06);
   }
 
-  .kcn-fig-cap {
-    font-family: var(--kcn-serif);
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--kcn-ink);
-    margin: 0 0 18px;
-    line-height: 1.35;
-  }
-
-  .kcn-fig-num {
-    display: inline-block;
-    font-family: var(--kcn-sans);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #fff;
-    background: var(--kcn-green2);
-    padding: 3px 9px;
-    border-radius: 5px;
-    margin-right: 10px;
-    vertical-align: middle;
-  }
-
   .kcn-chart {
     width: 100%;
+  }
+
+  .kcn-chart,
+  .kcn-chart-container-wrap,
+  .kcn-sankey-compare-grid {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #kcn-c-polar {
+    width: 100% !important;
+    min-width: 0;
   }
 
   .kcn-src {
@@ -830,8 +820,8 @@
 
   .kcn-sankey-compare-grid {
     display: grid;
-    grid-template-columns: 90px 1fr 1fr 1fr;
-    gap: 16px 24px;
+    grid-template-columns: minmax(8%, .36fr) repeat(3, minmax(0, 1fr));
+    gap: clamp(.375rem, 2vw, 1.5rem);
     align-items: center;
     position: relative;
     margin-top: 16px;
@@ -865,7 +855,7 @@
     color: var(--kcn-muted);
     letter-spacing: 0.05em;
     line-height: 1.3;
-    padding-right: 8px;
+    padding-right: .5rem;
   }
 
   .kcn-sankey-grid-val {
@@ -876,7 +866,7 @@
   .kcn-sankey-grid-arrow {
     display: flex;
     justify-content: center;
-    font-size: 24px;
+    font-size: clamp(.875rem, 3vw, 1.5rem);
     font-weight: bold;
     color: #4a5568;
     line-height: 1;
@@ -888,35 +878,36 @@
     background: #5B7EBD;
     color: white;
     border-radius: 999px;
-    padding: 6px 14px 6px 6px;
+    padding: .35em .8em .35em .35em;
     font-family: var(--kcn-sans);
     font-weight: 700;
-    font-size: 15px;
+    font-size: clamp(.5rem, 2vw, .9375rem);
     line-height: 1;
     box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    white-space: nowrap;
   }
 
   .kcn-sankey-badge-new .kcn-icon-circle {
-    width: 22px;
-    height: 22px;
+    width: 1.45em;
+    height: 1.45em;
     border-radius: 50%;
     background: white;
     color: #5B7EBD;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-right: 8px;
-    font-size: 11px;
+    margin-right: .5em;
+    font-size: .75em;
   }
 
   .kcn-sankey-badge-new .kcn-val {
-    font-size: 16px;
+    font-size: 1.05em;
   }
 
   .kcn-sankey-badge-new .kcn-unit {
-    font-size: 11px;
+    font-size: .72em;
     font-weight: 600;
-    margin-left: 3px;
+    margin-left: .2em;
     opacity: 0.95;
   }
 
@@ -927,7 +918,7 @@
     width: 0;
     height: 100%;
     justify-self: start;
-    margin-left: -12px;
+    margin-left: calc(-1 * clamp(.1875rem, 1vw, .75rem));
     pointer-events: none;
   }
 
@@ -941,8 +932,8 @@
 
   .kcn-sankey-box {
     width: 100%;
-    min-height: 280px;
-    padding-right: 24px;
+    min-height: clamp(11rem, 28vw, 17.5rem);
+    padding-right: clamp(.25rem, 2vw, 1.5rem);
   }
 
   .kcn-sankey-foot {
@@ -966,49 +957,6 @@
 
   .kcn-sankey-mobile-header {
     display: none;
-  }
-
-  @media (max-width: 980px) {
-    .kcn-sankey-compare-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .kcn-sankey-grid-label,
-    .kcn-sankey-grid-val,
-    .kcn-sankey-grid-arrow,
-    .kcn-sankey-divider-line {
-      display: none !important;
-    }
-
-    .kcn-sankey-col {
-      width: 100%;
-      align-self: stretch;
-    }
-
-    .kcn-sankey-mobile-header {
-      display: flex !important;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--kcn-line);
-      padding-bottom: 8px;
-    }
-
-    .kcn-sankey-mobile-arrow {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #5c6168;
-      font-size: 12px;
-    }
-
-    .kcn-sankey-mobile-arrow strong {
-      font-size: 24px;
-      line-height: 1;
-      color: #3f4349;
-    }
   }
 
   /* RESPONSIVE */
@@ -1085,9 +1033,21 @@
       font-size: 12px;
     }
 
-    .kcn-fig {
-      padding: 16px 14px 12px;
+    .kcn-sticky-inner {
+      height: auto;
+      min-height: 54px;
+      padding: .35rem 0;
     }
+
+    .kcn-sticky-links {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .kcn-fig {
+      padding: 1rem .875rem .75rem;
+    }
+
   }
 
   @media (prefers-reduced-motion:reduce) {
@@ -1097,19 +1057,19 @@
   }
   /* SECTION 6 TEXT GRID AND COMBINED CHART STYLES */
   .kcn-ch5v3-text-grid {
-    margin-left: 80px;
-    margin-right: 50px;
+    margin-left: 8%;
+    margin-right: 5%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    column-gap: 20px;
+    column-gap: clamp(.375rem, 2vw, 1.25rem);
     row-gap: 10px;
     margin-bottom: 15px;
   }
   .kcn-ch5v3-text-cell {
-    font-size: 10px;
+    font-size: clamp(.5rem, 1.25vw, .625rem);
     line-height: 1.35;
     text-align: right;
-    padding-right: 8px;
+    padding-right: .5rem;
     padding-top: 4px;
     padding-bottom: 4px;
     color: #374151;
@@ -1145,19 +1105,6 @@
     padding-top: 12px;
     border-top: 1px solid var(--kcn-line);
   }
-  @media (max-width: 768px) {
-    .kcn-ch5v3-text-grid {
-      margin-left: 10px;
-      margin-right: 10px;
-      column-gap: 10px;
-    }
-    .kcn-ch5v3-text-cell {
-      font-size: 8px;
-      padding-right: 4px;
-    }
-    .kcn-ch5v3-combined { height: 400px; }
-  }
-
   /* GROSS DUAL (STACKED AREA) */
   .kcn-gd-charts {
     display: grid;
@@ -1193,17 +1140,6 @@
     border-radius: 2px;
     display: inline-block;
     margin-right: 6px;
-  }
-
-  @media (max-width: 768px) {
-    .kcn-gd-charts {
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
-
-    .kcn-gd-chart {
-      height: 320px;
-    }
   }
 
 </style>
@@ -1509,9 +1445,6 @@
 
       <!-- Fig 1: Gross Dual stacked area chart -->
       <figure class="kcn-fig">
-        <figcaption class="kcn-fig-cap">
-          <span class="kcn-fig-num">Figure 1</span> Gross GHG emissions by sector, Actual vs BAU vs CN50 (MtCO₂e)
-        </figcaption>
         <div class="kcn-chart-container-wrap" data-chart="grossDual" id="chart-container-dual">
           <div class="kcn-gd-charts">
             <div class="kcn-gd-chart" id="kcn-gd-bau"></div>
@@ -1537,10 +1470,7 @@
 
       <!-- Fig 2: Polar Area Transition Chart -->
       <figure class="kcn-fig">
-        <figcaption class="kcn-fig-cap">
-          <span class="kcn-fig-num">Figure 2</span> CN50 transition indicators, BAU vs CN50
-        </figcaption>
-        <div class="kcn-chart" id="kcn-c-polar" data-chart="polar" style="height:520px; max-width:750px; margin:0 auto;"></div>
+        <div class="kcn-chart" id="kcn-c-polar" data-chart="polar" style="height:520px; width:100%; margin:0 auto;"></div>
       </figure>
     </div>
   </section>
@@ -1559,9 +1489,6 @@
 
       <!-- Fig 3: Sankey Comparison -->
       <figure class="kcn-fig">
-        <figcaption class="kcn-fig-cap">
-          <span class="kcn-fig-num">Figure 3</span> Kerala energy balance transition: 2021 vs 2050 BAU vs 2050 CN50 (in PJ)
-        </figcaption>
         <div class="kcn-sankey-compare-grid" data-chart="sankeyComparison" id="kcn-sankey-comparison">
           <!-- 2021 Actual -->
           <div class="kcn-sankey-col col-1 row-3" data-total="372">
@@ -1634,9 +1561,6 @@
 
       <!-- Fig 4: Generation Mix with Grid Emission Factor -->
       <figure class="kcn-fig">
-        <figcaption class="kcn-fig-cap">
-          <span class="kcn-fig-num">Figure 4</span> Generation Mix with Grid Emission Factor — Actual, BAU and CN50 Scenarios
-        </figcaption>
         <div class="kcn-chart" id="chart-container-genmix" data-chart="generationMix" style="height:420px"></div>
       </figure>
     </div>
@@ -1657,9 +1581,6 @@
 
       <!-- Fig 5: Sensitivity analysis -->
       <figure class="kcn-fig">
-        <figcaption class="kcn-fig-cap">
-          <span class="kcn-fig-num">Figure 5</span> Sensitivity of the net-emissions trajectory to key levers (MtCO₂e)
-        </figcaption>
         <div class="kcn-chart" id="kcn-c-sensitivity" data-chart="sensitivity" style="height:320px"></div>
      </figure>
     </div>
@@ -1679,10 +1600,6 @@
 
       <!-- Fig 6: Mitigation Wedges & Sequestration Combined Chart -->
       <figure class="kcn-fig">
-        <figcaption class="kcn-fig-cap">
-          <span class="kcn-fig-num">Figure 6</span> Gross &amp; Net GHG Emissions — BAU vs CN50 with Mitigation Wedges and Sequestration
-        </figcaption>
-        
         <div class="kcn-chart" id="chart-container-ch5v3" data-chart="ch5v3">
           <!-- Text Grid aligned with the chart columns -->
           <div class="kcn-ch5v3-text-grid">
@@ -1827,6 +1744,11 @@
       var elCn = wrap.querySelector('#kcn-gd-cn50');
       var legendEl = wrap.querySelector('#kcn-gd-legend');
       if(!elBau || !elCn) return;
+      var compact = false;
+      function refreshCompact(){
+        compact = wrap.clientWidth < 560;
+      }
+      refreshCompact();
     
       var years = [2005, 2010, 2015, 2021, 2030, 2040, 2050];
       
@@ -1949,7 +1871,7 @@
           itemStyle:{color:"rgba(56,64,76,0)"},
           tooltip:{show:false},
           label:{
-            show:true,
+            show:!compact,
             position:"top",
             distance:8,
             formatter:function(p){return fv(p.value);},
@@ -1996,7 +1918,7 @@
             itemStyle:{color:"rgba(0,0,0,0)"},
             tooltip:{show:false},
             label:{
-              show:true,
+              show:!compact,
               formatter:function(p){return fv(p.data.amount);},
               color:lblColor(sec.name),
               fontSize:10,
@@ -2038,10 +1960,10 @@
         return {
           animation:false,
           grid:{
-            left:isCn?28:88,
-            right:isCn?42:80,
-            top:18,
-            bottom:76,
+            left:compact?(showY?42:10):(isCn?28:88),
+            right:compact?10:(isCn?42:80),
+            top:compact?8:18,
+            bottom:compact?26:76,
             containLabel:false
           },
           tooltip:{
@@ -2058,19 +1980,19 @@
             data:years,
             axisTick:{length:5,lineStyle:{color:"#a9adb7"}},
             axisLine:{lineStyle:{color:"#a9adb7"}},
-            axisLabel:{color:"#111827",fontSize:12}
+            axisLabel:{color:"#111827",fontSize:compact?9:12,interval:compact?1:0}
           },
           yAxis:{
             type:"value",
             min:0,
             max:30,
             interval:5,
-            name:showY?"GHG Emissions (MtCO\u2082e)":"",
+            name:(showY&&!compact)?"GHG Emissions (MtCO\u2082e)":"",
             nameLocation:"middle",
             nameGap:46,
             nameRotate:90,
             nameTextStyle:{color:"#1f2937",fontWeight:700,fontSize:12},
-            axisLabel:{show:!isCn,color:"#111827",fontSize:12},
+            axisLabel:{show:!isCn,color:"#111827",fontSize:compact?9:12},
             axisTick:{show:!isCn},
             axisLine:{show:!isCn,lineStyle:{color:"#a9adb7"}},
             splitLine:{show:!isCn,lineStyle:{color:"#e2e5eb",width:1}}
@@ -2090,6 +2012,10 @@
       }
     
       function decorate(chart,scenarioLabel,includeNote){
+        if(compact){
+          chart.setOption({graphic:[]},{replaceMerge:["graphic"]});
+          return;
+        }
         var baselineX=chart.convertToPixel({xAxisIndex:0},3);
         var top=28, labelY=68;
         var aS=chart.convertToPixel({xAxisIndex:0},0);
@@ -2151,6 +2077,12 @@
     
       return {
         resize: function() {
+          var wasCompact = compact;
+          refreshCompact();
+          if(wasCompact !== compact){
+            bau.setOption(optionFor("bau",true), true);
+            cn.setOption(optionFor("cn50",false), true);
+          }
           bau.resize();
           cn.resize();
           requestAnimationFrame(deco);
@@ -2807,6 +2739,11 @@
     };
 
     var chart = echarts.init(wrap);
+    var compact = false;
+    function refreshCompact() {
+      compact = wrap.clientWidth < 560;
+    }
+    refreshCompact();
 
     function makeSeries(name, data, color) {
       return {
@@ -2817,7 +2754,7 @@
         barWidth: "55%",
         itemStyle: { color: color },
         label: {
-          show: true,
+          show: !compact,
           position: "inside",
           formatter: function (p) {
             return p.value.toFixed(2) + "%";
@@ -2833,10 +2770,10 @@
     var option = {
       animation: false,
       grid: {
-        left: 80,
-        right: 100,
-        top: 30,
-        bottom: 110,
+        left: compact ? 38 : 80,
+        right: compact ? 38 : 100,
+        top: compact ? 16 : 30,
+        bottom: compact ? 56 : 110,
         containLabel: false
       },
       tooltip: {
@@ -2861,10 +2798,10 @@
       },
       legend: {
         bottom: 0,
-        itemWidth: 18,
-        itemHeight: 12,
-        itemGap: 20,
-        textStyle: { fontSize: 13, color: "#333" },
+        itemWidth: compact ? 10 : 18,
+        itemHeight: compact ? 7 : 12,
+        itemGap: compact ? 8 : 20,
+        textStyle: { fontSize: compact ? 9 : 13, color: "#333" },
         data: [
           { name: "Thermal", icon: "rect" },
           { name: "Hydro", icon: "rect" },
@@ -2882,9 +2819,9 @@
         axisLine: { lineStyle: { color: "#999" } },
         axisLabel: {
           color: "#333",
-          fontSize: 13,
+          fontSize: compact ? 9 : 13,
           fontWeight: 600,
-          interval: 0
+          interval: compact ? 1 : 0
         }
       },
       yAxis: [
@@ -2892,34 +2829,34 @@
           type: "value",
           name: "Source Share (%)",
           nameLocation: "middle",
-          nameGap: 50,
+          nameGap: compact ? 28 : 50,
           nameRotate: 90,
-          nameTextStyle: { color: "#333", fontWeight: 700, fontSize: 14 },
+          nameTextStyle: { color: "#333", fontWeight: 700, fontSize: compact ? 10 : 14 },
           min: 0,
           max: 100,
           interval: 10,
           axisLabel: {
             formatter: "{value}%",
             color: "#333",
-            fontSize: 12
+            fontSize: compact ? 9 : 12
           },
           axisLine: { show: true, lineStyle: { color: "#999" } },
           splitLine: { lineStyle: { color: "#e8e8e8" } }
         },
         {
           type: "value",
-          name: "Grid Emission Factor (kgCO₂e/MWh)",
+          name: compact ? "" : "Grid Emission Factor (kgCO₂e/MWh)",
           nameLocation: "middle",
-          nameGap: 60,
+          nameGap: compact ? 28 : 60,
           nameRotate: -90,
-          nameTextStyle: { color: "#333", fontWeight: 700, fontSize: 13 },
+          nameTextStyle: { color: "#333", fontWeight: 700, fontSize: compact ? 10 : 13 },
           min: 0,
           max: 0.70,
           interval: 0.10,
           axisLabel: {
             formatter: function (v) { return (v * 100).toFixed(2) + "%"; },
             color: "#333",
-            fontSize: 12
+            fontSize: compact ? 9 : 12
           },
           axisLine: { show: true, lineStyle: { color: "#333" } },
           splitLine: { show: false }
@@ -2950,6 +2887,10 @@
     chart.setOption(option);
 
     function addDecorations() {
+      if (compact) {
+        chart.setOption({ graphic: [] }, { replaceMerge: ["graphic"] });
+        return;
+      }
       var x05 = chart.convertToPixel({ xAxisIndex: 0 }, 0.5);
       var axisBottom = chart.convertToPixel({ yAxisIndex: 0 }, 0);
       var axisTop = chart.convertToPixel({ yAxisIndex: 0 }, 100);
@@ -3028,6 +2969,11 @@
 
     return {
       resize: function () {
+        var wasCompact = compact;
+        refreshCompact();
+        if (wasCompact !== compact) {
+          chart.setOption(option, true);
+        }
         chart.resize();
         requestAnimationFrame(addDecorations);
       },
