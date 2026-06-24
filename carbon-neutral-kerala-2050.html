@@ -1399,10 +1399,22 @@
   .kcn-sticky:not(.is-visible) {
     transform: translateY(-100%);
   }
+
+  /* Chart wrapper layout fix */
+  .kcn-chart-container-wrap {
+    width: 100%;
+    display: block;
+  }
+  .kcn-chart-container-wrap .kcn-chart {
+    width: 100%;
+  }
+
+  .kcn-chart-container-wrap .kcn-chart {
+    position: relative;
+  }
 </style>
   <!-- ECharts library from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-<base target="_blank">
 </head>
 <body>
 
@@ -1734,7 +1746,15 @@
 
       <!-- Fig 2: Polar Area Transition Chart -->
       <figure class="kcn-fig">
-        <div class="kcn-chart" id="kcn-c-polar" data-chart="polar" style="height:520px; width:100%; margin:0 auto;"></div>
+        <div class="kcn-chart-container-wrap" id="kcn-c-polar-wrap" data-show-numbers="true">
+          <div class="kcn-gd-toolbar">
+            <button type="button" class="kcn-gd-toggle is-on" id="kcn-polar-number-toggle" aria-pressed="true" aria-label="Hide numbers">
+              <span class="kcn-gd-toggle-track" aria-hidden="true"></span>
+              <span class="kcn-gd-toggle-text">Numbers</span>
+            </button>
+          </div>
+          <div class="kcn-chart" id="kcn-c-polar" data-chart="polar" style="height:520px; width:100%; margin:0 auto;"></div>
+        </div>
       </figure>
     </div>
   </section>
@@ -1824,16 +1844,14 @@
       </div>
 
       <!-- Fig 4: Generation Mix with Grid Emission Factor -->
-      <figure class="kcn-fig">
-        <div class="kcn-chart-container-wrap" data-chart="generationMix" id="chart-container-genmix-wrap" data-show-numbers="true">
-          <div class="kcn-gd-toolbar">
-            <button type="button" class="kcn-gd-toggle is-on" id="kcn-gen-number-toggle" aria-pressed="true" aria-label="Hide numbers">
-              <span class="kcn-gd-toggle-track" aria-hidden="true"></span>
-              <span class="kcn-gd-toggle-text">Numbers</span>
-            </button>
-          </div>
-          <div class="kcn-chart" id="chart-container-genmix" data-chart="generationMix" style="height:420px"></div>
+      <figure class="kcn-fig" id="chart-container-genmix-wrap" data-show-numbers="true">
+        <div class="kcn-gd-toolbar">
+          <button type="button" class="kcn-gd-toggle is-on" id="kcn-gen-number-toggle" aria-pressed="true" aria-label="Hide numbers">
+            <span class="kcn-gd-toggle-track" aria-hidden="true"></span>
+            <span class="kcn-gd-toggle-text">Numbers</span>
+          </button>
         </div>
+        <div class="kcn-chart" id="chart-container-genmix" data-chart="generationMix" style="height:420px"></div>
       </figure>
     </div>
   </section>
@@ -1872,7 +1890,14 @@
 
       <!-- Fig 6: Mitigation Wedges & Sequestration Combined Chart -->
       <figure class="kcn-fig">
-        <div class="kcn-chart" id="chart-container-ch5v3" data-chart="ch5v3">
+        <div class="kcn-chart-container-wrap" id="chart-container-ch5v3-wrap" data-show-numbers="true">
+          <div class="kcn-gd-toolbar">
+            <button type="button" class="kcn-gd-toggle is-on" id="kcn-ch5v3-number-toggle" aria-pressed="true" aria-label="Hide numbers">
+              <span class="kcn-gd-toggle-track" aria-hidden="true"></span>
+              <span class="kcn-gd-toggle-text">Numbers</span>
+            </button>
+          </div>
+          <div class="kcn-chart" id="chart-container-ch5v3" data-chart="ch5v3">
           <!-- Text Grid aligned with the chart columns -->
           <div class="kcn-ch5v3-text-grid">
             <!-- Row 1: Forestry/Sequestration -->
@@ -2465,6 +2490,9 @@
         ]
       };
 
+    var containerWrap = el.closest('[data-show-numbers]');
+    var showNumbers = containerWrap ? (containerWrap.getAttribute('data-show-numbers') !== 'false') : true;
+
     var el = el;
     if (el) {
       el.innerHTML = "";
@@ -2707,7 +2735,12 @@
           var fill = (ratio >= 0.5) ? getTextColor(i, 'BAU') : "black";
           var fSize = label.length > 5 ? "9px" : "11px";
           var lblDelay = Math.round(lblNormAngle + rIdx * 200 + 800);
-          var lblStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + lblDelay + 'ms;"';
+          var lblStyle = '';
+          if (!prefersReducedMotion) {
+            lblStyle = ' style="animation-delay:' + lblDelay + 'ms;' + (showNumbers ? '' : 'opacity:0;') + '"';
+          } else if (!showNumbers) {
+            lblStyle = ' style="opacity:0;"';
+          }
           svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '"' + lblStyle + '>0</text>';
         });
 
@@ -2724,7 +2757,12 @@
           var fill = (ratio >= 0.5) ? getTextColor(i, 'CN50') : "black";
           var fSize = label.length > 5 ? "9px" : "11px";
           var lblDelay = Math.round(lblNormAngle + rIdx * 200 + 1050);
-          var lblStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + lblDelay + 'ms;"';
+          var lblStyle = '';
+          if (!prefersReducedMotion) {
+            lblStyle = ' style="animation-delay:' + lblDelay + 'ms;' + (showNumbers ? '' : 'opacity:0;') + '"';
+          } else if (!showNumbers) {
+            lblStyle = ' style="opacity:0;"';
+          }
           svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '"' + lblStyle + '>0</text>';
         });
       }
@@ -2911,6 +2949,18 @@
           tooltipEl.style.transform = 'translateY(4px)';
           setTimeout(function() { tooltipEl.style.display = 'none'; }, 150);
         }
+      });
+    }
+
+    // Listen for number toggle
+    if (containerWrap) {
+      containerWrap.addEventListener('kcn:numbers-toggle', function(e) {
+        var show = !!(e.detail && e.detail.showNumbers);
+        var labels = el.querySelectorAll('.kcn-polar-label');
+        labels.forEach(function(lbl) {
+          lbl.style.transition = 'opacity 0.25s ease';
+          lbl.style.opacity = show ? '1' : '0';
+        });
       });
     }
 
@@ -3124,7 +3174,6 @@
     var wrap = el;
     if (!wrap || typeof echarts === "undefined") return;
 
-    // ENHANCED: Read number toggle state from parent container
     var containerWrap = wrap.closest('[data-show-numbers]');
     var showNumbers = containerWrap ? (containerWrap.getAttribute('data-show-numbers') !== 'false') : true;
 
@@ -3155,7 +3204,6 @@
     }
     refreshCompact();
 
-    // ENHANCED: Staggered bar animation with progressive reveal
     function makeSeries(name, data, color, sIdx) {
       return {
         name: name,
@@ -3163,14 +3211,13 @@
         stack: "mix",
         data: data,
         barWidth: "55%",
+        z: 10,
         itemStyle: { color: color },
-        // ENHANCED: Emphasis state with focus
         emphasis: {
           focus: "series",
           blurScope: "coordinateSystem",
           itemStyle: { shadowBlur: 12, shadowColor: 'rgba(0,0,0,0.15)' }
         },
-        // ENHANCED: Progressive bar animation
         animation: !prefersReducedMotion,
         animationDuration: prefersReducedMotion ? 0 : 1000,
         animationEasing: 'elasticOut',
@@ -3187,7 +3234,6 @@
           color: (name === "Thermal") ? "#ffffff" : "#1a1a1a",
           fontSize: 11,
           fontWeight: 600,
-          // ENHANCED: Label fade-in after bar grows
           animationDelay: function(idx) {
             return prefersReducedMotion ? 0 : sIdx * 120 + idx * 80 + 400;
           }
@@ -3197,7 +3243,7 @@
     }
 
     var option = {
-      animation: false, // We handle per-series
+      animation: false,
       grid: {
         left: compact ? 38 : 80,
         right: compact ? 38 : 100,
@@ -3216,9 +3262,10 @@
           var header = "<strong>" + params[0].axisValue + "</strong><br>";
           var lines = [];
           params.forEach(function (p) {
-            if (p.seriesName === "Grid Emission factor" || p.seriesName === "__cn50") {
+            if (p.value === null || p.value === undefined) return;
+            if (p.seriesName === "Grid Emission factor") {
               lines.push(p.marker + " Grid Emission factor: " + (p.value * 100).toFixed(2) + "%");
-            } else if (p.seriesName !== "__bridge") {
+            } else if (p.seriesName.indexOf("__") !== 0) {
               lines.push(p.marker + " " + p.seriesName + ": " + p.value.toFixed(2) + "%");
             }
           });
@@ -3298,16 +3345,17 @@
         makeSeries("Wind", windPct, sourceColors["Wind"], 3),
         makeSeries("Nuclear", nuclearPct, sourceColors["Nuclear"], 4),
         makeSeries("Market", marketPct, sourceColors["Market"], 5),
+        // SOLID LINE — Actual → BAU only (2021, 2030, 2040, 2050 BAU)
         {
           name: "Grid Emission factor",
           type: "line",
           yAxisIndex: 1,
-          data: [0.5747, 0.2621, 0.0632, 0.0080, null, null, null],
+          data: [gridEmissionFactor[0], gridEmissionFactor[1], gridEmissionFactor[2], gridEmissionFactor[3], null, null, null],
+          connectNulls: false,
           symbol: "circle",
           symbolSize: 8,
           z: 20,
           smooth: 0.3,
-          connectNulls: false,
           animation: !prefersReducedMotion,
           animationDuration: prefersReducedMotion ? 0 : 1800,
           animationEasing: 'cubicOut',
@@ -3320,53 +3368,65 @@
           },
           label: { show: false }
         },
+        // SOLID LINE — CN50 only (2030, 2040, 2050 CN50). Same name as above so it
+        // shares one legend entry, but it is a separate series so it never draws a
+        // segment back to the BAU points.
+        {
+          name: "Grid Emission factor",
+          type: "line",
+          yAxisIndex: 1,
+          data: [null, null, null, null, gridEmissionFactor[4], gridEmissionFactor[5], gridEmissionFactor[6]],
+          connectNulls: false,
+          symbol: "circle",
+          symbolSize: 8,
+          z: 20,
+          smooth: 0.3,
+          animation: !prefersReducedMotion,
+          animationDuration: prefersReducedMotion ? 0 : 1800,
+          animationEasing: 'cubicOut',
+          animationDelay: prefersReducedMotion ? 0 : 600,
+          itemStyle: { color: "#2C3E50", borderColor: "#fff", borderWidth: 2 },
+          lineStyle: { color: "#2C3E50", width: 2.5, shadowBlur: 6, shadowColor: 'rgba(44,62,80,0.2)' },
+          emphasis: {
+            scale: 1.5,
+            itemStyle: { shadowBlur: 10, shadowColor: 'rgba(44,62,80,0.4)' }
+          },
+          label: { show: false },
+          legendHoverLink: false
+        },
+        // GHOST CONNECTOR — dashed, faint, low z so it tucks behind the BAU bars.
+        // Goes straight from 2021 (Actual) to 2030 CN50, skipping the BAU points
+        // entirely (connectNulls jumps over the nulls). This reads as "CN50 also
+        // branches from the 2021 baseline," not "BAU 2050 flows into CN50 2030."
         {
           name: "__bridge",
           type: "line",
           yAxisIndex: 1,
-          data: [null, null, null, 0.0080, 0.2064, null, null],
+          data: [gridEmissionFactor[0], null, null, null, gridEmissionFactor[4], null, null],
           symbol: "none",
-          z: 21,
-          smooth: 0.3,
-          connectNulls: false,
+          z: 5,
+          smooth: 0,
+          connectNulls: true,
           animation: !prefersReducedMotion,
           animationDuration: prefersReducedMotion ? 0 : 800,
           animationEasing: 'cubicOut',
           animationDelay: prefersReducedMotion ? 0 : 1200,
           itemStyle: { color: "#2C3E50" },
-          lineStyle: { color: "#2C3E50", width: 2.5, type: "dashed" },
+          lineStyle: { color: "#2C3E50", width: 2, type: "dashed", opacity: 0.45 },
           tooltip: { show: false },
           legendHoverLink: false,
+          silent: true,
           emphasis: { disabled: true }
-        },
-        {
-          name: "__cn50",
-          type: "line",
-          yAxisIndex: 1,
-          data: [null, null, null, null, 0.2064, 0.0415, 0.0058],
-          symbol: "circle",
-          symbolSize: 8,
-          z: 20,
-          smooth: 0.3,
-          connectNulls: false,
-          animation: !prefersReducedMotion,
-          animationDuration: prefersReducedMotion ? 0 : 1400,
-          animationEasing: 'cubicOut',
-          animationDelay: prefersReducedMotion ? 0 : 900,
-          itemStyle: { color: "#2C3E50", borderColor: "#fff", borderWidth: 2 },
-          lineStyle: { color: "#2C3E50", width: 2.5, shadowBlur: 6, shadowColor: 'rgba(44,62,80,0.2)' },
-          tooltip: { show: false },
-          legendHoverLink: false,
-          emphasis: {
-            scale: 1.5,
-            itemStyle: { shadowBlur: 10, shadowColor: 'rgba(44,62,80,0.4)' }
-          },
-          label: { show: false }
         }
       ]
     };
 
     chart.setOption(option);
+
+    // Ensure proper dimensions after layout settles
+    if (!prefersReducedMotion) {
+      setTimeout(function() { chart.resize(); }, 150);
+    }
 
     function addDecorations() {
       if (compact) {
@@ -3449,7 +3509,6 @@
 
     requestAnimationFrame(addDecorations);
 
-    // ENHANCED: Listen for number toggle events
     if (containerWrap) {
       containerWrap.addEventListener('kcn:numbers-toggle', function(e) {
         var show = !!(e.detail && e.detail.showNumbers);
@@ -3648,6 +3707,9 @@
   B.ch5v3 = function (el) {
     var wrap = el;
     if (!wrap || typeof echarts === "undefined") return;
+
+    var containerWrap = wrap.closest('[data-show-numbers]');
+    var showNumbers = containerWrap ? (containerWrap.getAttribute('data-show-numbers') !== 'false') : true;
 
     var elCombined = wrap.querySelector("#kcn-ch5v3-combined");
     var legendEl   = wrap.querySelector("#kcn-ch5v3-legend");
@@ -3880,7 +3942,7 @@
           animationEasing: 'elasticOut',
           animationDelay: prefersReducedMotion ? 0 : 600,
           label: {
-            show: true,
+            show: showNumbers,
             position: "inside",
             formatter: function (p) { return fv(p.value); },
             color: "#fff",
@@ -3901,7 +3963,7 @@
           animationEasing: 'elasticOut',
           animationDelay: prefersReducedMotion ? 0 : 750,
           label: {
-            show: true,
+            show: showNumbers,
             position: "inside",
             formatter: function (p) {
               if (p.value === 0) return "";
@@ -3919,10 +3981,10 @@
           type: "line",
           labelLayout: { hideOverlap: false },
           data: [
-            { value: 22.18, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-            { value: 26.70, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-            { value: 26.48, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-            { value: 25.90, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } }
+            { value: 22.18, label: { show: showNumbers, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 26.70, label: { show: showNumbers, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 26.48, label: { show: showNumbers, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 25.90, label: { show: showNumbers, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } }
           ],
           symbol: "none",
           z: 20,
@@ -3938,9 +4000,9 @@
           labelLayout: { hideOverlap: false },
           data: [
             { value: 22.18, label: { show: false } },
-            { value: 23.99, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
-            { value: 17.87, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
-            { value: 11.52, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
+            { value: 23.99, label: { show: showNumbers, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 17.87, label: { show: showNumbers, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 11.52, label: { show: showNumbers, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
           ],
           symbol: "none",
           z: 20,
@@ -3956,11 +4018,11 @@
           labelLayout: { hideOverlap: false },
           data: [
             { value: 7.55, label: { show: false } },
-            { value: 4.30, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 4.30, label: { show: showNumbers, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
             {
               value: -5.45,
               label: {
-                show: true,
+                show: showNumbers,
                 position: "top",
                 backgroundColor: "#fff",
                 borderColor: "#a1a1aa",
@@ -3975,7 +4037,7 @@
             {
               value: -12.40,
               label: {
-                show: true,
+                show: showNumbers,
                 position: "left",
                 distance: 10,
                 backgroundColor: "#fff",
@@ -4005,7 +4067,7 @@
             {
               value: 7.55,
               label: {
-                show: true,
+                show: showNumbers,
                 position: "bottom",
                 distance: 10,
                 backgroundColor: "#fff",
@@ -4018,9 +4080,9 @@
                 fontSize: 10
               }
             },
-            { value: 12.08, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-            { value: 11.86, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-            { value: 11.27, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
+            { value: 12.08, label: { show: showNumbers, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 11.86, label: { show: showNumbers, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 11.27, label: { show: showNumbers, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
           ],
           symbol: "none",
           z: 20,
@@ -4067,6 +4129,44 @@
       });
     }
 
+    // Listen for number toggle
+    if (containerWrap) {
+      containerWrap.addEventListener('kcn:numbers-toggle', function(e) {
+        var show = !!(e.detail && e.detail.showNumbers);
+        combinedChart.setOption({
+          series: [
+            {}, {}, {}, {}, {}, {}, {}, // wedges (no labels to toggle)
+            { label: { show: show } },   // Sequestration_BAU bar
+            { label: { show: show } },   // Additional Sequestration bar
+            { data: [
+                { value: 22.18, label: { show: show } },
+                { value: 26.70, label: { show: show } },
+                { value: 26.48, label: { show: show } },
+                { value: 25.90, label: { show: show } }
+              ] },
+            { data: [
+                { value: 22.18, label: { show: false } },
+                { value: 23.99, label: { show: show } },
+                { value: 17.87, label: { show: show } },
+                { value: 11.52, label: { show: show } }
+              ] },
+            { data: [
+                { value: 7.55, label: { show: false } },
+                { value: 4.30, label: { show: show } },
+                { value: -5.45, label: { show: show } },
+                { value: -12.40, label: { show: show } }
+              ] },
+            { data: [
+                { value: 7.55, label: { show: show } },
+                { value: 12.08, label: { show: show } },
+                { value: 11.86, label: { show: show } },
+                { value: 11.27, label: { show: show } }
+              ] }
+          ]
+        }, { lazyUpdate: true });
+      });
+    }
+
     return combinedChart;
   };
 
@@ -4109,6 +4209,70 @@
   function initGenMixControls() {
     var wrap = document.getElementById('chart-container-genmix-wrap');
     var toggle = document.getElementById('kcn-gen-number-toggle');
+    if (!wrap || !toggle || toggle.getAttribute('data-bound') === '1') return;
+
+    function readState() {
+      return wrap.getAttribute('data-show-numbers') !== 'false';
+    }
+
+    function sync() {
+      var showNumbers = readState();
+      toggle.setAttribute('aria-pressed', showNumbers ? 'true' : 'false');
+      toggle.setAttribute('aria-label', showNumbers ? 'Hide numbers' : 'Show numbers');
+      toggle.classList.toggle('is-on', showNumbers);
+    }
+
+    if (!wrap.hasAttribute('data-show-numbers')) {
+      wrap.setAttribute('data-show-numbers', 'true');
+    }
+
+    toggle.setAttribute('data-bound', '1');
+    toggle.addEventListener('click', function () {
+      if (toggle.disabled) return;
+      var next = !readState();
+      wrap.setAttribute('data-show-numbers', next ? 'true' : 'false');
+      sync();
+      wrap.dispatchEvent(new CustomEvent('kcn:numbers-toggle', { detail: { showNumbers: next } }));
+    });
+    sync();
+  }
+
+  // ENHANCED: Polar number toggle
+  function initPolarControls() {
+    var wrap = document.getElementById('kcn-c-polar-wrap');
+    var toggle = document.getElementById('kcn-polar-number-toggle');
+    if (!wrap || !toggle || toggle.getAttribute('data-bound') === '1') return;
+
+    function readState() {
+      return wrap.getAttribute('data-show-numbers') !== 'false';
+    }
+
+    function sync() {
+      var showNumbers = readState();
+      toggle.setAttribute('aria-pressed', showNumbers ? 'true' : 'false');
+      toggle.setAttribute('aria-label', showNumbers ? 'Hide numbers' : 'Show numbers');
+      toggle.classList.toggle('is-on', showNumbers);
+    }
+
+    if (!wrap.hasAttribute('data-show-numbers')) {
+      wrap.setAttribute('data-show-numbers', 'true');
+    }
+
+    toggle.setAttribute('data-bound', '1');
+    toggle.addEventListener('click', function () {
+      if (toggle.disabled) return;
+      var next = !readState();
+      wrap.setAttribute('data-show-numbers', next ? 'true' : 'false');
+      sync();
+      wrap.dispatchEvent(new CustomEvent('kcn:numbers-toggle', { detail: { showNumbers: next } }));
+    });
+    sync();
+  }
+
+  // ENHANCED: Combined (ch5v3) number toggle
+  function initCh5v3Controls() {
+    var wrap = document.getElementById('chart-container-ch5v3-wrap');
+    var toggle = document.getElementById('kcn-ch5v3-number-toggle');
     if (!wrap || !toggle || toggle.getAttribute('data-bound') === '1') return;
 
     function readState() {
@@ -4235,6 +4399,8 @@
     initNav();
     initGrossDualControls();
     initGenMixControls();
+    initPolarControls();
+    initCh5v3Controls();
     var waited = 0;
     (function wait() {
       if (typeof echarts !== 'undefined') {
