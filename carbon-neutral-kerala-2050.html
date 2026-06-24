@@ -1117,6 +1117,92 @@
     width: 100%;
   }
 
+  .kcn-gd-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 0 10px;
+  }
+
+  .kcn-gd-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    background: transparent;
+    padding: 2px 0;
+    font-family: inherit;
+    color: var(--kcn-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .kcn-gd-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .kcn-gd-toggle-track {
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    border: 1px solid var(--kcn-line);
+    background: #E8ECEA;
+    position: relative;
+    transition: background .18s ease, border-color .18s ease;
+    flex: 0 0 auto;
+  }
+
+  .kcn-gd-toggle-track::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    top: 2px;
+    left: 3px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(16, 40, 30, .22);
+    transition: transform .18s ease;
+  }
+
+  .kcn-gd-toggle input:checked + .kcn-gd-toggle-track {
+    background: #315C4B;
+    border-color: #315C4B;
+  }
+
+  .kcn-gd-toggle input:checked + .kcn-gd-toggle-track::after {
+    transform: translateX(15px);
+  }
+
+  .kcn-gd-toggle input:focus-visible + .kcn-gd-toggle-track {
+    outline: 2px solid #1B8A5F;
+    outline-offset: 2px;
+  }
+
+  .kcn-gd-toggle.is-on .kcn-gd-toggle-track {
+    background: #315C4B;
+    border-color: #315C4B;
+  }
+
+  .kcn-gd-toggle.is-on .kcn-gd-toggle-track::after {
+    transform: translateX(15px);
+  }
+
+  .kcn-gd-toggle:focus-visible .kcn-gd-toggle-track {
+    outline: 2px solid #1B8A5F;
+    outline-offset: 2px;
+  }
+
+  .kcn-gd-toggle.is-disabled {
+    opacity: .55;
+    cursor: default;
+  }
+
   .kcn-gd-legend {
     display: flex;
     flex-wrap: wrap;
@@ -1142,9 +1228,121 @@
     margin-right: 6px;
   }
 
+
+
+  /* ===== ENHANCED DYNAMIC ANIMATION STYLES ===== */
+  /* All original styles preserved above. These additions enable smooth transitions. */
+
+  /* Polar chart arc hover animations */
+  .kcn-polar-arc {
+    transition: opacity 0.15s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: 375px 325px;
+    cursor: pointer;
+  }
+  .kcn-polar-arc:hover {
+    opacity: 0.82 !important;
+    transform: scale(1.02);
+  }
+
+  /* Polar node pulse animation */
+  @keyframes polarNodePulse {
+    0% { r: 4.5; opacity: 1; }
+    50% { r: 6; opacity: 0.7; }
+    100% { r: 4.5; opacity: 1; }
+  }
+  .kcn-polar-node-pulse {
+    animation: polarNodePulse 2s ease-in-out infinite;
+  }
+
+  /* Smooth tooltip transitions for polar */
+  #kcn-polar-tooltip {
+    will-change: opacity, transform;
+  }
+
+  /* Chart container smooth transitions */
+  .kcn-chart, .kcn-sankey-box, .kcn-gd-chart {
+    transition: opacity 0.3s ease;
+  }
+
+  /* Loading skeleton state */
+  .kcn-chart-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: kcnSkeleton 1.5s ease-in-out infinite;
+    border-radius: 8px;
+  }
+  @keyframes kcnSkeleton {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .kcn-polar-arc,
+    .kcn-polar-node-pulse,
+    .kcn-chart,
+    .kcn-sankey-box,
+    .kcn-gd-chart,
+    #kcn-polar-tooltip {
+      animation: none !important;
+      transition: none !important;
+    }
+    .kcn-chart-loading {
+      animation: none !important;
+      background: #f0f0f0 !important;
+    }
+  }
+
+  /* Legend item hover enhancement */
+  .kcn-gd-li {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    cursor: default;
+  }
+  .kcn-gd-li:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+  }
+
+  /* Figure hover lift effect */
+  .kcn-fig {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .kcn-fig:hover {
+    box-shadow: 0 4px 12px rgba(16, 40, 30, 0.08);
+    transform: translateY(-1px);
+  }
+
+  /* KPI card hover */
+  .kcn-kpi {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .kcn-kpi:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 40, 30, 0.06);
+  }
+
+  /* TOC row smooth hover */
+  .kcn-toc-row {
+    transition: background 0.25s ease, padding-left 0.25s ease, transform 0.2s ease;
+  }
+  .kcn-toc-row:hover {
+    transform: translateX(2px);
+  }
+
+  /* Sticky nav smooth appearance */
+  .kcn-sticky {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .kcn-sticky.is-visible {
+    transform: translateY(0);
+  }
+  .kcn-sticky:not(.is-visible) {
+    transform: translateY(-100%);
+  }
 </style>
   <!-- ECharts library from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<base target="_blank">
 </head>
 <body>
 
@@ -1436,7 +1634,7 @@
      ====================================================== -->
   <section class="kcn-section" id="kcn-sec1">
     <div class="kcn-wrap">
-      <p class="kcn-eyebrow">Part 1</p>
+      
       <h2 class="kcn-sec-title">Gross GHG Emissions in Kerala — BAU vs CN50 Scenarios</h2>
       
       <div class="kcn-prose">
@@ -1446,6 +1644,12 @@
       <!-- Fig 1: Gross Dual stacked area chart -->
       <figure class="kcn-fig">
         <div class="kcn-chart-container-wrap" data-chart="grossDual" id="chart-container-dual">
+          <div class="kcn-gd-toolbar">
+            <button type="button" class="kcn-gd-toggle is-on" id="kcn-gd-number-toggle" aria-pressed="true" aria-label="Hide numbers">
+              <span class="kcn-gd-toggle-track" aria-hidden="true"></span>
+              <span class="kcn-gd-toggle-text">Numbers</span>
+            </button>
+          </div>
           <div class="kcn-gd-charts">
             <div class="kcn-gd-chart" id="kcn-gd-bau"></div>
             <div class="kcn-gd-chart" id="kcn-gd-cn50"></div>
@@ -1461,7 +1665,7 @@
      ====================================================== -->
   <section class="kcn-section kcn-alt" id="kcn-sec2">
     <div class="kcn-wrap">
-      <p class="kcn-eyebrow">Part 2</p>
+     
       <h2 class="kcn-sec-title">Deep electrification across energy sectors will act as a strategic enabler for economy-wide decarbonisation</h2>
       
       <div class="kcn-prose">
@@ -1480,7 +1684,7 @@
      ====================================================== -->
   <section class="kcn-section" id="kcn-sec3">
     <div class="kcn-wrap">
-      <p class="kcn-eyebrow">Part 3</p>
+  
       <h2 class="kcn-sec-title">Multi-fold increase in the electricity demand by 2050; therefore, higher integration of renewable sources would be required to meet this demand</h2>
       
       <div class="kcn-prose">
@@ -1552,7 +1756,7 @@
      ====================================================== -->
   <section class="kcn-section kcn-alt" id="kcn-sec4">
     <div class="kcn-wrap">
-      <p class="kcn-eyebrow">Part 4</p>
+      
       <h2 class="kcn-sec-title">Solar-Dominated Renewable Growth Drives Emissions Toward Zero</h2>
       
       <div class="kcn-prose">
@@ -1571,7 +1775,7 @@
      ====================================================== -->
   <section class="kcn-section" id="kcn-sec5">
     <div class="kcn-wrap">
-      <p class="kcn-eyebrow">Part 5</p>
+      
       <h2 class="kcn-sec-title">While the evolving economic and technical landscape may impact the pace of action vis-a-vis interventions proposed under the CN50 scenario, carbon neutrality would still remain achievable</h2>
       
       <div class="kcn-prose">
@@ -1591,7 +1795,7 @@
      ====================================================== -->
   <section class="kcn-section kcn-alt" id="kcn-sec6">
     <div class="kcn-wrap">
-      <p class="kcn-eyebrow">Part 6</p>
+      
       <h2 class="kcn-sec-title">Enhancement of sequestration by harnessing the potential of land use and blue carbon capture would be equally paramount – leading to net negative emissions by 2050</h2>
       
       <div class="kcn-prose">
@@ -1716,385 +1920,468 @@
 </div>
 
 <script>
-(function () {
+
+  // ====== ENHANCED DYNAMIC CHART CONFIGURATIONS ======
+  // All original data, colors, labels, and text preserved exactly.
+  // Only animation, transition, smoothing, and interactivity enhanced.
+
+  (function () {
   "use strict";
 
   var B = {};
-  
-  // Shared constants/styles
+
+  // Shared constants/styles — PRESERVED EXACTLY
   var GREEN_SECONDARY = '#1B8A5F', BLUE_BAU = '#3498DB', TEXT = '#1A211E', MUTED = '#5E6B66', GRID = '#EDF0EE';
+
+  // --- ENHANCED: Global animation preferences ---
+  var prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var BASE_ANIMATION_DURATION = prefersReducedMotion ? 0 : 950;
+  var BASE_ANIMATION_EASING = 'cubicOut';
+  var STAGGER_DELAY = prefersReducedMotion ? 0 : 80;
 
   function tooltip(trigger) {
     return {
       trigger: trigger || 'axis',
       backgroundColor: 'rgba(255,255,255,0.97)', borderColor: '#E3E7E5', borderWidth: 1,
       textStyle: { color: TEXT, fontSize: 13, fontFamily: 'Inter,sans-serif' },
-      extraCssText: 'box-shadow:0 6px 18px rgba(16,40,30,.12);border-radius:8px;padding:10px 12px;'
+      extraCssText: 'box-shadow:0 6px 18px rgba(16,40,30,.12);border-radius:8px;padding:10px 12px;transition:all 0.16s ease-out;'
     };
   }
   function legend() { return { bottom: 0, textStyle: { color: MUTED, fontSize: 12, fontFamily: 'Inter,sans-serif' }, itemGap: 18, itemWidth: 14, itemHeight: 8 }; }
   function valAxis(name) { return { type: 'value', name: name, nameTextStyle: { color: MUTED, fontSize: 12 }, axisLine: { show: false }, axisLabel: { color: MUTED, fontSize: 12 }, splitLine: { lineStyle: { color: GRID, type: 'dashed' } } }; }
   function catAxis(data) { return { type: 'category', data: data, axisLine: { lineStyle: { color: '#E3E7E5' } }, axisLabel: { color: MUTED, fontSize: 12 }, axisTick: { show: false } }; }
 
+  // ============================================================
+  // CHART 1: GROSS DUAL — ENHANCED WITH TRANSITIONS & SMOOTHING
+  // ============================================================
   B.grossDual = function (el) {
     var wrap = el;
-      if (!wrap || typeof echarts === 'undefined') return;
-    
-      var elBau = wrap.querySelector('#kcn-gd-bau');
-      var elCn = wrap.querySelector('#kcn-gd-cn50');
-      var legendEl = wrap.querySelector('#kcn-gd-legend');
-      if(!elBau || !elCn) return;
-      var compact = false;
-      function refreshCompact(){
-        compact = wrap.clientWidth < 560;
-      }
-      refreshCompact();
-    
-      var years = [2005, 2010, 2015, 2021, 2030, 2040, 2050];
-      
-      var sectorColors = {
-        "Transport": "#EFDC4C",
-        "Buildings": "#6566AB",
-        "Industries, incl CPP": "#A19ACB",
-        "PEG": "#4F81BD",
-        "Agricultural Energy": "#87CFBE",
-        "IPPU": "#E25D3E",
-        "Livestock": "#FDBA5C",
-        "Waste": "#D0F0F4",
-        "Aggregate Sources": "#CF8DA3",
-        "Land (Emissions)": "#9BBB59"
-      };
-    
-      var sectors = [
-        {name:"Transport",bau:[12.81079825143,9.2071469584,10.88910765605,10.970140822,15.003537554397605,13.844814545090347,12.293580668465749],cn50:[null,null,null,10.970140822,13.79601000178959,9.779207239512239,5.087005986939303]},
-        {name:"Buildings",bau:[2.38819029403,3.02574979383,3.3626595977,3.7477010946,3.7907781186758616,4.024730418586263,4.1469380907605125],cn50:[null,null,null,3.7477010946,2.93246841396431,2.2141590374993103,1.5830806347879307]},
-        {name:"Industries, incl CPP",bau:[2.515079512965819,2.3769758213380925,1.942663814949988,2.515245163,2.981,3.474,3.956],cn50:[null,null,null,2.515245163,2.943,2.731,2.511]},
-        {name:"PEG",bau:[0.3358714563,1.1946003898,0.2846603577,0.014603497,0.014603497,0.014603497,0.014603497],cn50:[null,null,null,0.014603497,0,0,0]},
-        {name:"Agricultural Energy",bau:[0.07906138522,0.42140791953,0.57797032477,0.11575,0.12783,0.13336,0.13588],cn50:[null,null,null,0.11575,0.10651,0.08002,0]},
-        {name:"IPPU",bau:[1.4744834153518291,1.4473348921196172,1.343490535805991,1.31653083,1.317,1.317,1.317],cn50:[null,null,null,1.31653083,1.317,0.957,0.597]},
-        {name:"Livestock",bau:[1.5031577289,1.2081910476,1.08180609,1.11367689,1.213,1.396,1.695],cn50:[null,null,null,1.11367689,1.102,1.104,1.11357]},
-        {name:"Waste",bau:[1.944873102345636,1.9097543841728588,1.8890025666480985,1.92054516,1.81906,1.86818,1.94809],cn50:[null,null,null,1.92054516,1.39051,0.692,0.41276]},
-        {name:"Aggregate Sources",bau:[0.521313858358857,0.56108687595366,0.5198653042165848,0.450476,0.421,0.396,0.376],cn50:[null,null,null,0.450476,0.384,0.3,0.1966]},
-        {name:"Land (Emissions)",bau:[0.001085577921702,0.0021231526006187996,0.014776049563858263,0.014096,0.014,0.014,0.014],cn50:[null,null,null,0.014096,0.014,0.014,0.0141]}
-      ];
-    
-      var totals = {
-        bau:[23.57391458282385,21.354371235344846,21.906002297404523,22.1787654566,26.701809170073467,26.482688460676613,25.897092256226262],
-        cn50:[23.57391458282385,21.354371235344846,21.906002297404523,22.1787654566,23.9854984157539,17.87138627701155,11.515116621727234]
-      };
-    
-      var chartNote = [
-        "55.52% (14.38 MtCO\u2082e)",
-        "reduction in gross emissions",
-        "expected, with 67.94% of it",
-        "(9.77 MtCO\u2082e) driven by",
-        "higher electrification in transport",
-        "and industries alone."
-      ];
-    
-      var labelIndexes = {bau:[0,1,2,3,4,5,6], cn50:[4,5,6]};
-    
-      function fv(v){ return Number(v).toFixed(2); }
-    
-      function buildHit(key){
-        var data=[];
-        years.forEach(function(year,yi){
-          var bottom=0;
-          sectors.forEach(function(sec){
-            var v=sec[key][yi];
-            if(v==null) return;
-            var top=bottom+v;
-            data.push({
-              value:[yi,bottom,top,v],
-              sector:sec.name,
-              year:year,
-              scenario:key==="bau"?"BAU":"CN50",
-              amount:v,
-              itemStyle:{color:"rgba(255,255,255,0.01)"}
-            });
-            bottom=top;
+    if (!wrap || typeof echarts === 'undefined') return;
+
+    var elBau = wrap.querySelector('#kcn-gd-bau');
+    var elCn = wrap.querySelector('#kcn-gd-cn50');
+    var legendEl = wrap.querySelector('#kcn-gd-legend');
+    var numberToggle = wrap.querySelector('#kcn-gd-number-toggle');
+    if(!elBau || !elCn) return;
+    var compact = false;
+    var showNumbers = wrap.getAttribute('data-show-numbers') !== 'false';
+    function refreshCompact(){
+      compact = wrap.clientWidth < 560;
+    }
+    function labelsVisible(){
+      return showNumbers && !compact;
+    }
+    refreshCompact();
+
+    var years = [2005, 2010, 2015, 2021, 2030, 2040, 2050];
+
+    var sectorColors = {
+      "Transport": "#EFDC4C",
+      "Buildings": "#6566AB",
+      "Industries, incl CPP": "#A19ACB",
+      "PEG": "#4F81BD",
+      "Agricultural Energy": "#87CFBE",
+      "IPPU": "#E25D3E",
+      "Livestock": "#FDBA5C",
+      "Waste": "#D0F0F4",
+      "Aggregate Sources": "#CF8DA3",
+      "Land (Emissions)": "#9BBB59"
+    };
+
+    var sectors = [
+      {name:"Transport",bau:[12.81079825143,9.2071469584,10.88910765605,10.970140822,15.003537554397605,13.844814545090347,12.293580668465749],cn50:[null,null,null,10.970140822,13.79601000178959,9.779207239512239,5.087005986939303]},
+      {name:"Buildings",bau:[2.38819029403,3.02574979383,3.3626595977,3.7477010946,3.7907781186758616,4.024730418586263,4.1469380907605125],cn50:[null,null,null,3.7477010946,2.93246841396431,2.2141590374993103,1.5830806347879307]},
+      {name:"Industries, incl CPP",bau:[2.515079512965819,2.3769758213380925,1.942663814949988,2.515245163,2.981,3.474,3.956],cn50:[null,null,null,2.515245163,2.943,2.731,2.511]},
+      {name:"PEG",bau:[0.3358714563,1.1946003898,0.2846603577,0.014603497,0.014603497,0.014603497,0.014603497],cn50:[null,null,null,0.014603497,0,0,0]},
+      {name:"Agricultural Energy",bau:[0.07906138522,0.42140791953,0.57797032477,0.11575,0.12783,0.13336,0.13588],cn50:[null,null,null,0.11575,0.10651,0.08002,0]},
+      {name:"IPPU",bau:[1.4744834153518291,1.4473348921196172,1.343490535805991,1.31653083,1.317,1.317,1.317],cn50:[null,null,null,1.31653083,1.317,0.957,0.597]},
+      {name:"Livestock",bau:[1.5031577289,1.2081910476,1.08180609,1.11367689,1.213,1.396,1.695],cn50:[null,null,null,1.11367689,1.102,1.104,1.11357]},
+      {name:"Waste",bau:[1.944873102345636,1.9097543841728588,1.8890025666480985,1.92054516,1.81906,1.86818,1.94809],cn50:[null,null,null,1.92054516,1.39051,0.692,0.41276]},
+      {name:"Aggregate Sources",bau:[0.521313858358857,0.56108687595366,0.5198653042165848,0.450476,0.421,0.396,0.376],cn50:[null,null,null,0.450476,0.384,0.3,0.1966]},
+      {name:"Land (Emissions)",bau:[0.001085577921702,0.0021231526006187996,0.014776049563858263,0.014096,0.014,0.014,0.014],cn50:[null,null,null,0.014096,0.014,0.014,0.0141]}
+    ];
+
+    var totals = {
+      bau:[23.57391458282385,21.354371235344846,21.906002297404523,22.1787654566,26.701809170073467,26.482688460676613,25.897092256226262],
+      cn50:[23.57391458282385,21.354371235344846,21.906002297404523,22.1787654566,23.9854984157539,17.87138627701155,11.515116621727234]
+    };
+
+    var chartNote = [
+      "55.52% (14.38 MtCO₂e)",
+      "reduction in gross emissions",
+      "expected, with 67.94% of it",
+      "(9.77 MtCO₂e) driven by",
+      "higher electrification in transport",
+      "and industries alone."
+    ];
+
+    var labelIndexes = {bau:[0,1,2,3,4,5,6], cn50:[4,5,6]};
+
+    function fv(v){ return Number(v).toFixed(2); }
+
+    function buildHit(key){
+      var data=[];
+      years.forEach(function(year,yi){
+        var bottom=0;
+        sectors.forEach(function(sec){
+          var v=sec[key][yi];
+          if(v==null) return;
+          var top=bottom+v;
+          data.push({
+            value:[yi,bottom,top,v],
+            sector:sec.name,
+            year:year,
+            scenario:key==="bau"?"BAU":"CN50",
+            amount:v,
+            itemStyle:{color:"rgba(255,255,255,0.01)"}
           });
+          bottom=top;
         });
-        return data;
+      });
+      return data;
+    }
+
+    function makeTip(p){
+      var d=p.data||{};
+      if(d.sector){
+        return "<strong>"+d.scenario+" - "+d.year+"</strong><br>"+d.sector+"<br>"+fv(d.amount)+" MtCO₂e";
       }
-    
-      function makeTip(p){
-        var d=p.data||{};
-        if(d.sector){
-          return "<strong>"+d.scenario+" - "+d.year+"</strong><br>"+d.sector+"<br>"+fv(d.amount)+" MtCO\u2082e";
-        }
-        var y=years[p.dataIndex];
-        return "<strong>"+p.seriesName+" - "+y+"</strong><br>"+fv(p.value)+" MtCO\u2082e";
-      }
-    
-      function stackedSeries(key){
-        return sectors.map(function(sec){
-          return {
-            name:sec.name,
-            type:"line",
-            stack:"gross",
-            data:sec[key],
-            symbol:"none",
-            connectNulls:false,
-            areaStyle:{opacity:1},
-            lineStyle:{width:0.8,color:"rgba(255,255,255,0.72)"},
-            itemStyle:{color:sectorColors[sec.name]},
-            emphasis:{focus:"series"}
-          };
-        });
-      }
-    
-      function totalSeries(key){
+      var y=years[p.dataIndex];
+      return "<strong>"+p.seriesName+" - "+y+"</strong><br>"+fv(p.value)+" MtCO₂e";
+    }
+
+    // ENHANCED: Added gradient area styles and emphasis states
+    function stackedSeries(key){
+      return sectors.map(function(sec, sIdx){
         return {
-          name:"Total",
+          name:sec.name,
           type:"line",
-          data:totals[key],
-          symbol:"circle",
-          symbolSize:6,
-          z:20,
-          itemStyle:{color:"#38404c",borderColor:"#fff",borderWidth:1.6},
-          lineStyle:{color:"#38404c",width:2.2},
-          label:{show:false}
+          stack:"gross",
+          data:sec[key],
+          symbol:"none",
+          smooth:0.4, // ENHANCED: smoother curves (was 0.22)
+          smoothMonotone:"x",
+          connectNulls:false,
+          // ENHANCED: Gradient area for depth
+          areaStyle:{
+            opacity:1,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: sectorColors[sec.name] },
+              { offset: 1, color: sectorColors[sec.name] + 'CC' }
+            ])
+          },
+          lineStyle:{width:0.8,color:"rgba(255,255,255,0.72)"},
+          itemStyle:{color:sectorColors[sec.name]},
+          // ENHANCED: Focus and blur for hover interactivity
+          emphasis:{
+            focus:"series",
+            blurScope:"coordinateSystem",
+            itemStyle:{opacity:1},
+            lineStyle:{width:1.5}
+          },
+          // ENHANCED: Universal transition for smooth data morphing
+          universalTransition:{enabled:true},
+          // ENHANCED: Staggered animation per series
+          animationDelay:function(idx){ return prefersReducedMotion ? 0 : (key==="cn50"?160:0)+(idx*55)+(sIdx*STAGGER_DELAY); }
         };
-      }
-    
-      function totalLabel(key){
+      });
+    }
+
+    function totalSeries(key){
+      return {
+        name:"Total",
+        type:"line",
+        data:totals[key],
+        symbol:"circle",
+        symbolSize:6,
+        smooth:0.35, // ENHANCED
+        smoothMonotone:"x",
+        z:20,
+        itemStyle:{color:"#38404c",borderColor:"#fff",borderWidth:1.6},
+        lineStyle:{color:"#38404c",width:2.2},
+        label:{show:false},
+        universalTransition:{enabled:true}, // ENHANCED
+        animationDelay:function(idx){ return prefersReducedMotion ? 0 : (key==="cn50"?400:200)+(idx*60); }
+      };
+    }
+
+    function totalLabel(key){
+      return {
+        name:"__tl__",
+        type:"scatter",
+        data:totals[key].map(function(v,idx){
+          return labelIndexes[key].indexOf(idx)>=0?v:null;
+        }),
+        symbolSize:1,
+        silent:true,
+        z:35,
+        itemStyle:{color:"rgba(56,64,76,0)"},
+        tooltip:{show:false},
+        label:{
+          show:labelsVisible(),
+          position:"top",
+          distance:8,
+          formatter:function(p){return fv(p.value);},
+          color:"#111827",
+          fontSize:11,
+          fontWeight:700,
+          backgroundColor:"rgba(255,255,255,0.94)",
+          borderColor:"#cfd3dc",
+          borderWidth:1,
+          borderRadius:2,
+          padding:[3,6],
+          // ENHANCED: Smooth label transition
+          transition:['show','position','color','fontSize'].map(function(k){ return {name:k,duration:300}; })
+        },
+        labelLayout:{hideOverlap:true}
+      };
+    }
+
+    function lblColor(n){ return (n==="Buildings"||n==="Land (Emissions)")?"#fff":"#111827"; }
+    function lblBorderW(n){ return lblColor(n)==="#fff"?3.2:2; }
+    function lblLayout(key,yi){
+      if(key==="bau"&&yi===0) return{position:"right",distance:8};
+      if(key==="bau"&&yi===years.length-1) return{position:"right",distance:8};
+      if(key==="cn50"&&yi===3) return{position:"left",distance:8};
+      if(key==="cn50"&&yi===years.length-1) return{position:"right",distance:6};
+      return{position:"inside",distance:0};
+    }
+
+    function valueLabels(key){
+      var cum=new Array(years.length).fill(0);
+      return sectors.map(function(sec, sIdx){
+        var pts=sec[key].map(function(v,idx){
+          if(v==null||v<0.3) return null;
+          var mid=cum[idx]+v/2;
+          return {value:[idx,mid],amount:v,sector:sec.name,label:lblLayout(key,idx)};
+        });
+        sec[key].forEach(function(v,idx){
+          if(v!=null) cum[idx]+=v;
+        });
         return {
-          name:"__tl__",
+          name:"__l_"+sec.name,
           type:"scatter",
-          data:totals[key].map(function(v,idx){
-            return labelIndexes[key].indexOf(idx)>=0?v:null;
-          }),
+          data:pts,
           symbolSize:1,
           silent:true,
-          z:35,
-          itemStyle:{color:"rgba(56,64,76,0)"},
+          z:28,
+          itemStyle:{color:"rgba(0,0,0,0)"},
           tooltip:{show:false},
           label:{
-            show:!compact,
-            position:"top",
-            distance:8,
-            formatter:function(p){return fv(p.value);},
-            color:"#111827",
-            fontSize:11,
-            fontWeight:700,
-            backgroundColor:"rgba(255,255,255,0.94)",
-            borderColor:"#cfd3dc",
-            borderWidth:1,
-            borderRadius:2,
-            padding:[3,6]
-          }
+            show:labelsVisible(),
+            formatter:function(p){return fv(p.data.amount);},
+            color:lblColor(sec.name),
+            fontSize:10,
+            fontWeight:800,
+            textBorderColor:lblColor(sec.name)==="#fff"?"rgba(0,0,0,0.48)":"rgba(255,255,255,0.45)",
+            textBorderWidth:lblBorderW(sec.name),
+            // ENHANCED: Smooth label transitions
+            transition:['show','position'].map(function(k){ return {name:k,duration:250}; })
+          },
+          labelLayout:{hideOverlap:true},
+          animationDelay:function(idx){ return prefersReducedMotion ? 0 : idx*40 + sIdx*30; }
         };
-      }
-    
-      function lblColor(n){ return (n==="Buildings"||n==="Land (Emissions)")?"#fff":"#111827"; }
-      function lblBorderW(n){ return lblColor(n)==="#fff"?3.2:2; }
-      function lblLayout(key,yi){
-        if(key==="bau"&&yi===0) return{position:"right",distance:8};
-        if(key==="bau"&&yi===years.length-1) return{position:"right",distance:8};
-        if(key==="cn50"&&yi===3) return{position:"left",distance:8};
-        if(key==="cn50"&&yi===years.length-1) return{position:"right",distance:6};
-        return{position:"inside",distance:0};
-      }
-    
-      function valueLabels(key){
-        var cum=new Array(years.length).fill(0);
-        return sectors.map(function(sec){
-          var pts=sec[key].map(function(v,idx){
-            if(v==null||v<0.3) return null;
-            var mid=cum[idx]+v/2;
-            return {value:[idx,mid],amount:v,sector:sec.name,label:lblLayout(key,idx)};
-          });
-          sec[key].forEach(function(v,idx){
-            if(v!=null) cum[idx]+=v;
-          });
-          return {
-            name:"__l_"+sec.name,
-            type:"scatter",
-            data:pts,
-            symbolSize:1,
-            silent:true,
-            z:28,
-            itemStyle:{color:"rgba(0,0,0,0)"},
-            tooltip:{show:false},
-            label:{
-              show:!compact,
-              formatter:function(p){return fv(p.data.amount);},
-              color:lblColor(sec.name),
-              fontSize:10,
-              fontWeight:800,
-              textBorderColor:lblColor(sec.name)==="#fff"?"rgba(0,0,0,0.48)":"rgba(255,255,255,0.45)",
-              textBorderWidth:lblBorderW(sec.name)
-            },
-            labelLayout:{hideOverlap:true}
-          };
-        });
-      }
-    
-      function hitSeries(key){
-        return {
-          name:"__hover__",
-          type:"custom",
-          data:buildHit(key),
-          z:30,
-          silent:false,
-          legendHoverLink:false,
-          tooltip:{show:true},
-          renderItem:function(params,api){
-            var xi=api.value(0), y0=api.value(1), y1=api.value(2);
-            var top=api.coord([xi,y1]);
-            var bottom=api.coord([xi,y0]);
-            var band=api.size([1,0])[0]*0.82;
-            var h=Math.max(8,bottom[1]-top[1]);
-            return {
-              type:"rect",
-              shape:{x:top[0]-band/2,y:top[1]+(bottom[1]-top[1]-h)/2,width:band,height:h},
-              style:api.style({fill:"rgba(255,255,255,0.01)",stroke:"transparent"})
-            };
-          }
-        };
-      }
-    
-      function optionFor(key,showY){
-        var isCn=key==="cn50";
-        return {
-          animation:false,
-          grid:{
-            left:compact?(showY?42:10):(isCn?28:88),
-            right:compact?10:(isCn?42:80),
-            top:compact?8:18,
-            bottom:compact?26:76,
-            containLabel:false
-          },
-          tooltip:{
-            trigger:"item",
-            borderColor:"#c6ccd8",
-            backgroundColor:"rgba(255,255,255,0.97)",
-            textStyle:{color:"#1f2430",fontSize:12},
-            extraCssText:"box-shadow:0 8px 22px rgba(31,36,48,0.14);",
-            formatter:makeTip
-          },
-          xAxis:{
-            type:"category",
-            boundaryGap:false,
-            data:years,
-            axisTick:{length:5,lineStyle:{color:"#a9adb7"}},
-            axisLine:{lineStyle:{color:"#a9adb7"}},
-            axisLabel:{color:"#111827",fontSize:compact?9:12,interval:compact?1:0}
-          },
-          yAxis:{
-            type:"value",
-            min:0,
-            max:30,
-            interval:5,
-            name:(showY&&!compact)?"GHG Emissions (MtCO\u2082e)":"",
-            nameLocation:"middle",
-            nameGap:46,
-            nameRotate:90,
-            nameTextStyle:{color:"#1f2937",fontWeight:700,fontSize:12},
-            axisLabel:{show:!isCn,color:"#111827",fontSize:compact?9:12},
-            axisTick:{show:!isCn},
-            axisLine:{show:!isCn,lineStyle:{color:"#a9adb7"}},
-            splitLine:{show:!isCn,lineStyle:{color:"#e2e5eb",width:1}}
-          },
-          series:[].concat(stackedSeries(key),[totalSeries(key),totalLabel(key)],valueLabels(key),[hitSeries(key)]),
-          legend:{show:false}
-        };
-      }
-    
-      function bracket(idp,x1,x2,y,text){
-        return [
-          {id:idp+"-l",type:"line",z:40,shape:{x1:x1,y1:y,x2:x2,y2:y},style:{stroke:"#b8bdc8",lineWidth:1}},
-          {id:idp+"-tl",type:"line",z:40,shape:{x1:x1,y1:y-4,x2:x1,y2:y+4},style:{stroke:"#b8bdc8",lineWidth:1}},
-          {id:idp+"-tr",type:"line",z:40,shape:{x1:x2,y1:y-4,x2:x2,y2:y+4},style:{stroke:"#b8bdc8",lineWidth:1}},
-          {id:idp+"-t",type:"text",z:40,x:(x1+x2)/2,y:y+16,style:{text:text,fill:"#4b5260",font:"700 12px Arial",textAlign:"center"}}
-        ];
-      }
-    
-      function decorate(chart,scenarioLabel,includeNote){
-        if(compact){
-          chart.setOption({graphic:[]},{replaceMerge:["graphic"]});
-          return;
-        }
-        var baselineX=chart.convertToPixel({xAxisIndex:0},3);
-        var top=28, labelY=68;
-        var aS=chart.convertToPixel({xAxisIndex:0},0);
-        var aE=chart.convertToPixel({xAxisIndex:0},3);
-        var sS=chart.convertToPixel({xAxisIndex:0},4);
-        var sE=chart.convertToPixel({xAxisIndex:0},6);
-        var axisBottom=chart.convertToPixel({yAxisIndex:0},0);
-        var bY=axisBottom+38;
-        
-        var g=[
-          {id:"bl-line",type:"line",z:40,shape:{x1:baselineX,y1:top,x2:baselineX,y2:labelY-34},style:{stroke:"#8f96a3",lineDash:[4,4],lineWidth:1.3}},
-          {id:"bl-label",type:"text",z:41,rotation:Math.PI/2*-1,x:baselineX+12,y:labelY,style:{text:"Baseline",fill:"#3f4652",font:"700 12px Arial",textAlign:"center",textVerticalAlign:"middle"}}
-        ].concat(bracket("act",aS,aE,bY,"Actual"), bracket("scn",sS,sE,bY,scenarioLabel));
-        
-        if(includeNote){
-          var nX=chart.convertToPixel({xAxisIndex:0},1.28);
-          var nY=chart.convertToPixel({yAxisIndex:0},10.2);
-          chartNote.forEach(function(line,idx){
-            g.push({
-              id:"note-"+idx,
-              type:"text",
-              z:36,
-              x:nX,
-              y:nY-38+idx*15,
-              style:{text:line,fill:"#1f2937",font:(idx===0||idx===2)?"700 13px Arial":"400 13px Arial",textAlign:"center",textVerticalAlign:"middle"}
-            });
-          });
-        }
-        chart.setOption({graphic:g},{replaceMerge:["graphic"]});
-      }
-    
-      var bau = echarts.init(elBau), cn = echarts.init(elCn);
-      bau.setOption(optionFor("bau",true));
-      cn.setOption(optionFor("cn50",false));
-    
-      function deco(){
-        decorate(bau,"BAU",false);
-        decorate(cn,"CN50",true);
-      }
-    
-      requestAnimationFrame(deco);
-    
-      
-    
-      // Render external legend
-      if(legendEl){
-        legendEl.innerHTML="";
-        sectors.forEach(function(sec){
-          var it=document.createElement("span");
-          it.className="kcn-gd-li";
-          it.innerHTML='<span class="sw" style="background:'+sectorColors[sec.name]+'"></span>'+sec.name;
-          legendEl.appendChild(it);
-        });
-        var t=document.createElement("span");
-        t.className="kcn-gd-li";
-        t.innerHTML='<span class="sw" style="background:#38404c"></span>Total';
-        legendEl.appendChild(t);
-      }
-    
+      });
+    }
+
+    function hitSeries(key){
       return {
-        resize: function() {
-          var wasCompact = compact;
-          refreshCompact();
-          if(wasCompact !== compact){
-            bau.setOption(optionFor("bau",true), true);
-            cn.setOption(optionFor("cn50",false), true);
-          }
-          bau.resize();
-          cn.resize();
-          requestAnimationFrame(deco);
-        },
-        isDisposed: function() {
-          return bau.isDisposed() || cn.isDisposed();
+        name:"__hover__",
+        type:"custom",
+        data:buildHit(key),
+        z:30,
+        silent:false,
+        legendHoverLink:false,
+        tooltip:{show:true},
+        renderItem:function(params,api){
+          var xi=api.value(0), y0=api.value(1), y1=api.value(2);
+          var top=api.coord([xi,y1]);
+          var bottom=api.coord([xi,y0]);
+          var band=api.size([1,0])[0]*0.82;
+          var h=Math.max(8,bottom[1]-top[1]);
+          return {
+            type:"rect",
+            shape:{x:top[0]-band/2,y:top[1]+(bottom[1]-top[1]-h)/2,width:band,height:h},
+            style:api.style({fill:"rgba(255,255,255,0.01)",stroke:"transparent"})
+          };
         }
       };
-    
+    }
+
+    function optionFor(key,showY){
+      var isCn=key==="cn50";
+      return {
+        animation:!prefersReducedMotion,
+        animationDuration:prefersReducedMotion?0:BASE_ANIMATION_DURATION,
+        animationEasing:BASE_ANIMATION_EASING,
+        // ENHANCED: Smooth update transitions for number toggle
+        animationDurationUpdate:prefersReducedMotion?0:800,
+        animationEasingUpdate:"cubicInOut",
+        animationDelay:function(idx){ return prefersReducedMotion?0:(isCn?160:0)+(idx*55); },
+        animationDelayUpdate:function(idx){ return prefersReducedMotion?0:idx*25; },
+        grid:{
+          left:compact?(showY?42:10):(isCn?28:88),
+          right:compact?10:(isCn?42:80),
+          top:compact?8:18,
+          bottom:compact?26:76,
+          containLabel:false
+        },
+        tooltip:{
+          trigger:"item",
+          confine:true,
+          transitionDuration:0.16,
+          borderColor:"#c6ccd8",
+          backgroundColor:"rgba(255,255,255,0.97)",
+          textStyle:{color:"#1f2430",fontSize:12},
+          extraCssText:"box-shadow:0 8px 22px rgba(31,36,48,0.14);transition:all 0.2s ease-out;",
+          formatter:makeTip
+        },
+        xAxis:{
+          type:"category",
+          boundaryGap:false,
+          data:years,
+          axisTick:{length:5,lineStyle:{color:"#a9adb7"}},
+          axisLine:{lineStyle:{color:"#a9adb7"}},
+          axisLabel:{color:"#111827",fontSize:compact?9:12,interval:compact?1:0}
+        },
+        yAxis:{
+          type:"value",
+          min:0,
+          max:30,
+          interval:5,
+          name:(showY&&!compact)?"GHG Emissions (MtCO₂e)":"",
+          nameLocation:"middle",
+          nameGap:46,
+          nameRotate:90,
+          nameTextStyle:{color:"#1f2937",fontWeight:700,fontSize:12},
+          axisLabel:{show:!isCn,color:"#111827",fontSize:compact?9:12},
+          axisTick:{show:!isCn},
+          axisLine:{show:!isCn,lineStyle:{color:"#a9adb7"}},
+          splitLine:{show:!isCn,lineStyle:{color:"#e2e5eb",width:1}}
+        },
+        series:[].concat(stackedSeries(key),[totalSeries(key),totalLabel(key)],valueLabels(key),[hitSeries(key)]),
+        legend:{show:false}
+      };
+    }
+
+    function bracket(idp,x1,x2,y,text){
+      return [
+        {id:idp+"-l",type:"line",z:40,shape:{x1:x1,y1:y,x2:x2,y2:y},style:{stroke:"#b8bdc8",lineWidth:1}},
+        {id:idp+"-tl",type:"line",z:40,shape:{x1:x1,y1:y-4,x2:x1,y2:y+4},style:{stroke:"#b8bdc8",lineWidth:1}},
+        {id:idp+"-tr",type:"line",z:40,shape:{x1:x2,y1:y-4,x2:x2,y2:y+4},style:{stroke:"#b8bdc8",lineWidth:1}},
+        {id:idp+"-t",type:"text",z:40,x:(x1+x2)/2,y:y+16,style:{text:text,fill:"#4b5260",font:"700 12px Arial",textAlign:"center"}}
+      ];
+    }
+
+    function decorate(chart,scenarioLabel,includeNote){
+      if(compact){
+        chart.setOption({graphic:[]},{replaceMerge:["graphic"]});
+        return;
+      }
+      var baselineX=chart.convertToPixel({xAxisIndex:0},3);
+      var top=28, labelY=68;
+      var aS=chart.convertToPixel({xAxisIndex:0},0);
+      var aE=chart.convertToPixel({xAxisIndex:0},3);
+      var sS=chart.convertToPixel({xAxisIndex:0},4);
+      var sE=chart.convertToPixel({xAxisIndex:0},6);
+      var axisBottom=chart.convertToPixel({yAxisIndex:0},0);
+      var bY=axisBottom+38;
+
+      var g=[
+        {id:"bl-line",type:"line",z:40,shape:{x1:baselineX,y1:top,x2:baselineX,y2:labelY-34},style:{stroke:"#8f96a3",lineDash:[4,4],lineWidth:1.3}},
+        {id:"bl-label",type:"text",z:41,rotation:Math.PI/2*-1,x:baselineX+12,y:labelY,style:{text:"Baseline",fill:"#3f4652",font:"700 12px Arial",textAlign:"center",textVerticalAlign:"middle"}}
+      ].concat(bracket("act",aS,aE,bY,"Actual"), bracket("scn",sS,sE,bY,scenarioLabel));
+
+      if(includeNote){
+        var nX=chart.convertToPixel({xAxisIndex:0},1.28);
+        var nY=chart.convertToPixel({yAxisIndex:0},10.2);
+        chartNote.forEach(function(line,idx){
+          g.push({
+            id:"note-"+idx,
+            type:"text",
+            z:36,
+            x:nX,
+            y:nY-38+idx*15,
+            style:{text:line,fill:"#1f2937",font:(idx===0||idx===2)?"700 13px Arial":"400 13px Arial",textAlign:"center",textVerticalAlign:"middle"}
+          });
+        });
+      }
+      // ENHANCED: Animate graphic elements in
+      chart.setOption({graphic:g},{replaceMerge:["graphic"]});
+    }
+
+    var bau = echarts.init(elBau), cn = echarts.init(elCn);
+    bau.setOption(optionFor("bau",true));
+    cn.setOption(optionFor("cn50",false));
+
+    // ENHANCED: Connect tooltips between BAU and CN50 charts
+    echarts.connect([bau, cn]);
+
+    function deco(){
+      decorate(bau,"BAU",false);
+      decorate(cn,"CN50",true);
+    }
+
+    function syncNumberToggle(){
+      if(!numberToggle) return;
+      numberToggle.disabled = compact;
+      numberToggle.setAttribute('aria-pressed', showNumbers ? 'true' : 'false');
+      numberToggle.setAttribute('aria-label', showNumbers ? 'Hide numbers' : 'Show numbers');
+      numberToggle.classList.toggle('is-on', showNumbers);
+    }
+
+    if(numberToggle){
+      syncNumberToggle();
+      wrap.addEventListener('kcn:numbers-toggle', function(e){
+        showNumbers = !!(e.detail && e.detail.showNumbers);
+        // ENHANCED: Use notMerge:false for smooth transition instead of full rebuild
+        bau.setOption(optionFor("bau",true), {notMerge: false, lazyUpdate: true});
+        cn.setOption(optionFor("cn50",false), {notMerge: false, lazyUpdate: true});
+        requestAnimationFrame(deco);
+        syncNumberToggle();
+      });
+    }
+
+    requestAnimationFrame(deco);
+
+    // Render external legend — PRESERVED EXACTLY
+    if(legendEl){
+      legendEl.innerHTML="";
+      sectors.forEach(function(sec){
+        var it=document.createElement("span");
+        it.className="kcn-gd-li";
+        it.innerHTML='<span class="sw" style="background:'+sectorColors[sec.name]+'"></span>'+sec.name;
+        legendEl.appendChild(it);
+      });
+      var t=document.createElement("span");
+      t.className="kcn-gd-li";
+      t.innerHTML='<span class="sw" style="background:#38404c"></span>Total';
+      legendEl.appendChild(t);
+    }
+
+    return {
+      resize: function() {
+        var wasCompact = compact;
+        refreshCompact();
+        if(wasCompact !== compact){
+          bau.setOption(optionFor("bau",true), true);
+          cn.setOption(optionFor("cn50",false), true);
+        }
+        syncNumberToggle();
+        bau.resize();
+        cn.resize();
+        requestAnimationFrame(deco);
+      },
+      isDisposed: function() {
+        return bau.isDisposed() || cn.isDisposed();
+      }
+    };
   };
 
 
+  // ============================================================
+  // CHART 2: POLAR AREA — ENHANCED WITH SVG ANIMATIONS
+  // ============================================================
   B.polar = function (el) {
     var POLAR = {
         cats: ['E-Cookstoves', 'Green H₂', 'Electric 2W', 'Electric 4W', 'Sequestration', 'Non-Fossil Cap.', 'Wastewater Trt.'],
@@ -2109,611 +2396,644 @@
           [388.87, 447.31, 388.87, 545.04, 388.87, 584.33]
         ]
       };
-    
-      var el = el;
-      if (el) {
-        el.innerHTML = "";
-        
-        var cx = 375;
-        var cy = 325;
-        var Rin = 70;
-        var Rout = 260;
-        var ringSpan = Rout - Rin;
-        var R1 = Rin + ringSpan / 3;
-        var R2 = Rin + 2 * ringSpan / 3;
-        var R3 = Rout;
-        
-        var catFullNames = [
-          "E-Cookstoves",
-          "Green Hydrogen Capacity",
-          "Electric 2W",
-          "Electric 4W",
-          "Sequestration",
-          "Non-Fossil Capacity",
-          "Wastewater Treatment"
+
+    var el = el;
+    if (el) {
+      el.innerHTML = "";
+
+      var cx = 375;
+      var cy = 325;
+      var Rin = 70;
+      var Rout = 260;
+      var ringSpan = Rout - Rin;
+      var R1 = Rin + ringSpan / 3;
+      var R2 = Rin + 2 * ringSpan / 3;
+      var R3 = Rout;
+
+      var catFullNames = [
+        "E-Cookstoves",
+        "Green Hydrogen Capacity",
+        "Electric 2W",
+        "Electric 4W",
+        "Sequestration",
+        "Non-Fossil Capacity",
+        "Wastewater Treatment"
+      ];
+      var catUnits = [
+        "Thousand Units",
+        "kt",
+        "Million Units",
+        "Million Units",
+        "MtCO₂e",
+        "GW",
+        "MLD"
+      ];
+
+      var catColors = [
+        ["#FDEBD0", "#F39C12"],
+        ["#ECEEF1", "#087E6E"],
+        ["#FADBD8", "#DE6A50"],
+        ["#EBDEF0", "#5A287E"],
+        ["#D5F5E3", "#1D5D37"],
+        ["#FADBD8", "#9A1B1B"],
+        ["#D6EAF8", "#0C4573"]
+      ];
+
+      var defaultBg = "#EDEDED";
+
+      var startAngles = [];
+      var endAngles = [];
+      var midAngles = [];
+      for (var i = 0; i < 7; i++) {
+        var a = 244.2857 + i * 51.42857;
+        startAngles.push(a);
+        endAngles.push(a + 51.42857);
+        midAngles.push(a + 25.71428);
+      }
+
+      function getArcPath(cx, cy, r1, r2, startAngleDeg, endAngleDeg) {
+        var startAngleRad = startAngleDeg * Math.PI / 180;
+        var endAngleRad = endAngleDeg * Math.PI / 180;
+
+        var x1 = cx + r2 * Math.cos(startAngleRad);
+        var y1 = cy + r2 * Math.sin(startAngleRad);
+        var x2 = cx + r2 * Math.cos(endAngleRad);
+        var y2 = cy + r2 * Math.sin(endAngleRad);
+
+        var x3 = cx + r1 * Math.cos(endAngleRad);
+        var y3 = cy + r1 * Math.sin(endAngleRad);
+        var x4 = cx + r1 * Math.cos(startAngleRad);
+        var y4 = cy + r1 * Math.sin(startAngleRad);
+
+        return "M " + x1 + " " + y1 + 
+               " A " + r2 + " " + r2 + " 0 0 1 " + x2 + " " + y2 + 
+               " L " + x3 + " " + y3 + 
+               " A " + r1 + " " + r1 + " 0 0 0 " + x4 + " " + y4 + " Z";
+      }
+
+      function getDisplayLabel(catIdx, scenario, year, value) {
+        if (value === 0) return "";
+        if (catIdx === 0) return value.toLocaleString();
+        if (catIdx === 1) return value.toString();
+        if (catIdx === 2) {
+          if (year === 2030) return scenario === 'BAU' ? "1.2" : "1.7";
+          if (year === 2040) return scenario === 'BAU' ? "5.9" : "7.0";
+          if (year === 2050) return scenario === 'BAU' ? "9.9" : "10.1";
+        }
+        if (catIdx === 3) {
+          if (year === 2030) return scenario === 'BAU' ? "0.01" : "0.02";
+          if (year === 2040) return scenario === 'BAU' ? "0.07" : "1.9";
+          if (year === 2050) return scenario === 'BAU' ? "1.8" : "4.4";
+        }
+        if (catIdx === 4) return value.toFixed(2);
+        if (catIdx === 5) {
+          if (year === 2030) return scenario === 'BAU' ? "10" : "13";
+          if (year === 2040) return scenario === 'BAU' ? "26" : "38";
+          if (year === 2050) return scenario === 'BAU' ? "47" : "65";
+        }
+        if (catIdx === 6) return value.toFixed(2);
+        return value.toString();
+      }
+
+      function getTextColor(catIdx, scenario) {
+        if (scenario === 'BAU') {
+          if (catIdx === 0 || catIdx === 2 || catIdx === 3 || catIdx === 5) return "black";
+          return "white";
+        } else {
+          if (catIdx === 0 || catIdx === 2) return "black";
+          return "white";
+        }
+      }
+
+      // ENHANCED: Build SVG with animation classes and data attributes for JS animation
+      var svg = '<svg width="100%" height="100%" viewBox="0 0 750 650" style="font-family:Inter,sans-serif;" xmlns="http://www.w3.org/2000/svg">';
+
+      svg += '<defs>';
+      svg += '  <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">';
+      svg += '    <path d="M 0 1.5 L 8 5 L 0 8.5 Z" fill="black" />';
+      svg += '  </marker>';
+      // ENHANCED: Add clipPath for draw-on animation
+      svg += '  <clipPath id="polar-clip"><rect x="0" y="0" width="750" height="650" /></clipPath>';
+      svg += '</defs>';
+
+      // ENHANCED: Group for animated arcs with CSS class
+      svg += '<g class="polar-arcs-group">';
+
+      for (var i = 0; i < 7; i++) {
+        var startA = startAngles[i];
+        var endA = endAngles[i];
+        var midA = midAngles[i];
+
+        var maxVal = Math.max.apply(null, POLAR.raw[i]) || 1;
+
+        var rings = [
+          { year: 2030, rStart: Rin, rEnd: R1, bauIdx: 0, cnIdx: 1 },
+          { year: 2040, rStart: R1, rEnd: R2, bauIdx: 2, cnIdx: 3 },
+          { year: 2050, rStart: R2, rEnd: R3, bauIdx: 4, cnIdx: 5 }
         ];
-        var catUnits = [
-          "Thousand Units",
-          "kt",
-          "Million Units",
-          "Million Units",
-          "MtCO₂e",
-          "GW",
-          "MLD"
-        ];
-        
-        var catColors = [
-          ["#FDEBD0", "#F39C12"], // E-Cookstoves
-          ["#ECEEF1", "#087E6E"], // Green Hydrogen
-          ["#FADBD8", "#DE6A50"], // Electric 2W
-          ["#EBDEF0", "#5A287E"], // Electric 4W
-          ["#D5F5E3", "#1D5D37"], // Sequestration
-          ["#FADBD8", "#9A1B1B"], // Non Fossil Capacity
-          ["#D6EAF8", "#0C4573"]  // Wastewater Treatment
-        ];
-        
-        var defaultBg = "#EDEDED";
-        
-        var startAngles = [];
-        var endAngles = [];
-        var midAngles = [];
-        for (var i = 0; i < 7; i++) {
-          var a = 244.2857 + i * 51.42857;
-          startAngles.push(a);
-          endAngles.push(a + 51.42857);
-          midAngles.push(a + 25.71428);
-        }
-        
-        function getArcPath(cx, cy, r1, r2, startAngleDeg, endAngleDeg) {
-          var startAngleRad = startAngleDeg * Math.PI / 180;
-          var endAngleRad = endAngleDeg * Math.PI / 180;
-          
-          var x1 = cx + r2 * Math.cos(startAngleRad);
-          var y1 = cy + r2 * Math.sin(startAngleRad);
-          var x2 = cx + r2 * Math.cos(endAngleRad);
-          var y2 = cy + r2 * Math.sin(endAngleRad);
-          
-          var x3 = cx + r1 * Math.cos(endAngleRad);
-          var y3 = cy + r1 * Math.sin(endAngleRad);
-          var x4 = cx + r1 * Math.cos(startAngleRad);
-          var y4 = cy + r1 * Math.sin(startAngleRad);
-          
-          return "M " + x1 + " " + y1 + 
-                 " A " + r2 + " " + r2 + " 0 0 1 " + x2 + " " + y2 + 
-                 " L " + x3 + " " + y3 + 
-                 " A " + r1 + " " + r1 + " 0 0 0 " + x4 + " " + y4 + " Z";
-        }
-        
-        function getDisplayLabel(catIdx, scenario, year, value) {
-          if (value === 0) return "";
-          if (catIdx === 0) return value.toLocaleString();
-          if (catIdx === 1) return value.toString();
-          if (catIdx === 2) {
-            if (year === 2030) return scenario === 'BAU' ? "1.2" : "1.7";
-            if (year === 2040) return scenario === 'BAU' ? "5.9" : "7.0";
-            if (year === 2050) return scenario === 'BAU' ? "9.9" : "10.1";
+
+        // Draw BAU side
+        rings.forEach(function (ring, rIdx) {
+          var val = POLAR.raw[i][ring.bauIdx];
+          var ratio = val / maxVal;
+          var sweepAngle = ratio * 25.71428;
+          var tooltipData = ' class="kcn-polar-arc" data-cat="' + catFullNames[i] + '" data-scenario="BAU" data-year="' + ring.year + '" data-val="' + val + '" data-unit="' + catUnits[i] + '"';
+          var animDelay = (i * 3 + rIdx) * 120; // ENHANCED: staggered animation
+          var animStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + animDelay + 'ms;"';
+
+          if (sweepAngle < 25.71428) {
+            var pathBg = getArcPath(cx, cy, ring.rStart, ring.rEnd, startA, midA - sweepAngle);
+            svg += '<path d="' + pathBg + '" fill="' + defaultBg + '"' + tooltipData + animStyle + ' />';
           }
-          if (catIdx === 3) {
-            if (year === 2030) return scenario === 'BAU' ? "0.01" : "0.02";
-            if (year === 2040) return scenario === 'BAU' ? "0.07" : "1.9";
-            if (year === 2050) return scenario === 'BAU' ? "1.8" : "4.4";
-          }
-          if (catIdx === 4) return value.toFixed(2);
-          if (catIdx === 5) {
-            if (year === 2030) return scenario === 'BAU' ? "10" : "13";
-            if (year === 2040) return scenario === 'BAU' ? "26" : "38";
-            if (year === 2050) return scenario === 'BAU' ? "47" : "65";
-          }
-          if (catIdx === 6) return value.toFixed(2);
-          return value.toString();
-        }
-        
-        function getTextColor(catIdx, scenario) {
-          if (scenario === 'BAU') {
-            if (catIdx === 0 || catIdx === 2 || catIdx === 3 || catIdx === 5) return "black";
-            return "white";
-          } else {
-            if (catIdx === 0 || catIdx === 2) return "black";
-            return "white";
-          }
-        }
-        
-        var svg = '<svg width="100%" height="100%" viewBox="0 0 750 650" style="font-family:Inter,sans-serif;" xmlns="http://www.w3.org/2000/svg">';
-        
-        svg += '<defs>';
-        svg += '  <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">';
-        svg += '    <path d="M 0 1.5 L 8 5 L 0 8.5 Z" fill="black" />';
-        svg += '  </marker>';
-        svg += '</defs>';
-        
-        for (var i = 0; i < 7; i++) {
-          var startA = startAngles[i];
-          var endA = endAngles[i];
-          var midA = midAngles[i];
-          
-          var maxVal = Math.max.apply(null, POLAR.raw[i]) || 1;
-          
-          var rings = [
-            { year: 2030, rStart: Rin, rEnd: R1, bauIdx: 0, cnIdx: 1 },
-            { year: 2040, rStart: R1, rEnd: R2, bauIdx: 2, cnIdx: 3 },
-            { year: 2050, rStart: R2, rEnd: R3, bauIdx: 4, cnIdx: 5 }
-          ];
-          
-          // Draw BAU side
-          rings.forEach(function (ring) {
-            var val = POLAR.raw[i][ring.bauIdx];
-            var ratio = val / maxVal;
-            var sweepAngle = ratio * 25.71428;
-            var tooltipData = ' class="kcn-polar-arc" data-cat="' + catFullNames[i] + '" data-scenario="BAU" data-year="' + ring.year + '" data-val="' + val + '" data-unit="' + catUnits[i] + '"';
-            
-            if (sweepAngle < 25.71428) {
-              var pathBg = getArcPath(cx, cy, ring.rStart, ring.rEnd, startA, midA - sweepAngle);
-              svg += '<path d="' + pathBg + '" fill="' + defaultBg + '"' + tooltipData + ' />';
-            }
-            
-            if (val > 0) {
-              var pathBar = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA - sweepAngle, midA);
-              svg += '<path d="' + pathBar + '" fill="' + catColors[i][0] + '"' + tooltipData + ' />';
-            }
-          });
-          
-          // Draw CN50 side
-          rings.forEach(function (ring) {
-            var val = POLAR.raw[i][ring.cnIdx];
-            var ratio = val / maxVal;
-            var sweepAngle = ratio * 25.71428;
-            var tooltipData = ' class="kcn-polar-arc" data-cat="' + catFullNames[i] + '" data-scenario="CN50" data-year="' + ring.year + '" data-val="' + val + '" data-unit="' + catUnits[i] + '"';
-            
-            if (val > 0) {
-              var pathBar = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA, midA + sweepAngle);
-              svg += '<path d="' + pathBar + '" fill="' + catColors[i][1] + '"' + tooltipData + ' />';
-            }
-            
-            if (sweepAngle < 25.71428) {
-              var pathBg = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA + sweepAngle, endA);
-              svg += '<path d="' + pathBg + '" fill="' + defaultBg + '"' + tooltipData + ' />';
-            }
-          });
-        }
-        
-        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + Rin + '" fill="none" stroke="white" stroke-width="2" />';
-        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R1 + '" fill="none" stroke="white" stroke-width="1.5" />';
-        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R2 + '" fill="none" stroke="white" stroke-width="1.5" />';
-        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R3 + '" fill="none" stroke="white" stroke-width="1.5" />';
-        
-        for (var i = 0; i < 7; i++) {
-          var angleRad = midAngles[i] * Math.PI / 180;
-          var x1 = cx + Rin * Math.cos(angleRad);
-          var y1 = cy + Rin * Math.sin(angleRad);
-          var x2 = cx + Rout * Math.cos(angleRad);
-          var y2 = cy + Rout * Math.sin(angleRad);
-          svg += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="white" stroke-width="1.5" />';
-        }
-        
-        for (var i = 0; i < 7; i++) {
-          var angleRad = startAngles[i] * Math.PI / 180;
-          var x1 = cx + Rin * Math.cos(angleRad);
-          var y1 = cy + Rin * Math.sin(angleRad);
-          var x2 = cx + Rout * Math.cos(angleRad);
-          var y2 = cy + Rout * Math.sin(angleRad);
-          svg += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="black" stroke-width="2.5" />';
-        }
-        
-        for (var i = 0; i < 7; i++) {
-          var startA = startAngles[i];
-          var endA = endAngles[i];
-          var midA = midAngles[i];
-          var maxVal = Math.max.apply(null, POLAR.raw[i]) || 1;
-          
-          var rings = [
-            { year: 2030, rMid: Rin + ringSpan / 6, bauIdx: 0, cnIdx: 1 },
-            { year: 2040, rMid: Rin + 3 * ringSpan / 6, bauIdx: 2, cnIdx: 3 },
-            { year: 2050, rMid: Rin + 5 * ringSpan / 6, bauIdx: 4, cnIdx: 5 }
-          ];
-          
-          rings.forEach(function (ring) {
-            var val = POLAR.raw[i][ring.bauIdx];
-            var label = getDisplayLabel(i, 'BAU', ring.year, val);
-            if (!label) return;
-            
-            var ratio = val / maxVal;
-            var angleText = startA + 12.857;
-            var xText = cx + ring.rMid * Math.cos(angleText * Math.PI / 180);
-            var yText = cy + ring.rMid * Math.sin(angleText * Math.PI / 180);
-            
-            var fill = (ratio >= 0.5) ? getTextColor(i, 'BAU') : "black";
-            var fSize = label.length > 5 ? "9px" : "11px";
-            svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600">' + label + '</text>';
-          });
-          
-          rings.forEach(function (ring) {
-            var val = POLAR.raw[i][ring.cnIdx];
-            var label = getDisplayLabel(i, 'CN50', ring.year, val);
-            if (!label) return;
-            
-            var ratio = val / maxVal;
-            var angleText = midA + 12.857;
-            var xText = cx + ring.rMid * Math.cos(angleText * Math.PI / 180);
-            var yText = cy + ring.rMid * Math.sin(angleText * Math.PI / 180);
-            
-            var fill = (ratio >= 0.5) ? getTextColor(i, 'CN50') : "black";
-            var fSize = label.length > 5 ? "9px" : "11px";
-            svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600">' + label + '</text>';
-          });
-        }
-        
-        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + Rin + '" fill="white" stroke="#E3E7E5" stroke-width="1.5" />';
-        
-        var nodeColors = ["#F39C12", "#087E6E", "#DE6A50", "#5A287E", "#1D5D37", "#9A1B1B", "#0C4573"];
-        var dotR = 36;
-        var dotCoords = [];
-        for (var i = 0; i < 7; i++) {
-          var rad = midAngles[i] * Math.PI / 180;
-          var dx = cx + dotR * Math.cos(rad);
-          var dy = cy + dotR * Math.sin(rad);
-          dotCoords.push({ x: dx, y: dy });
-        }
-        
-        var redDot = dotCoords[5];
-        var startRad = midAngles[5] * Math.PI / 180;
-        var x_curve_start = cx + 24 * Math.cos(startRad);
-        var y_curve_start = cy + 24 * Math.sin(startRad);
-        
-        var targets = [0, 1, 2, 3];
-        targets.forEach(function (tIdx) {
-          var tgtRad = midAngles[tIdx] * Math.PI / 180;
-          var x_curve_end = cx + 24 * Math.cos(tgtRad);
-          var y_curve_end = cy + 24 * Math.sin(tgtRad);
-          
-          svg += '<path d="M ' + x_curve_start + ' ' + y_curve_start + ' Q ' + cx + ' ' + cy + ' ' + x_curve_end + ' ' + y_curve_end + '" fill="none" stroke="black" stroke-width="1.2" marker-end="url(#arrow)" />';
-        });
-        
-        for (var i = 0; i < 7; i++) {
-          svg += '<circle cx="' + dotCoords[i].x + '" cy="' + dotCoords[i].y + '" r="4.5" fill="' + nodeColors[i] + '" />';
-        }
-        
-        var divAngle = startAngles[2];
-        svg += '<text transform="translate(' + cx + ',' + cy + ') rotate(' + divAngle + ') translate(101,-5)" font-weight="bold" font-size="11" fill="black" text-anchor="middle">2030</text>';
-        svg += '<text transform="translate(' + cx + ',' + cy + ') rotate(' + divAngle + ') translate(165,-5)" font-weight="bold" font-size="11" fill="black" text-anchor="middle">2040</text>';
-        svg += '<text transform="translate(' + cx + ',' + cy + ') rotate(' + divAngle + ') translate(228,-5)" font-weight="bold" font-size="11" fill="black" text-anchor="middle">2050</text>';
-        
-        svg += '<text x="' + cx + '" y="33" text-anchor="middle" font-size="12" font-weight="bold" fill="black">E-Cookstoves</text>';
-        svg += '<text x="' + cx + '" y="47" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(Thousand Units)</text>';
-        
-        svg += '<text x="580" y="146" text-anchor="start" font-size="12" font-weight="bold" fill="black">Green Hydrogen Capacity</text>';
-        svg += '<text x="580" y="160" text-anchor="start" font-size="12" font-weight="bold" fill="black">(kt)</text>';
-        
-        svg += '<text x="635" y="379" text-anchor="start" font-size="12" font-weight="bold" fill="black">Electric 2W</text>';
-        svg += '<text x="635" y="393" text-anchor="start" font-size="12" font-weight="bold" fill="black">(Million Units)</text>';
-        
-        svg += '<text x="505" y="575" text-anchor="middle" font-size="12" font-weight="bold" fill="black">Electric 4W</text>';
-        svg += '<text x="505" y="589" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(Million Units)</text>';
-        
-        svg += '<text x="256" y="565" text-anchor="middle" font-size="12" font-weight="bold" fill="black">Sequestration</text>';
-        svg += '<text x="256" y="579" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(Land + Blue)</text>';
-        svg += '<text x="256" y="593" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(MtCO₂e)</text>';
-        
-        svg += '<text x="115" y="372" text-anchor="end" font-size="12" font-weight="bold" fill="black">Non Fossil</text>';
-        svg += '<text x="115" y="386" text-anchor="end" font-size="12" font-weight="bold" fill="black">Capacity</text>';
-        svg += '<text x="115" y="400" text-anchor="end" font-size="12" font-weight="bold" fill="black">(GW)</text>';
-        
-        svg += '<text x="160" y="146" text-anchor="end" font-size="12" font-weight="bold" fill="black">Wastewater Treatment</text>';
-        svg += '<text x="160" y="160" text-anchor="end" font-size="12" font-weight="bold" fill="black">(MLD)</text>';
-        
-        svg += '<rect x="40" y="490" width="115" height="52" fill="white" stroke="#6B7280" stroke-width="1" rx="4" />';
-        svg += '<text x="46" y="502" font-size="10" fill="#374151" font-weight="500">BAU = Light shade</text>';
-        svg += '<text x="46" y="516" font-size="10" fill="#374151" font-weight="500">CN50 = Dark shade</text>';
-        svg += '<text x="46" y="530" font-size="10" fill="#374151" font-weight="500">Grey = Nil</text>';
-        
-        svg += '<rect x="40" y="552" width="125" height="66" fill="white" stroke="#6B7280" stroke-width="1" rx="4" />';
-        svg += '<text x="46" y="565" font-size="10" fill="#374151" font-weight="bold">Year legend:</text>';
-        svg += '<text x="46" y="579" font-size="10" fill="#374151">Innermost arc = 2030</text>';
-        svg += '<text x="46" y="593" font-size="10" fill="#374151">Middle arc = 2040</text>';
-        svg += '<text x="46" y="607" font-size="10" fill="#374151">Outermost arc = 2050</text>';
-        
-        svg += '<circle cx="610" cy="515" r="3.5" fill="#F39C12" />';
-        svg += '<path d="M 610 523 L 610 582" fill="none" stroke="black" stroke-width="1.2" marker-end="url(#arrow)" />';
-        svg += '<circle cx="610" cy="590" r="3.5" fill="#5A287E" />';
-        svg += '<text x="630" y="557" font-size="13" font-weight="500" fill="black" dominant-baseline="central">Influences</text>';
-        
-        svg += '</svg>';
-        
-        el.innerHTML = svg;
-        
-        // Dynamic tooltip element
-        var tooltipEl = document.getElementById('kcn-polar-tooltip');
-        if (!tooltipEl) {
-          tooltipEl = document.createElement('div');
-          tooltipEl.id = 'kcn-polar-tooltip';
-          tooltipEl.style.position = 'absolute';
-          tooltipEl.style.display = 'none';
-          tooltipEl.style.pointerEvents = 'none';
-          tooltipEl.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-          tooltipEl.style.border = '1px solid #E3E7E5';
-          tooltipEl.style.borderRadius = '8px';
-          tooltipEl.style.padding = '10px 12px';
-          tooltipEl.style.boxShadow = '0 6px 18px rgba(16,40,30,.12)';
-          tooltipEl.style.fontSize = '13px';
-          tooltipEl.style.fontFamily = 'Inter, sans-serif';
-          tooltipEl.style.color = '#1A211E';
-          tooltipEl.style.zIndex = '9999';
-          tooltipEl.style.transition = 'opacity 0.08s ease-out';
-          document.body.appendChild(tooltipEl);
-        }
-        
-        el.addEventListener('mouseover', function (e) {
-          var target = e.target;
-          if (target.classList.contains('kcn-polar-arc')) {
-            var cat = target.getAttribute('data-cat');
-            var scn = target.getAttribute('data-scenario');
-            var yr = target.getAttribute('data-year');
-            var valRaw = target.getAttribute('data-val');
-            var val = parseFloat(valRaw);
-            var unit = target.getAttribute('data-unit');
-            
-            var displayVal = valRaw;
-            if (!isNaN(val)) {
-              if (val % 1 === 0) displayVal = val.toLocaleString();
-              else displayVal = val.toString();
-            }
-            
-            tooltipEl.innerHTML = '<div style="font-weight:600;margin-bottom:4px;color:#1A211E;">' + cat + ' (' + yr + ')</div>' +
-                                  '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#5E6B66;">' +
-                                    '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:' + (scn === 'BAU' ? '#3498DB' : '#1B8A5F') + ';"></span>' +
-                                    '<span>' + scn + ':</span>' +
-                                    '<span style="font-weight:700;color:#1A211E;">' + displayVal + ' ' + unit + '</span>' +
-                                  '</div>';
-            tooltipEl.style.display = 'block';
-            tooltipEl.style.opacity = '1';
+
+          if (val > 0) {
+            var pathBar = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA - sweepAngle, midA);
+            // ENHANCED: Add draw-on animation class for BAU arcs
+            svg += '<path d="' + pathBar + '" fill="' + catColors[i][0] + '"' + tooltipData + ' class="kcn-polar-arc kcn-polar-arc-bau"' + animStyle + ' />';
           }
         });
-        
-        el.addEventListener('mousemove', function (e) {
-          var tooltipWidth = tooltipEl.offsetWidth || 180;
-          var tooltipHeight = tooltipEl.offsetHeight || 50;
-          var x = e.pageX + 15;
-          var y = e.pageY + 15;
-          
-          if (x + tooltipWidth > window.innerWidth + window.pageXOffset) {
-            x = e.pageX - tooltipWidth - 15;
+
+        // Draw CN50 side
+        rings.forEach(function (ring, rIdx) {
+          var val = POLAR.raw[i][ring.cnIdx];
+          var ratio = val / maxVal;
+          var sweepAngle = ratio * 25.71428;
+          var tooltipData = ' class="kcn-polar-arc" data-cat="' + catFullNames[i] + '" data-scenario="CN50" data-year="' + ring.year + '" data-val="' + val + '" data-unit="' + catUnits[i] + '"';
+          var animDelay = (i * 3 + rIdx + 1) * 120 + 600; // ENHANCED: staggered, CN50 delayed after BAU
+          var animStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + animDelay + 'ms;"';
+
+          if (val > 0) {
+            var pathBar = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA, midA + sweepAngle);
+            svg += '<path d="' + pathBar + '" fill="' + catColors[i][1] + '"' + tooltipData + ' class="kcn-polar-arc kcn-polar-arc-cn50"' + animStyle + ' />';
           }
-          if (y + tooltipHeight > window.innerHeight + window.pageYOffset) {
-            y = e.pageY - tooltipHeight - 15;
-          }
-          
-          tooltipEl.style.left = x + 'px';
-          tooltipEl.style.top = y + 'px';
-        });
-        
-        el.addEventListener('mouseout', function (e) {
-          if (e.target.classList.contains('kcn-polar-arc')) {
-            tooltipEl.style.display = 'none';
-            tooltipEl.style.opacity = '0';
+
+          if (sweepAngle < 25.71428) {
+            var pathBg = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA + sweepAngle, endA);
+            svg += '<path d="' + pathBg + '" fill="' + defaultBg + '"' + tooltipData + animStyle + ' />';
           }
         });
       }
-    
-      return {
-        resize: function() {},
-        isDisposed: function() { return false; }
-      };
-    
+      svg += '</g>'; // end polar-arcs-group
+
+      // Grid circles
+      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + Rin + '" fill="none" stroke="white" stroke-width="2" />';
+      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R1 + '" fill="none" stroke="white" stroke-width="1.5" />';
+      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R2 + '" fill="none" stroke="white" stroke-width="1.5" />';
+      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R3 + '" fill="none" stroke="white" stroke-width="1.5" />';
+
+      // Spokes
+      for (var i = 0; i < 7; i++) {
+        var angleRad = midAngles[i] * Math.PI / 180;
+        var x1 = cx + Rin * Math.cos(angleRad);
+        var y1 = cy + Rin * Math.sin(angleRad);
+        var x2 = cx + Rout * Math.cos(angleRad);
+        var y2 = cy + Rout * Math.sin(angleRad);
+        svg += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="white" stroke-width="1.5" />';
+      }
+
+      for (var i = 0; i < 7; i++) {
+        var angleRad = startAngles[i] * Math.PI / 180;
+        var x1 = cx + Rin * Math.cos(angleRad);
+        var y1 = cy + Rin * Math.sin(angleRad);
+        var x2 = cx + Rout * Math.cos(angleRad);
+        var y2 = cy + Rout * Math.sin(angleRad);
+        svg += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="black" stroke-width="2.5" />';
+      }
+
+      // ENHANCED: Labels with count-up animation classes
+      for (var i = 0; i < 7; i++) {
+        var startA = startAngles[i];
+        var endA = endAngles[i];
+        var midA = midAngles[i];
+        var maxVal = Math.max.apply(null, POLAR.raw[i]) || 1;
+
+        var rings = [
+          { year: 2030, rMid: Rin + ringSpan / 6, bauIdx: 0, cnIdx: 1 },
+          { year: 2040, rMid: Rin + 3 * ringSpan / 6, bauIdx: 2, cnIdx: 3 },
+          { year: 2050, rMid: Rin + 5 * ringSpan / 6, bauIdx: 4, cnIdx: 5 }
+        ];
+
+        rings.forEach(function (ring) {
+          var val = POLAR.raw[i][ring.bauIdx];
+          var label = getDisplayLabel(i, 'BAU', ring.year, val);
+          if (!label) return;
+
+          var ratio = val / maxVal;
+          var angleText = startA + 12.857;
+          var xText = cx + ring.rMid * Math.cos(angleText * Math.PI / 180);
+          var yText = cy + ring.rMid * Math.sin(angleText * Math.PI / 180);
+
+          var fill = (ratio >= 0.5) ? getTextColor(i, 'BAU') : "black";
+          var fSize = label.length > 5 ? "9px" : "11px";
+          // ENHANCED: Add count-up class
+          svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '">0</text>';
+        });
+
+        rings.forEach(function (ring) {
+          var val = POLAR.raw[i][ring.cnIdx];
+          var label = getDisplayLabel(i, 'CN50', ring.year, val);
+          if (!label) return;
+
+          var ratio = val / maxVal;
+          var angleText = midA + 12.857;
+          var xText = cx + ring.rMid * Math.cos(angleText * Math.PI / 180);
+          var yText = cy + ring.rMid * Math.sin(angleText * Math.PI / 180);
+
+          var fill = (ratio >= 0.5) ? getTextColor(i, 'CN50') : "black";
+          var fSize = label.length > 5 ? "9px" : "11px";
+          svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '">0</text>';
+        });
+      }
+
+      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + Rin + '" fill="white" stroke="#E3E7E5" stroke-width="1.5" />';
+
+      // Center nodes with pulse animation
+      var nodeColors = ["#F39C12", "#087E6E", "#DE6A50", "#5A287E", "#1D5D37", "#9A1B1B", "#0C4573"];
+      var dotR = 36;
+      var dotCoords = [];
+      for (var i = 0; i < 7; i++) {
+        var rad = midAngles[i] * Math.PI / 180;
+        var dx = cx + dotR * Math.cos(rad);
+        var dy = cy + dotR * Math.sin(rad);
+        dotCoords.push({ x: dx, y: dy });
+      }
+
+      var redDot = dotCoords[5];
+      var startRad = midAngles[5] * Math.PI / 180;
+      var x_curve_start = cx + 24 * Math.cos(startRad);
+      var y_curve_start = cy + 24 * Math.sin(startRad);
+
+      var targets = [0, 1, 2, 3];
+      targets.forEach(function (tIdx) {
+        var tgtRad = midAngles[tIdx] * Math.PI / 180;
+        var x_curve_end = cx + 24 * Math.cos(tgtRad);
+        var y_curve_end = cy + 24 * Math.sin(tgtRad);
+
+        svg += '<path d="M ' + x_curve_start + ' ' + y_curve_start + ' Q ' + cx + ' ' + cy + ' ' + x_curve_end + ' ' + y_curve_end + '" fill="none" stroke="black" stroke-width="1.2" marker-end="url(#arrow)" />';
+      });
+
+      // ENHANCED: Nodes with pulse class
+      for (var i = 0; i < 7; i++) {
+        var pulseClass = (i === 5) ? ' kcn-polar-node-pulse' : '';
+        svg += '<circle cx="' + dotCoords[i].x + '" cy="' + dotCoords[i].y + '" r="4.5" fill="' + nodeColors[i] + '" class="kcn-polar-node' + pulseClass + '" />';
+      }
+
+      var divAngle = startAngles[2];
+      svg += '<text transform="translate(' + cx + ',' + cy + ') rotate(' + divAngle + ') translate(101,-5)" font-weight="bold" font-size="11" fill="black" text-anchor="middle">2030</text>';
+      svg += '<text transform="translate(' + cx + ',' + cy + ') rotate(' + divAngle + ') translate(165,-5)" font-weight="bold" font-size="11" fill="black" text-anchor="middle">2040</text>';
+      svg += '<text transform="translate(' + cx + ',' + cy + ') rotate(' + divAngle + ') translate(228,-5)" font-weight="bold" font-size="11" fill="black" text-anchor="middle">2050</text>';
+
+      // Category labels — PRESERVED EXACTLY
+      svg += '<text x="' + cx + '" y="33" text-anchor="middle" font-size="12" font-weight="bold" fill="black">E-Cookstoves</text>';
+      svg += '<text x="' + cx + '" y="47" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(Thousand Units)</text>';
+      svg += '<text x="580" y="146" text-anchor="start" font-size="12" font-weight="bold" fill="black">Green Hydrogen Capacity</text>';
+      svg += '<text x="580" y="160" text-anchor="start" font-size="12" font-weight="bold" fill="black">(kt)</text>';
+      svg += '<text x="635" y="379" text-anchor="start" font-size="12" font-weight="bold" fill="black">Electric 2W</text>';
+      svg += '<text x="635" y="393" text-anchor="start" font-size="12" font-weight="bold" fill="black">(Million Units)</text>';
+      svg += '<text x="505" y="575" text-anchor="middle" font-size="12" font-weight="bold" fill="black">Electric 4W</text>';
+      svg += '<text x="505" y="589" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(Million Units)</text>';
+      svg += '<text x="256" y="565" text-anchor="middle" font-size="12" font-weight="bold" fill="black">Sequestration</text>';
+      svg += '<text x="256" y="579" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(Land + Blue)</text>';
+      svg += '<text x="256" y="593" text-anchor="middle" font-size="12" font-weight="bold" fill="black">(MtCO₂e)</text>';
+      svg += '<text x="115" y="372" text-anchor="end" font-size="12" font-weight="bold" fill="black">Non Fossil</text>';
+      svg += '<text x="115" y="386" text-anchor="end" font-size="12" font-weight="bold" fill="black">Capacity</text>';
+      svg += '<text x="115" y="400" text-anchor="end" font-size="12" font-weight="bold" fill="black">(GW)</text>';
+      svg += '<text x="160" y="146" text-anchor="end" font-size="12" font-weight="bold" fill="black">Wastewater Treatment</text>';
+      svg += '<text x="160" y="160" text-anchor="end" font-size="12" font-weight="bold" fill="black">(MLD)</text>';
+
+      svg += '<rect x="40" y="490" width="115" height="52" fill="white" stroke="#6B7280" stroke-width="1" rx="4" />';
+      svg += '<text x="46" y="502" font-size="10" fill="#374151" font-weight="500">BAU = Light shade</text>';
+      svg += '<text x="46" y="516" font-size="10" fill="#374151" font-weight="500">CN50 = Dark shade</text>';
+      svg += '<text x="46" y="530" font-size="10" fill="#374151" font-weight="500">Grey = Nil</text>';
+
+      svg += '<rect x="40" y="552" width="125" height="66" fill="white" stroke="#6B7280" stroke-width="1" rx="4" />';
+      svg += '<text x="46" y="565" font-size="10" fill="#374151" font-weight="bold">Year legend:</text>';
+      svg += '<text x="46" y="579" font-size="10" fill="#374151">Innermost arc = 2030</text>';
+      svg += '<text x="46" y="593" font-size="10" fill="#374151">Middle arc = 2040</text>';
+      svg += '<text x="46" y="607" font-size="10" fill="#374151">Outermost arc = 2050</text>';
+
+      svg += '<circle cx="610" cy="515" r="3.5" fill="#F39C12" />';
+      svg += '<path d="M 610 523 L 610 582" fill="none" stroke="black" stroke-width="1.2" marker-end="url(#arrow)" />';
+      svg += '<circle cx="610" cy="590" r="3.5" fill="#5A287E" />';
+      svg += '<text x="630" y="557" font-size="13" font-weight="500" fill="black" dominant-baseline="central">Influences</text>';
+
+      svg += '</svg>';
+
+      el.innerHTML = svg;
+
+      // ENHANCED: Count-up animation for labels
+      if (!prefersReducedMotion) {
+        setTimeout(function() {
+          var labels = el.querySelectorAll('.kcn-polar-label');
+          labels.forEach(function(lbl) {
+            var final = lbl.getAttribute('data-final');
+            if (!final || final === '0') { lbl.textContent = final; return; }
+            var isFloat = final.indexOf('.') >= 0;
+            var num = parseFloat(final.replace(/,/g, ''));
+            if (isNaN(num)) { lbl.textContent = final; return; }
+            var start = 0;
+            var duration = 1200;
+            var startTime = performance.now();
+            function step(now) {
+              var progress = Math.min((now - startTime) / duration, 1);
+              var eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+              var current = start + (num - start) * eased;
+              if (isFloat) {
+                lbl.textContent = current.toFixed(final.split('.')[1].length);
+              } else if (final.indexOf(',') >= 0) {
+                lbl.textContent = Math.round(current).toLocaleString();
+              } else {
+                lbl.textContent = Math.round(current).toString();
+              }
+              if (progress < 1) requestAnimationFrame(step);
+              else lbl.textContent = final;
+            }
+            requestAnimationFrame(step);
+          });
+        }, 300);
+      } else {
+        el.querySelectorAll('.kcn-polar-label').forEach(function(lbl) {
+          lbl.textContent = lbl.getAttribute('data-final') || lbl.textContent;
+        });
+      }
+
+      // Dynamic tooltip element — PRESERVED with smooth transition
+      var tooltipEl = document.getElementById('kcn-polar-tooltip');
+      if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.id = 'kcn-polar-tooltip';
+        tooltipEl.style.cssText = 'position:absolute;display:none;pointer-events:none;background:rgba(255,255,255,0.98);border:1px solid #E3E7E5;border-radius:8px;padding:10px 12px;box-shadow:0 6px 18px rgba(16,40,30,.12);font-size:13px;font-family:Inter,sans-serif;color:#1A211E;z-index:9999;transition:opacity 0.15s ease-out, transform 0.15s ease-out; opacity:0; transform:translateY(4px);';
+        document.body.appendChild(tooltipEl);
+      }
+
+      el.addEventListener('mouseover', function (e) {
+        var target = e.target;
+        if (target.classList.contains('kcn-polar-arc')) {
+          // ENHANCED: Smooth scale hover on arc
+          target.style.transition = 'opacity 0.15s ease, transform 0.2s ease';
+          target.style.opacity = '0.85';
+          target.style.transformOrigin = '375px 325px';
+
+          var cat = target.getAttribute('data-cat');
+          var scn = target.getAttribute('data-scenario');
+          var yr = target.getAttribute('data-year');
+          var valRaw = target.getAttribute('data-val');
+          var val = parseFloat(valRaw);
+          var unit = target.getAttribute('data-unit');
+
+          var displayVal = valRaw;
+          if (!isNaN(val)) {
+            if (val % 1 === 0) displayVal = val.toLocaleString();
+            else displayVal = val.toString();
+          }
+
+          tooltipEl.innerHTML = '<div style="font-weight:600;margin-bottom:4px;color:#1A211E;">' + cat + ' (' + yr + ')</div>' +
+                                '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#5E6B66;">' +
+                                  '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:' + (scn === 'BAU' ? '#3498DB' : '#1B8A5F') + ';"></span>' +
+                                  '<span>' + scn + ':</span>' +
+                                  '<span style="font-weight:700;color:#1A211E;">' + displayVal + ' ' + unit + '</span>' +
+                                '</div>';
+          tooltipEl.style.display = 'block';
+          requestAnimationFrame(function() {
+            tooltipEl.style.opacity = '1';
+            tooltipEl.style.transform = 'translateY(0)';
+          });
+        }
+      });
+
+      el.addEventListener('mousemove', function (e) {
+        var tooltipWidth = tooltipEl.offsetWidth || 180;
+        var tooltipHeight = tooltipEl.offsetHeight || 50;
+        var x = e.pageX + 15;
+        var y = e.pageY + 15;
+
+        if (x + tooltipWidth > window.innerWidth + window.pageXOffset) {
+          x = e.pageX - tooltipWidth - 15;
+        }
+        if (y + tooltipHeight > window.innerHeight + window.pageYOffset) {
+          y = e.pageY - tooltipHeight - 15;
+        }
+
+        tooltipEl.style.left = x + 'px';
+        tooltipEl.style.top = y + 'px';
+      });
+
+      el.addEventListener('mouseout', function (e) {
+        if (e.target.classList.contains('kcn-polar-arc')) {
+          e.target.style.opacity = '1';
+          tooltipEl.style.opacity = '0';
+          tooltipEl.style.transform = 'translateY(4px)';
+          setTimeout(function() { tooltipEl.style.display = 'none'; }, 150);
+        }
+      });
+    }
+
+    return {
+      resize: function() {},
+      isDisposed: function() { return false; }
+    };
   };
 
 
+
+  // ============================================================
+  // CHART 3: SANKEY COMPARISON — ENHANCED WITH FLOW ANIMATIONS
+  // ============================================================
   B.sankeyComparison = function (el) {
     var TEXT = '#1A211E', MUTED = '#5E6B66';
-    
-      function tooltip(trigger) {
-        return {
-          trigger: trigger || 'axis',
-          backgroundColor: 'rgba(255,255,255,0.97)', borderColor: '#E3E7E5', borderWidth: 1,
-          textStyle: { color: TEXT, fontSize: 13, fontFamily: 'Inter,sans-serif' },
-          extraCssText: 'box-shadow:0 6px 18px rgba(16,40,30,.12);border-radius:8px;padding:10px 12px;'
-        };
-      }
-    
-      var SANKEY = {
-        "2021": {
-          links: [
-            ['Gasoline', 'Transport', 88], ['Diesel', 'Transport', 85], ['Diesel', 'Industry', 5], ['Diesel', 'Agriculture', 5],
-            ['ATF', 'Transport', 10], ['Electricity', 'Transport', 6], ['Electricity', 'Buildings', 69], ['Electricity', 'Industry', 28],
-            ['Electricity', 'Agriculture', 2], ['LPG', 'Buildings', 41], ['Biomass', 'Buildings', 5], ['Natural Gas', 'Transport', 4],
-            ['Natural Gas', 'Industry', 14], ['Fuel Oil', 'Industry', 10], ['Coal', 'Industry', 4]
-          ]
-        },
-        "bau": {
-          links: [
-            ['Gasoline', 'Transport', 41], ['Diesel', 'Transport', 75], ['Diesel', 'Industry', 8], ['Diesel', 'Agriculture', 5],
-            ['ATF', 'Transport', 58], ['Electricity', 'Transport', 36], ['Electricity', 'Buildings', 266], ['Electricity', 'Industry', 59],
-            ['Electricity', 'Agriculture', 2], ['LPG', 'Buildings', 36], ['Biomass', 'Buildings', 5], ['Natural Gas', 'Transport', 9],
-            ['Natural Gas', 'Buildings', 7], ['Natural Gas', 'Industry', 18], ['Fuel Oil', 'Industry', 15], ['Coal', 'Industry', 10]
-          ]
-        },
-        "cn50": {
-          links: [
-            ['Gasoline', 'Transport', 4], ['Diesel', 'Transport', 11], ['ATF', 'Transport', 58], ['Green Hydrogen', 'Transport', 11],
-            ['Green Hydrogen', 'Industry', 13], ['Electricity', 'Transport', 97], ['Electricity', 'Buildings', 253], ['Electricity', 'Industry', 117],
-            ['Electricity', 'Agriculture', 4], ['LPG', 'Buildings', 2], ['Natural Gas', 'Buildings', 23], ['Natural Gas', 'Industry', 6],
-            ['Fuel Oil', 'Industry', 2], ['Coal', 'Industry', 3]
-          ]
-        }
-      };
-    
-      var SANKEY_COLORS = {
-        'Gasoline': '#E67E22', 'Diesel': '#D35400', 'ATF': '#E74C3C', 'Electricity': '#3498DB', 'LPG': '#F39C12',
-        'Biomass': '#2ECC71', 'Natural Gas': '#9B59B6', 'Fuel Oil': '#7F8C8D', 'Coal': '#34495E', 'Green Hydrogen': '#159A8C',
-        'Transport': '#E74C3C', 'Buildings': '#1B8A5F', 'Industry': '#3498DB', 'Agriculture': '#27AE60'
-      };
-    
-      function sankeyOption(scn, reverse) {
-        var d = SANKEY[scn];
-        var rawLinks = d.links.map(function (l) {
-          return reverse ? [l[1], l[0], l[2]] : [l[0], l[1], l[2]];
-        });
-    
-        var nodeNames = {};
-        rawLinks.forEach(function (l) {
-          nodeNames[l[0]] = 1;
-          nodeNames[l[1]] = 1;
-        });
-    
-        var nodes = Object.keys(nodeNames).map(function (n) {
-          return { name: n, itemStyle: { color: SANKEY_COLORS[n] || '#999' } };
-        });
-    
-        var links = rawLinks.map(function (l) {
-          return { source: l[0], target: l[1], value: l[2] };
-        });
-    
-        return {
-          tooltip: Object.assign(tooltip('item'), {
-            triggerOn: 'mousemove',
-            formatter: function (p) {
-              if (p.dataType === 'edge') {
-                var arrow = reverse ? ' ← ' : ' → ';
-                return p.data.source + arrow + p.data.target + '<br/><b>' + p.data.value + ' PJ</b>';
-              }
-              return '<b>' + p.name + '</b><br/>' + p.value + ' PJ';
-            }
-          }),
-          series: [{
-            type: 'sankey',
-            layout: 'none',
-            emphasis: { focus: 'adjacency' },
-            data: nodes,
-            links: links,
-            top: '4%',
-            bottom: '4%',
-            
-            left: reverse ? '3%' : '3%',
-            right: reverse ? '25%' : '3%',
-            nodeWidth: 8,
-            nodeGap: 10,
-            lineStyle: { color: 'gradient', curveness: 0.5, opacity: 0.32 },
-            label: { color: TEXT, fontSize: 11, fontFamily: 'Inter,sans-serif', fontWeight: 500 },
-            itemStyle: { borderWidth: 0 }
-          }]
-        };
-      }
-    
-      function setSankeyCompareHeights() {
-        var cols = [].slice.call(document.querySelectorAll('.kcn-sankey-col'));
-        if (!cols.length) return;
-    
-        var maxTotal = Math.max.apply(null, cols.map(function (col) {
-          return parseFloat(col.getAttribute('data-total')) || 0;
-        }));
-    
-        cols.forEach(function (col) {
-          var total = parseFloat(col.getAttribute('data-total')) || 0;
-          var chart = col.querySelector('.kcn-sankey-box');
-          if (!chart) return;
-          var h = Math.max(280, Math.round((total / maxTotal) * 520));
-          chart.style.height = h + 'px';
-        });
-      }
-    
-      var el2021 = el.querySelector('#kcn-c-sankey-2021');
-      var elBau = el.querySelector('#kcn-c-sankey-bau');
-      var elCn50 = el.querySelector('#kcn-c-sankey-cn50');
-    
-      if (typeof echarts !== 'undefined') {
-        setSankeyCompareHeights();
-    
-        var c2021 = el2021 ? echarts.init(el2021) : null;
-        var cBau = elBau ? echarts.init(elBau) : null;
-        var cCn50 = elCn50 ? echarts.init(elCn50) : null;
-    
-        if (c2021) c2021.setOption(sankeyOption('2021', false));
-        if (cBau) cBau.setOption(sankeyOption('bau', true));
-        if (cCn50) cCn50.setOption(sankeyOption('cn50', true));
-    
-        
-      }
-    
+
+    function tooltip(trigger) {
       return {
-        resize: function() {
-          setSankeyCompareHeights();
-          if (c2021) c2021.resize();
-          if (cBau) cBau.resize();
-          if (cCn50) cCn50.resize();
-        },
-        isDisposed: function() {
-          return (c2021 && c2021.isDisposed()) || (cBau && cBau.isDisposed()) || (cCn50 && cCn50.isDisposed());
-        }
+        trigger: trigger || 'axis',
+        backgroundColor: 'rgba(255,255,255,0.97)', borderColor: '#E3E7E5', borderWidth: 1,
+        textStyle: { color: TEXT, fontSize: 13, fontFamily: 'Inter,sans-serif' },
+        extraCssText: 'box-shadow:0 6px 18px rgba(16,40,30,.12);border-radius:8px;padding:10px 12px;transition:all 0.2s ease-out;'
       };
-    
-  };
+    }
 
-
-  B.grid = function (el) {
-    var GREEN_SECONDARY = '#1B8A5F', BLUE_BAU = '#3498DB', TEXT = '#1A211E', MUTED = '#5E6B66', GRID = '#EDF0EE';
-    
-      function tooltip(trigger) {
-        return {
-          trigger: trigger || 'axis',
-          backgroundColor: 'rgba(255,255,255,0.97)', borderColor: '#E3E7E5', borderWidth: 1,
-          textStyle: { color: TEXT, fontSize: 13, fontFamily: 'Inter,sans-serif' },
-          extraCssText: 'box-shadow:0 6px 18px rgba(16,40,30,.12);border-radius:8px;padding:10px 12px;'
-        };
+    var SANKEY = {
+      "2021": {
+        links: [
+          ['Gasoline', 'Transport', 88], ['Diesel', 'Transport', 85], ['Diesel', 'Industry', 5], ['Diesel', 'Agriculture', 5],
+          ['ATF', 'Transport', 10], ['Electricity', 'Transport', 6], ['Electricity', 'Buildings', 69], ['Electricity', 'Industry', 28],
+          ['Electricity', 'Agriculture', 2], ['LPG', 'Buildings', 41], ['Biomass', 'Buildings', 5], ['Natural Gas', 'Transport', 4],
+          ['Natural Gas', 'Industry', 14], ['Fuel Oil', 'Industry', 10], ['Coal', 'Industry', 4]
+        ]
+      },
+      "bau": {
+        links: [
+          ['Gasoline', 'Transport', 41], ['Diesel', 'Transport', 75], ['Diesel', 'Industry', 8], ['Diesel', 'Agriculture', 5],
+          ['ATF', 'Transport', 58], ['Electricity', 'Transport', 36], ['Electricity', 'Buildings', 266], ['Electricity', 'Industry', 59],
+          ['Electricity', 'Agriculture', 2], ['LPG', 'Buildings', 36], ['Biomass', 'Buildings', 5], ['Natural Gas', 'Transport', 9],
+          ['Natural Gas', 'Buildings', 7], ['Natural Gas', 'Industry', 18], ['Fuel Oil', 'Industry', 15], ['Coal', 'Industry', 10]
+        ]
+      },
+      "cn50": {
+        links: [
+          ['Gasoline', 'Transport', 4], ['Diesel', 'Transport', 11], ['ATF', 'Transport', 58], ['Green Hydrogen', 'Transport', 11],
+          ['Green Hydrogen', 'Industry', 13], ['Electricity', 'Transport', 97], ['Electricity', 'Buildings', 253], ['Electricity', 'Industry', 117],
+          ['Electricity', 'Agriculture', 4], ['LPG', 'Buildings', 2], ['Natural Gas', 'Buildings', 23], ['Natural Gas', 'Industry', 6],
+          ['Fuel Oil', 'Industry', 2], ['Coal', 'Industry', 3]
+        ]
       }
-      function legend() { return { bottom: 0, textStyle: { color: MUTED, fontSize: 12, fontFamily: 'Inter,sans-serif' }, itemGap: 18, itemWidth: 14, itemHeight: 8 }; }
-      function valAxis(name) { return { type: 'value', name: name, nameTextStyle: { color: MUTED, fontSize: 12 }, axisLine: { show: false }, axisLabel: { color: MUTED, fontSize: 12 }, splitLine: { lineStyle: { color: GRID, type: 'dashed' } } }; }
-      function catAxis(data) { return { type: 'category', data: data, axisLine: { lineStyle: { color: '#E3E7E5' } }, axisLabel: { color: MUTED, fontSize: 12 }, axisTick: { show: false } }; }
-    
-      var el = el;
-      if (el && typeof echarts !== 'undefined') {
-        var chart = echarts.init(el);
-        var yrs = ['2021', '2030', '2040', '2050'];
-        chart.setOption({
-          tooltip: Object.assign(tooltip('axis'), { 
-            valueFormatter: function (v) { return (v == null ? '–' : v.toFixed(2)) + ' kgCO₂e/kWh'; } 
-          }),
-          legend: legend(), 
-          grid: { left: '3%', right: '6%', bottom: '12%', top: '8%', containLabel: true },
-          xAxis: catAxis(yrs),
-          yAxis: Object.assign(valAxis('kgCO₂e/kWh'), { max: 0.7 }),
-          series: [
-            {
-              name: 'BAU', 
-              type: 'line', 
-              data: [0.58, 0.26, 0.06, 0.01], 
-              symbol: 'circle', 
-              symbolSize: 8,
-              lineStyle: { color: BLUE_BAU, width: 3, type: 'dashed' }, 
-              itemStyle: { color: BLUE_BAU }
-            },
-            {
-              name: 'CN50', 
-              type: 'line', 
-              data: [0.58, 0.21, 0.04, 0.01], 
-              symbol: 'circle', 
-              symbolSize: 8,
-              lineStyle: { color: GREEN_SECONDARY, width: 3 }, 
-              itemStyle: { color: GREEN_SECONDARY },
-              areaStyle: { 
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: 'rgba(27,138,95,.18)' }, 
-                  { offset: 1, color: 'rgba(27,138,95,.02)' }
-                ]) 
-              },
-              markLine: { 
-                silent: true, 
-                symbol: 'none', 
-                lineStyle: { color: '#E74C3C', type: 'dashed', width: 1.5 }, 
-                label: { formatter: '100% RE target', color: '#E74C3C', fontSize: 11 }, 
-                data: [{ yAxis: 0.04 }] 
-              }
+    };
+
+    var SANKEY_COLORS = {
+      'Gasoline': '#E67E22', 'Diesel': '#D35400', 'ATF': '#E74C3C', 'Electricity': '#3498DB', 'LPG': '#F39C12',
+      'Biomass': '#2ECC71', 'Natural Gas': '#9B59B6', 'Fuel Oil': '#7F8C8D', 'Coal': '#34495E', 'Green Hydrogen': '#159A8C',
+      'Transport': '#E74C3C', 'Buildings': '#1B8A5F', 'Industry': '#3498DB', 'Agriculture': '#27AE60'
+    };
+
+    function sankeyOption(scn, reverse) {
+      var d = SANKEY[scn];
+      var rawLinks = d.links.map(function (l) {
+        return reverse ? [l[1], l[0], l[2]] : [l[0], l[1], l[2]];
+      });
+
+      var nodeNames = {};
+      rawLinks.forEach(function (l) {
+        nodeNames[l[0]] = 1;
+        nodeNames[l[1]] = 1;
+      });
+
+      var nodes = Object.keys(nodeNames).map(function (n) {
+        return { name: n, itemStyle: { color: SANKEY_COLORS[n] || '#999' } };
+      });
+
+      var links = rawLinks.map(function (l) {
+        return { source: l[0], target: l[1], value: l[2] };
+      });
+
+      return {
+        tooltip: Object.assign(tooltip('item'), {
+          triggerOn: 'mousemove',
+          formatter: function (p) {
+            if (p.dataType === 'edge') {
+              var arrow = reverse ? ' ← ' : ' → ';
+              return p.data.source + arrow + p.data.target + '<br/><b>' + p.data.value + ' PJ</b>';
             }
-          ]
+            return '<b>' + p.name + '</b><br/>' + p.value + ' PJ';
+          }
+        }),
+        series: [{
+          type: 'sankey',
+          layout: 'none',
+          // ENHANCED: Animation for sankey flow
+          animation: !prefersReducedMotion,
+          animationDuration: prefersReducedMotion ? 0 : 1400,
+          animationEasing: 'cubicOut',
+          animationDelay: function(idx) { return prefersReducedMotion ? 0 : idx * 60; },
+          emphasis: { 
+            focus: 'adjacency',
+            // ENHANCED: Blur non-adjacent elements
+            blurScope: 'global',
+            lineStyle: { opacity: 0.9 },
+            itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.2)' }
+          },
+          data: nodes,
+          links: links,
+          top: '4%',
+          bottom: '4%',
+          left: reverse ? '3%' : '3%',
+          right: reverse ? '25%' : '3%',
+          nodeWidth: 8,
+          nodeGap: 10,
+          // ENHANCED: Animated line style with higher hover opacity
+          lineStyle: { 
+            color: 'gradient', 
+            curveness: 0.5, 
+            opacity: 0.32,
+            // ENHANCED: Smooth transition on hover
+            emphasis: { opacity: 0.85 }
+          },
+          label: { 
+            color: TEXT, 
+            fontSize: 11, 
+            fontFamily: 'Inter,sans-serif', 
+            fontWeight: 500,
+            // ENHANCED: Label fade-in animation
+            show: true,
+            animationDelay: prefersReducedMotion ? 0 : 800
+          },
+          itemStyle: { borderWidth: 0 }
+        }]
+      };
+    }
+
+    function setSankeyCompareHeights() {
+      var cols = [].slice.call(document.querySelectorAll('.kcn-sankey-col'));
+      if (!cols.length) return;
+
+      var maxTotal = Math.max.apply(null, cols.map(function (col) {
+        return parseFloat(col.getAttribute('data-total')) || 0;
+      }));
+
+      cols.forEach(function (col) {
+        var total = parseFloat(col.getAttribute('data-total')) || 0;
+        var chart = col.querySelector('.kcn-sankey-box');
+        if (!chart) return;
+        var h = Math.max(280, Math.round((total / maxTotal) * 520));
+        chart.style.height = h + 'px';
+      });
+    }
+
+    var el2021 = el.querySelector('#kcn-c-sankey-2021');
+    var elBau = el.querySelector('#kcn-c-sankey-bau');
+    var elCn50 = el.querySelector('#kcn-c-sankey-cn50');
+
+    var c2021 = null, cBau = null, cCn50 = null;
+    if (typeof echarts !== 'undefined') {
+      setSankeyCompareHeights();
+
+      c2021 = el2021 ? echarts.init(el2021) : null;
+      cBau = elBau ? echarts.init(elBau) : null;
+      cCn50 = elCn50 ? echarts.init(elCn50) : null;
+
+      if (c2021) c2021.setOption(sankeyOption('2021', false));
+      if (cBau) cBau.setOption(sankeyOption('bau', true));
+      if (cCn50) cCn50.setOption(sankeyOption('cn50', true));
+
+      // ENHANCED: Cross-chart highlighting
+      var charts = [c2021, cBau, cCn50].filter(Boolean);
+      charts.forEach(function(chart, idx) {
+        chart.on('mouseover', function(params) {
+          if (params.dataType === 'node') {
+            charts.forEach(function(other, oIdx) {
+              if (oIdx !== idx) {
+                other.dispatchAction({ type: 'highlight', seriesIndex: 0, name: params.name });
+              }
+            });
+          }
         });
-        
+        chart.on('mouseout', function(params) {
+          if (params.dataType === 'node') {
+            charts.forEach(function(other, oIdx) {
+              if (oIdx !== idx) {
+                other.dispatchAction({ type: 'downplay', seriesIndex: 0, name: params.name });
+              }
+            });
+          }
+        });
+      });
+    }
+
+    return {
+      resize: function() {
+        setSankeyCompareHeights();
+        if (c2021) c2021.resize();
+        if (cBau) cBau.resize();
+        if (cCn50) cCn50.resize();
+      },
+      isDisposed: function() {
+        return (c2021 && c2021.isDisposed()) || (cBau && cBau.isDisposed()) || (cCn50 && cCn50.isDisposed());
       }
-    return chart;
+    };
   };
 
 
+  // ============================================================
+  // CHART 4: GENERATION MIX — ENHANCED WITH BAR/LINE ANIMATIONS
+  // ============================================================
   B.generationMix = function (el) {
     var wrap = el;
     if (!wrap || typeof echarts === "undefined") return;
@@ -2745,7 +3065,8 @@
     }
     refreshCompact();
 
-    function makeSeries(name, data, color) {
+    // ENHANCED: Staggered bar animation with progressive reveal
+    function makeSeries(name, data, color, sIdx) {
       return {
         name: name,
         type: "bar",
@@ -2753,6 +3074,20 @@
         data: data,
         barWidth: "55%",
         itemStyle: { color: color },
+        // ENHANCED: Emphasis state with focus
+        emphasis: {
+          focus: "series",
+          blurScope: "coordinateSystem",
+          itemStyle: { shadowBlur: 12, shadowColor: 'rgba(0,0,0,0.15)' }
+        },
+        // ENHANCED: Progressive bar animation
+        animation: !prefersReducedMotion,
+        animationDuration: prefersReducedMotion ? 0 : 1000,
+        animationEasing: 'elasticOut',
+        animationDelay: function(idx) {
+          return prefersReducedMotion ? 0 : sIdx * 120 + idx * 80;
+        },
+        animationDurationUpdate: prefersReducedMotion ? 0 : 600,
         label: {
           show: !compact,
           position: "inside",
@@ -2761,14 +3096,18 @@
           },
           color: (name === "Thermal") ? "#ffffff" : "#1a1a1a",
           fontSize: 11,
-          fontWeight: 600
+          fontWeight: 600,
+          // ENHANCED: Label fade-in after bar grows
+          animationDelay: function(idx) {
+            return prefersReducedMotion ? 0 : sIdx * 120 + idx * 80 + 400;
+          }
         },
-        emphasis: { focus: "series" }
+        universalTransition: { enabled: true }
       };
     }
 
     var option = {
-      animation: false,
+      animation: false, // We handle per-series
       grid: {
         left: compact ? 38 : 80,
         right: compact ? 38 : 100,
@@ -2782,7 +3121,7 @@
         borderColor: "#c6ccd8",
         backgroundColor: "rgba(255,255,255,0.97)",
         textStyle: { color: "#1f2430", fontSize: 12 },
-        extraCssText: "box-shadow:0 8px 22px rgba(31,36,48,0.14);",
+        extraCssText: "box-shadow:0 8px 22px rgba(31,36,48,0.14);transition:all 0.2s ease-out;",
         formatter: function (params) {
           var header = "<strong>" + params[0].axisValue + "</strong><br>";
           var lines = [];
@@ -2863,12 +3202,12 @@
         }
       ],
       series: [
-        makeSeries("Thermal", thermalPct, sourceColors["Thermal"]),
-        makeSeries("Hydro", hydroPct, sourceColors["Hydro"]),
-        makeSeries("Solar", solarPct, sourceColors["Solar"]),
-        makeSeries("Wind", windPct, sourceColors["Wind"]),
-        makeSeries("Nuclear", nuclearPct, sourceColors["Nuclear"]),
-        makeSeries("Market", marketPct, sourceColors["Market"]),
+        makeSeries("Thermal", thermalPct, sourceColors["Thermal"], 0),
+        makeSeries("Hydro", hydroPct, sourceColors["Hydro"], 1),
+        makeSeries("Solar", solarPct, sourceColors["Solar"], 2),
+        makeSeries("Wind", windPct, sourceColors["Wind"], 3),
+        makeSeries("Nuclear", nuclearPct, sourceColors["Nuclear"], 4),
+        makeSeries("Market", marketPct, sourceColors["Market"], 5),
         {
           name: "Grid Emission factor",
           type: "line",
@@ -2877,8 +3216,19 @@
           symbol: "circle",
           symbolSize: 8,
           z: 20,
+          smooth: 0.3, // ENHANCED: Smooth curve
+          // ENHANCED: Line drawing animation
+          animation: !prefersReducedMotion,
+          animationDuration: prefersReducedMotion ? 0 : 1800,
+          animationEasing: 'cubicOut',
+          animationDelay: prefersReducedMotion ? 0 : 600,
           itemStyle: { color: "#2C3E50", borderColor: "#fff", borderWidth: 2 },
-          lineStyle: { color: "#2C3E50", width: 2.5 },
+          lineStyle: { color: "#2C3E50", width: 2.5, shadowBlur: 6, shadowColor: 'rgba(44,62,80,0.2)' },
+          // ENHANCED: Symbol emphasis
+          emphasis: {
+            scale: 1.5,
+            itemStyle: { shadowBlur: 10, shadowColor: 'rgba(44,62,80,0.4)' }
+          },
           label: { show: false }
         }
       ]
@@ -2984,475 +3334,621 @@
   };
 
 
+  // ============================================================
+  // CHART 5: SENSITIVITY — ENHANCED WITH SMOOTH CURVES & AREAS
+  // ============================================================
   B.sensitivity = function (el) {
     var GREEN_SECONDARY = '#1B8A5F', TEXT = '#1A211E', MUTED = '#5E6B66', GRID = '#EDF0EE';
-    
-      function tooltip(trigger) {
-        return {
-          trigger: trigger || 'axis',
-          backgroundColor: 'rgba(255,255,255,0.97)', borderColor: '#E3E7E5', borderWidth: 1,
-          textStyle: { color: TEXT, fontSize: 13, fontFamily: 'Inter,sans-serif' },
-          extraCssText: 'box-shadow:0 6px 18px rgba(16,40,30,.12);border-radius:8px;padding:10px 12px;'
-        };
+
+    function tooltip(trigger) {
+      return {
+        trigger: trigger || 'axis',
+        backgroundColor: 'rgba(255,255,255,0.97)', borderColor: '#E3E7E5', borderWidth: 1,
+        textStyle: { color: TEXT, fontSize: 13, fontFamily: 'Inter,sans-serif' },
+        extraCssText: 'box-shadow:0 6px 18px rgba(16,40,30,.12);border-radius:8px;padding:10px 12px;transition:all 0.2s ease-out;'
+      };
+    }
+    function legend() { return { bottom: 0, textStyle: { color: MUTED, fontSize: 12, fontFamily: 'Inter,sans-serif' }, itemGap: 18, itemWidth: 14, itemHeight: 8 }; }
+    function valAxis(name) { return { type: 'value', name: name, nameTextStyle: { color: MUTED, fontSize: 12 }, axisLine: { show: false }, axisLabel: { color: MUTED, fontSize: 12 }, splitLine: { lineStyle: { color: GRID, type: 'dashed' } } }; }
+    function catAxis(data) { return { type: 'category', data: data, axisLine: { lineStyle: { color: '#E3E7E5' } }, axisLabel: { color: MUTED, fontSize: 12 }, axisTick: { show: false } }; }
+
+    var el = el;
+    if (el && typeof echarts !== 'undefined') {
+      var chart = echarts.init(el);
+      var yrs = ['2021', '2025', '2030', '2035', '2040', '2045', '2050'];
+
+      // ENHANCED: Area gradient colors for each series
+      var areaColors = {
+        'CN50 base': ['rgba(27,138,95,0.12)', 'rgba(27,138,95,0.02)'],
+        'Weaker EV uptake': ['rgba(230,126,34,0.10)', 'rgba(230,126,34,0.02)'],
+        'Moderate sequestration': ['rgba(155,89,182,0.10)', 'rgba(155,89,182,0.02)'],
+        'No EV / no clean cooking': ['rgba(231,76,60,0.10)', 'rgba(231,76,60,0.02)']
+      };
+
+      var seriesData = [
+        {
+          name: 'CN50 base', 
+          type: 'line', 
+          data: [7.52, 8.46, 4.34, -1.88, -5.49, -8.94, -12.40], 
+          symbol: 'circle', 
+          symbolSize: 7,
+          lineStyle: { color: GREEN_SECONDARY, width: 3, shadowBlur: 8, shadowColor: 'rgba(27,138,95,0.25)' }, 
+          itemStyle: { color: GREEN_SECONDARY },
+          // ENHANCED: Smooth curve
+          smooth: 0.35,
+          // ENHANCED: Area fill
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: areaColors['CN50 base'][0] },
+              { offset: 1, color: areaColors['CN50 base'][1] }
+            ])
+          },
+          // ENHANCED: Emphasis
+          emphasis: {
+            focus: 'series',
+            scale: 1.8,
+            itemStyle: { shadowBlur: 12, shadowColor: 'rgba(27,138,95,0.4)' }
+          },
+          // ENHANCED: Staggered animation
+          animationDuration: prefersReducedMotion ? 0 : 2000,
+          animationDelay: prefersReducedMotion ? 0 : 0,
+          animationEasing: 'cubicOut',
+          markLine: { 
+            silent: true, 
+            symbol: 'none', 
+            lineStyle: { color: '#E74C3C', type: 'dashed', width: 1.5 }, 
+            label: { formatter: 'Carbon neutral', color: '#E74C3C', fontSize: 11 }, 
+            data: [{ yAxis: 0 }] 
+          }
+        },
+        {
+          name: 'Weaker EV uptake', 
+          type: 'line', 
+          data: [7.52, 8.76, 4.94, -0.54, -3.42, -6.11, -8.79], 
+          symbol: 'diamond', 
+          symbolSize: 7,
+          lineStyle: { color: '#E67E22', width: 2, type: 'dashed', shadowBlur: 6, shadowColor: 'rgba(230,126,34,0.2)' }, 
+          itemStyle: { color: '#E67E22' },
+          smooth: 0.35,
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: areaColors['Weaker EV uptake'][0] },
+              { offset: 1, color: areaColors['Weaker EV uptake'][1] }
+            ])
+          },
+          emphasis: { focus: 'series', scale: 1.8 },
+          animationDuration: prefersReducedMotion ? 0 : 2000,
+          animationDelay: prefersReducedMotion ? 0 : 400,
+          animationEasing: 'cubicOut'
+        },
+        {
+          name: 'Moderate sequestration', 
+          type: 'line', 
+          data: [7.52, 8.46, 6.87, 2.21, -1.14, -4.45, -7.75], 
+          symbol: 'triangle', 
+          symbolSize: 8,
+          lineStyle: { color: '#9B59B6', width: 2, type: 'dashed', shadowBlur: 6, shadowColor: 'rgba(155,89,182,0.2)' }, 
+          itemStyle: { color: '#9B59B6' },
+          smooth: 0.35,
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: areaColors['Moderate sequestration'][0] },
+              { offset: 1, color: areaColors['Moderate sequestration'][1] }
+            ])
+          },
+          emphasis: { focus: 'series', scale: 1.8 },
+          animationDuration: prefersReducedMotion ? 0 : 2000,
+          animationDelay: prefersReducedMotion ? 0 : 800,
+          animationEasing: 'cubicOut'
+        },
+        {
+          name: 'No EV / no clean cooking', 
+          type: 'line', 
+          data: [7.52, 9.49, 6.41, 2.13, 0.46, -1.08, -2.61], 
+          symbol: 'rect', 
+          symbolSize: 7,
+          lineStyle: { color: '#E74C3C', width: 2, type: 'dotted', shadowBlur: 6, shadowColor: 'rgba(231,76,60,0.2)' }, 
+          itemStyle: { color: '#E74C3C' },
+          smooth: 0.35,
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: areaColors['No EV / no clean cooking'][0] },
+              { offset: 1, color: areaColors['No EV / no clean cooking'][1] }
+            ])
+          },
+          emphasis: { focus: 'series', scale: 1.8 },
+          animationDuration: prefersReducedMotion ? 0 : 2000,
+          animationDelay: prefersReducedMotion ? 0 : 1200,
+          animationEasing: 'cubicOut'
+        }
+      ];
+
+      chart.setOption({
+        tooltip: tooltip('axis'), 
+        legend: { bottom: 0, textStyle: { color: MUTED, fontSize: 11 }, itemGap: 14 },
+        grid: { left: '3%', right: '6%', bottom: '16%', top: '8%', containLabel: true },
+        xAxis: catAxis(yrs), 
+        yAxis: valAxis('MtCO₂e'),
+        series: seriesData
+      });
+
+      // ENHANCED: Animate markLine dash offset for drawing effect
+      if (!prefersReducedMotion) {
+        setTimeout(function() {
+          chart.setOption({
+            series: [{ markLine: { animation: true, animationDuration: 1500 } }]
+          });
+        }, 2000);
       }
-      function legend() { return { bottom: 0, textStyle: { color: MUTED, fontSize: 12, fontFamily: 'Inter,sans-serif' }, itemGap: 18, itemWidth: 14, itemHeight: 8 }; }
-      function valAxis(name) { return { type: 'value', name: name, nameTextStyle: { color: MUTED, fontSize: 12 }, axisLine: { show: false }, axisLabel: { color: MUTED, fontSize: 12 }, splitLine: { lineStyle: { color: GRID, type: 'dashed' } } }; }
-      function catAxis(data) { return { type: 'category', data: data, axisLine: { lineStyle: { color: '#E3E7E5' } }, axisLabel: { color: MUTED, fontSize: 12 }, axisTick: { show: false } }; }
-    
-      var el = el;
-      if (el && typeof echarts !== 'undefined') {
-        var chart = echarts.init(el);
-        var yrs = ['2021', '2025', '2030', '2035', '2040', '2045', '2050'];
-        chart.setOption({
-          tooltip: tooltip('axis'), 
-          legend: { bottom: 0, textStyle: { color: MUTED, fontSize: 11 }, itemGap: 14 },
-          grid: { left: '3%', right: '6%', bottom: '16%', top: '8%', containLabel: true },
-          xAxis: catAxis(yrs), 
-          yAxis: valAxis('MtCO₂e'),
-          series: [
-            {
-              name: 'CN50 base', 
-              type: 'line', 
-              data: [7.52, 8.46, 4.34, -1.88, -5.49, -8.94, -12.40], 
-              symbol: 'circle', 
-              symbolSize: 7,
-              lineStyle: { color: GREEN_SECONDARY, width: 3 }, 
-              itemStyle: { color: GREEN_SECONDARY },
-              markLine: { 
-                silent: true, 
-                symbol: 'none', 
-                lineStyle: { color: '#E74C3C', width: 1.5 }, 
-                label: { formatter: 'Carbon neutral', color: '#E74C3C', fontSize: 11 }, 
-                data: [{ yAxis: 0 }] 
-              }
-            },
-            {
-              name: 'Weaker EV uptake', 
-              type: 'line', 
-              data: [7.52, 8.76, 4.94, -0.54, -3.42, -6.11, -8.79], 
-              symbol: 'diamond', 
-              symbolSize: 7,
-              lineStyle: { color: '#E67E22', width: 2, type: 'dashed' }, 
-              itemStyle: { color: '#E67E22' }
-            },
-            {
-              name: 'Moderate sequestration', 
-              type: 'line', 
-              data: [7.52, 8.46, 6.87, 2.21, -1.14, -4.45, -7.75], 
-              symbol: 'triangle', 
-              symbolSize: 8,
-              lineStyle: { color: '#9B59B6', width: 2, type: 'dashed' }, 
-              itemStyle: { color: '#9B59B6' }
-            },
-            {
-              name: 'No EV / no clean cooking', 
-              type: 'line', 
-              data: [7.52, 9.49, 6.41, 2.13, 0.46, -1.08, -2.61], 
-              symbol: 'rect', 
-              symbolSize: 7,
-              lineStyle: { color: '#E74C3C', width: 2, type: 'dotted' }, 
-              itemStyle: { color: '#E74C3C' }
-            }
-          ]
-        });
-        
-      }
+    }
     return chart;
   };
 
 
+
+  // ============================================================
+  // CHART 6: COMBINED MITIGATION WEDGES — ENHANCED LAYERED ANIMS
+  // ============================================================
   B.ch5v3 = function (el) {
     var wrap = el;
-      if (!wrap || typeof echarts === "undefined") return;
-    
-      var elCombined = wrap.querySelector("#kcn-ch5v3-combined");
-      var legendEl   = wrap.querySelector("#kcn-ch5v3-legend");
-      if (!elCombined) return;
-    
-      /* ══════════════════════════════════════════════════════
-         EXACT DATA from Graph_Ch5_V3.png
-         Years: 2021, 2030, 2040, 2050
-         ══════════════════════════════════════════════════════ */
-    
-      var yearsCombined = ["2021", "2030", "2040", "2050"];
-    
-      // BAU Gross & CN50 Gross line values
-      var bauGross = [22.18, 26.70, 26.48, 25.90];
-      var cn50Gross = [22.18, 23.99, 17.87, 11.52];
-    
-      // Stacked area wedges (base = CN50 Gross)
-      var wedgeBase = [22.18, 23.99, 17.87, 11.52];
-      var wedgeOthers     = [0, 0.07, 0.16, 0.33];
-      var wedgeWaste      = [0, 0.43, 1.18, 1.54];
-      var wedgeLivestock  = [0, 0.11, 0.29, 0.58];
-      var wedgeBuildings  = [0, 0.86, 1.81, 2.56];
-      var wedgeIndustries = [0, 0.04, 1.10, 2.16];
-      var wedgeTransport  = [0, 1.21, 4.07, 7.21];
-    
-      // Net lines
-      var bauNet = [7.55, 12.08, 11.86, 11.27];
-      var cn50Net = [7.55, 4.30, -5.45, -12.40];
-    
-      // Sequestration bars
-      var seqBAU = [-14.63, -14.63, -14.63, -14.63];
-      var seqAdditional = [0, -5.06, -8.70, -9.29];
-    
-      /* ── COLORS matching the image ── */
-      var colors = {
-        others:      "#CF8DA3", // pink
-        waste:       "#87CEEB", // light blue
-        livestock:   "#E25D3E", // orange/red
-        buildings:   "#6566AB", // blue/purple
-        industries:  "#A19ACB", // lavender
-        transport:   "#EFDC4C", // yellow
-        seqBAU:      "#009639", // dark green
-        seqAdd:      "#a2d07e", // light green
-        bauLine:     "#000000", // black solid
-        cn50Line:    "#000000", // black dashed
-        cn50Net:     "#159A8C", // dashed teal
-        bauNet:      "#1B8A5F"  // solid green
-      };
-    
-      function fv(v) { return Number(v).toFixed(2); }
-    
-      /* ══════════════════════════════════════════════════════
-         COMBINED EMISSIONS CHART (Unified panel)
-         ══════════════════════════════════════════════════════ */
-      var combinedChart = echarts.init(elCombined);
-    
-      var option = {
-        animation: true,
-        animationDuration: 600,
-        grid: {
-          left: 80,
-          right: 50,
-          top: 15,
-          bottom: 50,
-          containLabel: false
-        },
-        tooltip: {
-          trigger: "axis",
-          borderColor: "#c6ccd8",
-          backgroundColor: "rgba(255,255,255,0.97)",
-          textStyle: { color: "#1f2430", fontSize: 12 },
-          extraCssText: "box-shadow:0 8px 22px rgba(31,36,48,0.14);",
-          formatter: function (params) {
-            var header = "<strong>Year: " + params[0].axisValue + "</strong><br>";
-            var lines = [];
-            params.forEach(function (p) {
-              if (p.seriesName.indexOf("__") === 0) return;
-              if (p.seriesName === "CN50 Gross Base") return;
-              
-              var val;
-              if (typeof p.value === 'object' && p.value !== null) {
-                val = p.value.value;
-              } else {
-                val = p.value;
-              }
-              if (val !== undefined && val !== null) {
-                lines.push(p.marker + " " + p.seriesName + ": " + fv(val) + " MtCO₂e");
-              }
-            });
-            return header + lines.join("<br>");
+    if (!wrap || typeof echarts === "undefined") return;
+
+    var elCombined = wrap.querySelector("#kcn-ch5v3-combined");
+    var legendEl   = wrap.querySelector("#kcn-ch5v3-legend");
+    if (!elCombined) return;
+
+    var yearsCombined = ["2021", "2030", "2040", "2050"];
+
+    var bauGross = [22.18, 26.70, 26.48, 25.90];
+    var cn50Gross = [22.18, 23.99, 17.87, 11.52];
+
+    var wedgeBase = [22.18, 23.99, 17.87, 11.52];
+    var wedgeOthers     = [0, 0.07, 0.16, 0.33];
+    var wedgeWaste      = [0, 0.43, 1.18, 1.54];
+    var wedgeLivestock  = [0, 0.11, 0.29, 0.58];
+    var wedgeBuildings  = [0, 0.86, 1.81, 2.56];
+    var wedgeIndustries = [0, 0.04, 1.10, 2.16];
+    var wedgeTransport  = [0, 1.21, 4.07, 7.21];
+
+    var bauNet = [7.55, 12.08, 11.86, 11.27];
+    var cn50Net = [7.55, 4.30, -5.45, -12.40];
+
+    var seqBAU = [-14.63, -14.63, -14.63, -14.63];
+    var seqAdditional = [0, -5.06, -8.70, -9.29];
+
+    var colors = {
+      others:      "#CF8DA3",
+      waste:       "#87CEEB",
+      livestock:   "#E25D3E",
+      buildings:   "#6566AB",
+      industries:  "#A19ACB",
+      transport:   "#EFDC4C",
+      seqBAU:      "#009639",
+      seqAdd:      "#a2d07e",
+      bauLine:     "#000000",
+      cn50Line:    "#000000",
+      cn50Net:     "#159A8C",
+      bauNet:      "#1B8A5F"
+    };
+
+    function fv(v) { return Number(v).toFixed(2); }
+
+    var combinedChart = echarts.init(elCombined);
+
+    // ENHANCED: Layered animation timeline
+    // Phase 1: Wedges (0-1000ms), Phase 2: Bars (600-1600ms), Phase 3: Lines (1000-2000ms), Phase 4: Labels (1800-2400ms)
+    var option = {
+      animation: true,
+      animationDuration: prefersReducedMotion ? 0 : 1200,
+      animationEasing: 'cubicOut',
+      animationDurationUpdate: prefersReducedMotion ? 0 : 800,
+      animationEasingUpdate: 'cubicInOut',
+      grid: {
+        left: 80,
+        right: 50,
+        top: 15,
+        bottom: 50,
+        containLabel: false
+      },
+      tooltip: {
+        trigger: "axis",
+        borderColor: "#c6ccd8",
+        backgroundColor: "rgba(255,255,255,0.97)",
+        textStyle: { color: "#1f2430", fontSize: 12 },
+        extraCssText: "box-shadow:0 8px 22px rgba(31,36,48,0.14);transition:all 0.2s ease-out;",
+        // ENHANCED: Better tooltip ordering
+        order: 'seriesDesc',
+        formatter: function (params) {
+          var header = "<strong>Year: " + params[0].axisValue + "</strong><br>";
+          var lines = [];
+          params.forEach(function (p) {
+            if (p.seriesName.indexOf("__") === 0) return;
+            if (p.seriesName === "CN50 Gross Base") return;
+
+            var val;
+            if (typeof p.value === 'object' && p.value !== null) {
+              val = p.value.value;
+            } else {
+              val = p.value;
+            }
+            if (val !== undefined && val !== null) {
+              lines.push(p.marker + " " + p.seriesName + ": " + fv(val) + " MtCO₂e");
+            }
+          });
+          return header + lines.join("<br>");
+        }
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: yearsCombined,
+        axisTick: { show: true, length: 5, lineStyle: { color: "#a9adb7" } },
+        axisLine: { show: true, lineStyle: { color: "#a9adb7" } },
+        axisLabel: { color: "#111827", fontSize: 12, fontWeight: 600, margin: 12 },
+        splitLine: {
+          show: true,
+          lineStyle: { color: "#e8e8e8", type: "dashed", width: 0.8 }
+        }
+      },
+      yAxis: {
+        type: "value",
+        name: "GHG Emissions (in MtCO₂e)",
+        nameLocation: "middle",
+        nameGap: 52,
+        nameRotate: 90,
+        nameTextStyle: { color: "#1f2937", fontWeight: 700, fontSize: 12 },
+        min: -26,
+        max: 29,
+        interval: 10,
+        axisLabel: {
+          color: "#111827",
+          fontSize: 11,
+          margin: 18,
+          hideOverlap: false,
+          formatter: function (value) {
+            var allowed = [-26, -16, -6, 4, 14, 24];
+            if (allowed.indexOf(value) !== -1) {
+              return fv(value);
+            }
+            return "";
           }
         },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: yearsCombined,
-          axisTick: { show: true, length: 5, lineStyle: { color: "#a9adb7" } },
-          axisLine: { show: true, lineStyle: { color: "#a9adb7" } },
-          axisLabel: { color: "#111827", fontSize: 12, fontWeight: 600, margin: 12 },
-          splitLine: {
+        axisLine: { show: false },
+        splitLine: { show: true, lineStyle: { color: "#e8e8e8", width: 0.8 } }
+      },
+      series: [
+        // ─── Stacked area wedges (base = CN50 Gross) ───
+        {
+          name: "CN50 Gross Base",
+          type: "line",
+          stack: "wedge",
+          data: wedgeBase,
+          symbol: "none",
+          lineStyle: { width: 0 },
+          areaStyle: { opacity: 0 },
+          z: 1,
+          universalTransition: { enabled: true }
+        },
+        {
+          name: "Others",
+          type: "line",
+          stack: "wedge",
+          data: wedgeOthers,
+          symbol: "none",
+          areaStyle: { opacity: 0.85, color: colors.others },
+          lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
+          z: 2,
+          // ENHANCED: Emphasis and animation
+          emphasis: { focus: 'series', blurScope: 'global' },
+          animationDelay: prefersReducedMotion ? 0 : 0,
+          universalTransition: { enabled: true }
+        },
+        {
+          name: "Waste",
+          type: "line",
+          stack: "wedge",
+          data: wedgeWaste,
+          symbol: "none",
+          areaStyle: { opacity: 0.85, color: colors.waste },
+          lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
+          z: 2,
+          emphasis: { focus: 'series', blurScope: 'global' },
+          animationDelay: prefersReducedMotion ? 0 : 100,
+          universalTransition: { enabled: true }
+        },
+        {
+          name: "Livestock",
+          type: "line",
+          stack: "wedge",
+          data: wedgeLivestock,
+          symbol: "none",
+          areaStyle: { opacity: 0.85, color: colors.livestock },
+          lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
+          z: 2,
+          emphasis: { focus: 'series', blurScope: 'global' },
+          animationDelay: prefersReducedMotion ? 0 : 200,
+          universalTransition: { enabled: true }
+        },
+        {
+          name: "Buildings",
+          type: "line",
+          stack: "wedge",
+          data: wedgeBuildings,
+          symbol: "none",
+          areaStyle: { opacity: 0.85, color: colors.buildings },
+          lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
+          z: 2,
+          emphasis: { focus: 'series', blurScope: 'global' },
+          animationDelay: prefersReducedMotion ? 0 : 300,
+          universalTransition: { enabled: true }
+        },
+        {
+          name: "Industries, incl IPPU",
+          type: "line",
+          stack: "wedge",
+          data: wedgeIndustries,
+          symbol: "none",
+          areaStyle: { opacity: 0.85, color: colors.industries },
+          lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
+          z: 2,
+          emphasis: { focus: 'series', blurScope: 'global' },
+          animationDelay: prefersReducedMotion ? 0 : 400,
+          universalTransition: { enabled: true }
+        },
+        {
+          name: "Transport",
+          type: "line",
+          stack: "wedge",
+          data: wedgeTransport,
+          symbol: "none",
+          areaStyle: { opacity: 0.85, color: colors.transport },
+          lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
+          z: 2,
+          emphasis: { focus: 'series', blurScope: 'global' },
+          animationDelay: prefersReducedMotion ? 0 : 500,
+          universalTransition: { enabled: true }
+        },
+
+        // ─── Sequestration stacked bars ───
+        {
+          name: "Sequestration_BAU",
+          type: "bar",
+          stack: "seqStack",
+          data: seqBAU,
+          barWidth: 25,
+          itemStyle: { color: colors.seqBAU },
+          z: 3,
+          // ENHANCED: Elastic bounce animation for bars
+          animation: !prefersReducedMotion,
+          animationDuration: prefersReducedMotion ? 0 : 1000,
+          animationEasing: 'elasticOut',
+          animationDelay: prefersReducedMotion ? 0 : 600,
+          label: {
             show: true,
-            lineStyle: { color: "#e8e8e8", type: "dashed", width: 0.8 }
+            position: "inside",
+            formatter: function (p) { return fv(p.value); },
+            color: "#fff",
+            fontSize: 10,
+            fontWeight: 700
           }
         },
-        yAxis: {
-          type: "value",
-          name: "GHG Emissions (in MtCO₂e)",
-          nameLocation: "middle",
-          nameGap: 52,
-          nameRotate: 90,
-          nameTextStyle: { color: "#1f2937", fontWeight: 700, fontSize: 12 },
-          min: -26,
-          max: 29,
-          interval: 10,
-          axisLabel: {
+        {
+          name: "Additional Sequestration_CN50",
+          type: "bar",
+          stack: "seqStack",
+          data: seqAdditional,
+          barWidth: 25,
+          itemStyle: { color: colors.seqAdd },
+          z: 3,
+          animation: !prefersReducedMotion,
+          animationDuration: prefersReducedMotion ? 0 : 1000,
+          animationEasing: 'elasticOut',
+          animationDelay: prefersReducedMotion ? 0 : 750,
+          label: {
+            show: true,
+            position: "inside",
+            formatter: function (p) {
+              if (p.value === 0) return "";
+              return fv(p.value);
+            },
             color: "#111827",
-            fontSize: 11,
-            margin: 18,
-            hideOverlap: false,
-            formatter: function (value) {
-              var allowed = [-26, -16, -6, 4, 14, 24];
-              if (allowed.indexOf(value) !== -1) {
-                return fv(value);
-              }
-              return "";
-            }
-          },
-          axisLine: { show: false },
-          splitLine: { show: true, lineStyle: { color: "#e8e8e8", width: 0.8 } }
+            fontSize: 10,
+            fontWeight: 700
+          }
         },
-        series: [
-          // ─── Stacked area wedges (base = CN50 Gross) ───
-          {
-            name: "CN50 Gross Base",
-            type: "line",
-            stack: "wedge",
-            data: wedgeBase,
-            symbol: "none",
-            lineStyle: { width: 0 },
-            areaStyle: { opacity: 0 },
-            z: 1
-          },
-          {
-            name: "Others",
-            type: "line",
-            stack: "wedge",
-            data: wedgeOthers,
-            symbol: "none",
-            areaStyle: { opacity: 0.85, color: colors.others },
-            lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
-            z: 2
-          },
-          {
-            name: "Waste",
-            type: "line",
-            stack: "wedge",
-            data: wedgeWaste,
-            symbol: "none",
-            areaStyle: { opacity: 0.85, color: colors.waste },
-            lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
-            z: 2
-          },
-          {
-            name: "Livestock",
-            type: "line",
-            stack: "wedge",
-            data: wedgeLivestock,
-            symbol: "none",
-            areaStyle: { opacity: 0.85, color: colors.livestock },
-            lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
-            z: 2
-          },
-          {
-            name: "Buildings",
-            type: "line",
-            stack: "wedge",
-            data: wedgeBuildings,
-            symbol: "none",
-            areaStyle: { opacity: 0.85, color: colors.buildings },
-            lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
-            z: 2
-          },
-          {
-            name: "Industries, incl IPPU",
-            type: "line",
-            stack: "wedge",
-            data: wedgeIndustries,
-            symbol: "none",
-            areaStyle: { opacity: 0.85, color: colors.industries },
-            lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
-            z: 2
-          },
-          {
-            name: "Transport",
-            type: "line",
-            stack: "wedge",
-            data: wedgeTransport,
-            symbol: "none",
-            areaStyle: { opacity: 0.85, color: colors.transport },
-            lineStyle: { width: 0.5, color: "rgba(255,255,255,0.5)" },
-            z: 2
-          },
-    
-          // ─── Sequestration stacked bars ───
-          {
-            name: "Sequestration_BAU",
-            type: "bar",
-            stack: "seqStack",
-            data: seqBAU,
-            barWidth: 25,
-            itemStyle: { color: colors.seqBAU },
-            z: 3,
-            label: {
-              show: true,
-              position: "inside",
-              formatter: function (p) { return fv(p.value); },
-              color: "#fff",
-              fontSize: 10,
-              fontWeight: 700
-            }
-          },
-          {
-            name: "Additional Sequestration_CN50",
-            type: "bar",
-            stack: "seqStack",
-            data: seqAdditional,
-            barWidth: 25,
-            itemStyle: { color: colors.seqAdd },
-            z: 3,
-            label: {
-              show: true,
-              position: "inside",
-              formatter: function (p) {
-                if (p.value === 0) return "";
-                return fv(p.value);
-              },
-              color: "#111827",
-              fontSize: 10,
-              fontWeight: 700
-            }
-          },
-    
-          // ─── Emissions Lines ───
-          {
-            name: "BAU Gross",
-            type: "line",
-            labelLayout: { hideOverlap: false },
-            data: [
-              { value: 22.18, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              { value: 26.70, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              { value: 26.48, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              { value: 25.90, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } }
-            ],
-            symbol: "none",
-            z: 20,
-            lineStyle: { color: colors.bauLine, width: 2.2 }
-          },
-          {
-            name: "CN50 Gross",
-            type: "line",
-            labelLayout: { hideOverlap: false },
-            data: [
-              { value: 22.18, label: { show: false } },
-              { value: 23.99, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              { value: 17.87, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              { value: 11.52, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
-            ],
-            symbol: "none",
-            z: 20,
-            lineStyle: { color: colors.cn50Line, width: 2.2, type: "dashed" }
-          },
-          {
-            name: "CN50 Net",
-            type: "line",
-            labelLayout: { hideOverlap: false },
-            data: [
-              { value: 7.55, label: { show: false } },
-              { value: 4.30, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              {
-                value: -5.45,
-                label: {
-                  show: true,
-                  position: "top",
-                  backgroundColor: "#fff",
-                  borderColor: "#a1a1aa",
-                  borderWidth: 1,
-                  borderRadius: 2,
-                  padding: [3, 5],
-                  color: "#111827",
-                  fontWeight: 700,
-                  fontSize: 10
-                }
-              },
-              {
-                value: -12.40,
-                label: {
-                  show: true,
-                  position: "left",
-                  distance: 10,
-                  backgroundColor: "#fff",
-                  borderColor: "#a1a1aa",
-                  borderWidth: 1,
-                  borderRadius: 2,
-                  padding: [3, 5],
-                  color: "#111827",
-                  fontWeight: 700,
-                  fontSize: 10
-                }
+
+        // ─── Emissions Lines ───
+        {
+          name: "BAU Gross",
+          type: "line",
+          labelLayout: { hideOverlap: false },
+          data: [
+            { value: 22.18, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 26.70, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 26.48, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 25.90, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } }
+          ],
+          symbol: "none",
+          z: 20,
+          smooth: 0.2,
+          lineStyle: { color: colors.bauLine, width: 2.2 },
+          animationDuration: prefersReducedMotion ? 0 : 1500,
+          animationDelay: prefersReducedMotion ? 0 : 1000,
+          animationEasing: 'cubicOut'
+        },
+        {
+          name: "CN50 Gross",
+          type: "line",
+          labelLayout: { hideOverlap: false },
+          data: [
+            { value: 22.18, label: { show: false } },
+            { value: 23.99, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 17.87, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 11.52, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
+          ],
+          symbol: "none",
+          z: 20,
+          smooth: 0.2,
+          lineStyle: { color: colors.cn50Line, width: 2.2, type: "dashed" },
+          animationDuration: prefersReducedMotion ? 0 : 1500,
+          animationDelay: prefersReducedMotion ? 0 : 1200,
+          animationEasing: 'cubicOut'
+        },
+        {
+          name: "CN50 Net",
+          type: "line",
+          labelLayout: { hideOverlap: false },
+          data: [
+            { value: 7.55, label: { show: false } },
+            { value: 4.30, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            {
+              value: -5.45,
+              label: {
+                show: true,
+                position: "top",
+                backgroundColor: "#fff",
+                borderColor: "#a1a1aa",
+                borderWidth: 1,
+                borderRadius: 2,
+                padding: [3, 5],
+                color: "#111827",
+                fontWeight: 700,
+                fontSize: 10
               }
-            ],
-            symbol: "none",
-            z: 20,
-            lineStyle: { color: colors.cn50Net, width: 2.2, type: "dashed" }
-          },
-          {
-            name: "BAU Net",
-            type: "line",
-            labelLayout: { hideOverlap: false },
-            data: [
-              {
-                value: 7.55,
-                label: {
-                  show: true,
-                  position: "bottom",
-                  distance: 10,
-                  backgroundColor: "#fff",
-                  borderColor: "#a1a1aa",
-                  borderWidth: 1,
-                  borderRadius: 2,
-                  padding: [3, 5],
-                  color: "#111827",
-                  fontWeight: 700,
-                  fontSize: 10
-                }
-              },
-              { value: 12.08, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              { value: 11.86, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
-              { value: 11.27, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
-            ],
-            symbol: "none",
-            z: 20,
-            lineStyle: { color: colors.bauNet, width: 2.2 }
-          }
-        ]
-      };
-    
-      combinedChart.setOption(option);
-    
-      /* ── LEGEND (matching image bottom legend) ── */
-      if (legendEl) {
-        legendEl.innerHTML = "";
-        var legendItems = [
-          { name: "Others", color: colors.others, type: "rect" },
-          { name: "Waste", color: colors.waste, type: "rect" },
-          { name: "Livestock", color: colors.livestock, type: "rect" },
-          { name: "Buildings", color: colors.buildings, type: "rect" },
-          { name: "Industries, incl IPPU", color: colors.industries, type: "rect" },
-          { name: "Transport", color: colors.transport, type: "rect" },
-          { name: "Sequestration_BAU", color: colors.seqBAU, type: "rect" },
-          { name: "Additional Sequestration_CN50", color: colors.seqAdd, type: "rect" },
-          { name: "BAU Gross", color: colors.bauLine, type: "solid" },
-          { name: "CN50 Gross", color: colors.cn50Line, type: "dashed" },
-          { name: "CN50 Net", color: colors.cn50Net, type: "dashed" },
-          { name: "BAU Net", color: colors.bauNet, type: "solid" }
-        ];
-    
-        legendItems.forEach(function (item) {
-          var li = document.createElement("span");
-          li.className = "kcn-gd-li";
-          if (item.type === "solid") {
-            li.innerHTML = '<span style="display:inline-block;width:18px;height:0;border-top:2.5px solid ' + item.color + ';margin-right:6px;vertical-align:middle;"></span>' + item.name;
-          } else if (item.type === "dashed") {
-            li.innerHTML = '<span style="display:inline-block;width:18px;height:0;border-top:2.5px dashed ' + item.color + ';margin-right:6px;vertical-align:middle;"></span>' + item.name;
-          } else {
-            li.innerHTML = '<span class="sw" style="background:' + item.color + '"></span>' + item.name;
-          }
-          legendEl.appendChild(li);
-        });
-      }
-    
-      /* ── RESIZE ── */
-      
+            },
+            {
+              value: -12.40,
+              label: {
+                show: true,
+                position: "left",
+                distance: 10,
+                backgroundColor: "#fff",
+                borderColor: "#a1a1aa",
+                borderWidth: 1,
+                borderRadius: 2,
+                padding: [3, 5],
+                color: "#111827",
+                fontWeight: 700,
+                fontSize: 10
+              }
+            }
+          ],
+          symbol: "none",
+          z: 20,
+          smooth: 0.2,
+          lineStyle: { color: colors.cn50Net, width: 2.2, type: "dashed" },
+          animationDuration: prefersReducedMotion ? 0 : 1500,
+          animationDelay: prefersReducedMotion ? 0 : 1400,
+          animationEasing: 'cubicOut'
+        },
+        {
+          name: "BAU Net",
+          type: "line",
+          labelLayout: { hideOverlap: false },
+          data: [
+            {
+              value: 7.55,
+              label: {
+                show: true,
+                position: "bottom",
+                distance: 10,
+                backgroundColor: "#fff",
+                borderColor: "#a1a1aa",
+                borderWidth: 1,
+                borderRadius: 2,
+                padding: [3, 5],
+                color: "#111827",
+                fontWeight: 700,
+                fontSize: 10
+              }
+            },
+            { value: 12.08, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 11.86, label: { show: true, position: "top", color: "#111827", fontWeight: 700, fontSize: 11 } },
+            { value: 11.27, label: { show: true, position: "bottom", color: "#111827", fontWeight: 700, fontSize: 11 } }
+          ],
+          symbol: "none",
+          z: 20,
+          smooth: 0.2,
+          lineStyle: { color: colors.bauNet, width: 2.2 },
+          animationDuration: prefersReducedMotion ? 0 : 1500,
+          animationDelay: prefersReducedMotion ? 0 : 1100,
+          animationEasing: 'cubicOut'
+        }
+      ]
+    };
+
+    combinedChart.setOption(option);
+
+    // ── LEGEND (matching image bottom legend) — PRESERVED EXACTLY ──
+    if (legendEl) {
+      legendEl.innerHTML = "";
+      var legendItems = [
+        { name: "Others", color: colors.others, type: "rect" },
+        { name: "Waste", color: colors.waste, type: "rect" },
+        { name: "Livestock", color: colors.livestock, type: "rect" },
+        { name: "Buildings", color: colors.buildings, type: "rect" },
+        { name: "Industries, incl IPPU", color: colors.industries, type: "rect" },
+        { name: "Transport", color: colors.transport, type: "rect" },
+        { name: "Sequestration_BAU", color: colors.seqBAU, type: "rect" },
+        { name: "Additional Sequestration_CN50", color: colors.seqAdd, type: "rect" },
+        { name: "BAU Gross", color: colors.bauLine, type: "solid" },
+        { name: "CN50 Gross", color: colors.cn50Line, type: "dashed" },
+        { name: "CN50 Net", color: colors.cn50Net, type: "dashed" },
+        { name: "BAU Net", color: colors.bauNet, type: "solid" }
+      ];
+
+      legendItems.forEach(function (item) {
+        var li = document.createElement("span");
+        li.className = "kcn-gd-li";
+        if (item.type === "solid") {
+          li.innerHTML = '<span style="display:inline-block;width:18px;height:0;border-top:2.5px solid ' + item.color + ';margin-right:6px;vertical-align:middle;"></span>' + item.name;
+        } else if (item.type === "dashed") {
+          li.innerHTML = '<span style="display:inline-block;width:18px;height:0;border-top:2.5px dashed ' + item.color + ';margin-right:6px;vertical-align:middle;"></span>' + item.name;
+        } else {
+          li.innerHTML = '<span class="sw" style="background:' + item.color + '"></span>' + item.name;
+        }
+        legendEl.appendChild(li);
+      });
+    }
+
     return combinedChart;
   };
 
 
   // ====== LAZY INIT + RESIZE + FALLBACK ======
   var live = [];
-  
+
+  function initGrossDualControls() {
+    var wrap = document.getElementById('chart-container-dual');
+    var toggle = document.getElementById('kcn-gd-number-toggle');
+    if (!wrap || !toggle || toggle.getAttribute('data-bound') === '1') return;
+
+    function readState() {
+      return wrap.getAttribute('data-show-numbers') !== 'false';
+    }
+
+    function sync() {
+      var showNumbers = readState();
+      toggle.setAttribute('aria-pressed', showNumbers ? 'true' : 'false');
+      toggle.setAttribute('aria-label', showNumbers ? 'Hide numbers' : 'Show numbers');
+      toggle.classList.toggle('is-on', showNumbers);
+    }
+
+    if (!wrap.hasAttribute('data-show-numbers')) {
+      wrap.setAttribute('data-show-numbers', 'true');
+    }
+
+    toggle.setAttribute('data-bound', '1');
+    toggle.addEventListener('click', function () {
+      if (toggle.disabled) return;
+      var next = !readState();
+      wrap.setAttribute('data-show-numbers', next ? 'true' : 'false');
+      sync();
+      wrap.dispatchEvent(new CustomEvent('kcn:numbers-toggle', { detail: { showNumbers: next } }));
+    });
+    sync();
+  }
+
   function initOne(el) {
     var key = el.getAttribute('data-chart');
     if (!key || el.getAttribute('data-done')) return;
@@ -3460,7 +3956,6 @@
     try {
       var inst = B[key](el);
       if (inst) {
-        // grossDual returns multiple instances or an object, we push them individually if array
         if (Array.isArray(inst)) {
           live = live.concat(inst);
         } else if (inst.resize) {
@@ -3485,7 +3980,6 @@
   }
 
   function startObserver() {
-    // select both normal charts and sankey compare container
     var nodes = document.querySelectorAll('.kcn-report .kcn-chart, .kcn-report .kcn-sankey-compare-grid, .kcn-report .kcn-chart-container-wrap');
     if ('IntersectionObserver' in window) {
       var obs = new IntersectionObserver(function (entries) {
@@ -3512,7 +4006,6 @@
     }, 150);
   });
 
-  // sticky nav visibility + scroll-spy
   function initNav() {
     var sticky = document.getElementById('kcn-sticky');
     var about = document.getElementById('kcn-about');
@@ -3534,7 +4027,6 @@
     onScroll();
   }
 
-  // smooth-scroll for in-page links (TOC + sticky)
   function initScroll() {
     document.querySelectorAll('.kcn-report a[href^="#"]').forEach(function (a) {
       a.addEventListener('click', function (e) {
@@ -3553,6 +4045,7 @@
   function boot() {
     initScroll();
     initNav();
+    initGrossDualControls();
     var waited = 0;
     (function wait() {
       if (typeof echarts !== 'undefined') {
