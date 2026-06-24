@@ -1259,6 +1259,61 @@
     will-change: opacity, transform;
   }
 
+  /* ===== POLAR CIRCULAR SWEEP ANIMATION ===== */
+  .kcn-polar-arc {
+    opacity: 0;
+    transform: scale(0.92);
+    transform-origin: 375px 325px;
+    animation: kcnArcAppear 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .kcn-polar-arc:hover {
+    opacity: 0.82 !important;
+    transform: scale(1.02) !important;
+  }
+
+  @keyframes kcnArcAppear {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Perimeter draw-on ring */
+  .kcn-polar-ring-draw {
+    fill: none;
+    stroke: #0F4C3A;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1193.8;
+    stroke-dashoffset: 1193.8;
+    animation: kcnRingDraw 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0.25;
+  }
+  @keyframes kcnRingDraw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* Polar label fade-in after arcs settle */
+  .kcn-polar-label {
+    opacity: 0;
+    animation: kcnLabelFade 0.4s ease forwards;
+  }
+  @keyframes kcnLabelFade {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Center hub burst */
+  .kcn-polar-hub {
+    animation: kcnHubBurst 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    transform-origin: 375px 325px;
+    opacity: 0;
+  }
+  @keyframes kcnHubBurst {
+    from { opacity: 0; transform: scale(0); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
   /* Chart container smooth transitions */
   .kcn-chart, .kcn-sankey-box, .kcn-gd-chart {
     transition: opacity 0.3s ease;
@@ -1280,12 +1335,17 @@
   @media (prefers-reduced-motion: reduce) {
     .kcn-polar-arc,
     .kcn-polar-node-pulse,
+    .kcn-polar-ring-draw,
+    .kcn-polar-hub,
+    .kcn-polar-label,
     .kcn-chart,
     .kcn-sankey-box,
     .kcn-gd-chart,
     #kcn-polar-tooltip {
       animation: none !important;
       transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
     }
     .kcn-chart-loading {
       animation: none !important;
@@ -1765,7 +1825,15 @@
 
       <!-- Fig 4: Generation Mix with Grid Emission Factor -->
       <figure class="kcn-fig">
-        <div class="kcn-chart" id="chart-container-genmix" data-chart="generationMix" style="height:420px"></div>
+        <div class="kcn-chart-container-wrap" data-chart="generationMix" id="chart-container-genmix-wrap" data-show-numbers="true">
+          <div class="kcn-gd-toolbar">
+            <button type="button" class="kcn-gd-toggle is-on" id="kcn-gen-number-toggle" aria-pressed="true" aria-label="Hide numbers">
+              <span class="kcn-gd-toggle-track" aria-hidden="true"></span>
+              <span class="kcn-gd-toggle-text">Numbers</span>
+            </button>
+          </div>
+          <div class="kcn-chart" id="chart-container-genmix" data-chart="generationMix" style="height:420px"></div>
+        </div>
       </figure>
     </div>
   </section>
@@ -2532,14 +2600,19 @@
           { year: 2050, rStart: R2, rEnd: R3, bauIdx: 4, cnIdx: 5 }
         ];
 
+        // Compute normalized sweep angle for circular reveal (0° at first sector start, 360° at end)
+        var normAngle = ((startA - 244.2857) / 360) * 1800; // 0 to ~1800ms for full circle
+
         // Draw BAU side
         rings.forEach(function (ring, rIdx) {
           var val = POLAR.raw[i][ring.bauIdx];
           var ratio = val / maxVal;
           var sweepAngle = ratio * 25.71428;
           var tooltipData = ' class="kcn-polar-arc" data-cat="' + catFullNames[i] + '" data-scenario="BAU" data-year="' + ring.year + '" data-val="' + val + '" data-unit="' + catUnits[i] + '"';
-          var animDelay = (i * 3 + rIdx) * 120; // ENHANCED: staggered animation
-          var animStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + animDelay + 'ms;"';
+          // ENHANCED: Delay based on angular position for 0°→360° sweep
+          var ringOffset = rIdx * 200; // inner→middle→outer stagger
+          var animDelay = Math.round(normAngle + ringOffset);
+          var animStyle = prefersReducedMotion ? ' style="opacity:1;transform:scale(1);"' : ' style="animation-delay:' + animDelay + 'ms;"';
 
           if (sweepAngle < 25.71428) {
             var pathBg = getArcPath(cx, cy, ring.rStart, ring.rEnd, startA, midA - sweepAngle);
@@ -2548,7 +2621,6 @@
 
           if (val > 0) {
             var pathBar = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA - sweepAngle, midA);
-            // ENHANCED: Add draw-on animation class for BAU arcs
             svg += '<path d="' + pathBar + '" fill="' + catColors[i][0] + '"' + tooltipData + ' class="kcn-polar-arc kcn-polar-arc-bau"' + animStyle + ' />';
           }
         });
@@ -2559,8 +2631,10 @@
           var ratio = val / maxVal;
           var sweepAngle = ratio * 25.71428;
           var tooltipData = ' class="kcn-polar-arc" data-cat="' + catFullNames[i] + '" data-scenario="CN50" data-year="' + ring.year + '" data-val="' + val + '" data-unit="' + catUnits[i] + '"';
-          var animDelay = (i * 3 + rIdx + 1) * 120 + 600; // ENHANCED: staggered, CN50 delayed after BAU
-          var animStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + animDelay + 'ms;"';
+          // ENHANCED: CN50 arcs appear after BAU arcs at same angle, creating double-wave
+          var ringOffset = rIdx * 200 + 250; // inner→middle→outer + BAU offset
+          var animDelay = Math.round(normAngle + ringOffset);
+          var animStyle = prefersReducedMotion ? ' style="opacity:1;transform:scale(1);"' : ' style="animation-delay:' + animDelay + 'ms;"';
 
           if (val > 0) {
             var pathBar = getArcPath(cx, cy, ring.rStart, ring.rEnd, midA, midA + sweepAngle);
@@ -2574,6 +2648,11 @@
         });
       }
       svg += '</g>'; // end polar-arcs-group
+
+      // ENHANCED: Perimeter draw-on ring (outer circle draws itself like a clock hand)
+      if (!prefersReducedMotion) {
+        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (R3 + 4) + '" class="kcn-polar-ring-draw" transform="rotate(-90 ' + cx + ' ' + cy + ')" />';
+      }
 
       // Grid circles
       svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + Rin + '" fill="none" stroke="white" stroke-width="2" />';
@@ -2606,6 +2685,8 @@
         var endA = endAngles[i];
         var midA = midAngles[i];
         var maxVal = Math.max.apply(null, POLAR.raw[i]) || 1;
+        // ENHANCED: Compute label delay from angular position for circular sweep
+        var lblNormAngle = ((startA - 244.2857) / 360) * 1800;
 
         var rings = [
           { year: 2030, rMid: Rin + ringSpan / 6, bauIdx: 0, cnIdx: 1 },
@@ -2613,7 +2694,7 @@
           { year: 2050, rMid: Rin + 5 * ringSpan / 6, bauIdx: 4, cnIdx: 5 }
         ];
 
-        rings.forEach(function (ring) {
+        rings.forEach(function (ring, rIdx) {
           var val = POLAR.raw[i][ring.bauIdx];
           var label = getDisplayLabel(i, 'BAU', ring.year, val);
           if (!label) return;
@@ -2625,11 +2706,12 @@
 
           var fill = (ratio >= 0.5) ? getTextColor(i, 'BAU') : "black";
           var fSize = label.length > 5 ? "9px" : "11px";
-          // ENHANCED: Add count-up class
-          svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '">0</text>';
+          var lblDelay = Math.round(lblNormAngle + rIdx * 200 + 800);
+          var lblStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + lblDelay + 'ms;"';
+          svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '"' + lblStyle + '>0</text>';
         });
 
-        rings.forEach(function (ring) {
+        rings.forEach(function (ring, rIdx) {
           var val = POLAR.raw[i][ring.cnIdx];
           var label = getDisplayLabel(i, 'CN50', ring.year, val);
           if (!label) return;
@@ -2641,11 +2723,13 @@
 
           var fill = (ratio >= 0.5) ? getTextColor(i, 'CN50') : "black";
           var fSize = label.length > 5 ? "9px" : "11px";
-          svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '">0</text>';
+          var lblDelay = Math.round(lblNormAngle + rIdx * 200 + 1050);
+          var lblStyle = prefersReducedMotion ? '' : ' style="animation-delay:' + lblDelay + 'ms;"';
+          svg += '<text x="' + xText + '" y="' + yText + '" text-anchor="middle" dominant-baseline="central" fill="' + fill + '" font-size="' + fSize + '" font-weight="600" class="kcn-polar-label" data-final="' + label + '"' + lblStyle + '>0</text>';
         });
       }
 
-      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + Rin + '" fill="white" stroke="#E3E7E5" stroke-width="1.5" />';
+      svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + Rin + '" fill="white" stroke="#E3E7E5" stroke-width="1.5" class="kcn-polar-hub" />';
 
       // Center nodes with pulse animation
       var nodeColors = ["#F39C12", "#087E6E", "#DE6A50", "#5A287E", "#1D5D37", "#9A1B1B", "#0C4573"];
@@ -2672,10 +2756,12 @@
         svg += '<path d="M ' + x_curve_start + ' ' + y_curve_start + ' Q ' + cx + ' ' + cy + ' ' + x_curve_end + ' ' + y_curve_end + '" fill="none" stroke="black" stroke-width="1.2" marker-end="url(#arrow)" />';
       });
 
-      // ENHANCED: Nodes with pulse class
+      // ENHANCED: Nodes with staggered appearance and pulse
       for (var i = 0; i < 7; i++) {
+        var nodeDelay = Math.round(((midAngles[i] - 244.2857) / 360) * 1800 + 400);
         var pulseClass = (i === 5) ? ' kcn-polar-node-pulse' : '';
-        svg += '<circle cx="' + dotCoords[i].x + '" cy="' + dotCoords[i].y + '" r="4.5" fill="' + nodeColors[i] + '" class="kcn-polar-node' + pulseClass + '" />';
+        var nodeStyle = prefersReducedMotion ? '' : ' style="opacity:0;animation:kcnArcAppear 0.4s ease forwards;animation-delay:' + nodeDelay + 'ms;"';
+        svg += '<circle cx="' + dotCoords[i].x + '" cy="' + dotCoords[i].y + '" r="4.5" fill="' + nodeColors[i] + '" class="kcn-polar-node' + pulseClass + '"' + nodeStyle + ' />';
       }
 
       var divAngle = startAngles[2];
@@ -3038,6 +3124,10 @@
     var wrap = el;
     if (!wrap || typeof echarts === "undefined") return;
 
+    // ENHANCED: Read number toggle state from parent container
+    var containerWrap = wrap.closest('[data-show-numbers]');
+    var showNumbers = containerWrap ? (containerWrap.getAttribute('data-show-numbers') !== 'false') : true;
+
     var categories = ["2021", "2030", "2040", "2050", "2030", "2040", "2050"];
 
     var thermalPct = [52.30, 27.80, 6.70, 0.85, 21.88, 4.40, 0.62];
@@ -3089,7 +3179,7 @@
         },
         animationDurationUpdate: prefersReducedMotion ? 0 : 600,
         label: {
-          show: !compact,
+          show: showNumbers && !compact,
           position: "inside",
           formatter: function (p) {
             return p.value.toFixed(2) + "%";
@@ -3126,9 +3216,9 @@
           var header = "<strong>" + params[0].axisValue + "</strong><br>";
           var lines = [];
           params.forEach(function (p) {
-            if (p.seriesName === "Grid Emission factor") {
-              lines.push(p.marker + " " + p.seriesName + ": " + (p.value * 100).toFixed(2) + "%");
-            } else {
+            if (p.seriesName === "Grid Emission factor" || p.seriesName === "__cn50") {
+              lines.push(p.marker + " Grid Emission factor: " + (p.value * 100).toFixed(2) + "%");
+            } else if (p.seriesName !== "__bridge") {
               lines.push(p.marker + " " + p.seriesName + ": " + p.value.toFixed(2) + "%");
             }
           });
@@ -3212,19 +3302,61 @@
           name: "Grid Emission factor",
           type: "line",
           yAxisIndex: 1,
-          data: gridEmissionFactor,
+          data: [0.5747, 0.2621, 0.0632, 0.0080, null, null, null],
           symbol: "circle",
           symbolSize: 8,
           z: 20,
-          smooth: 0.3, // ENHANCED: Smooth curve
-          // ENHANCED: Line drawing animation
+          smooth: 0.3,
+          connectNulls: false,
           animation: !prefersReducedMotion,
           animationDuration: prefersReducedMotion ? 0 : 1800,
           animationEasing: 'cubicOut',
           animationDelay: prefersReducedMotion ? 0 : 600,
           itemStyle: { color: "#2C3E50", borderColor: "#fff", borderWidth: 2 },
           lineStyle: { color: "#2C3E50", width: 2.5, shadowBlur: 6, shadowColor: 'rgba(44,62,80,0.2)' },
-          // ENHANCED: Symbol emphasis
+          emphasis: {
+            scale: 1.5,
+            itemStyle: { shadowBlur: 10, shadowColor: 'rgba(44,62,80,0.4)' }
+          },
+          label: { show: false }
+        },
+        {
+          name: "__bridge",
+          type: "line",
+          yAxisIndex: 1,
+          data: [null, null, null, 0.0080, 0.2064, null, null],
+          symbol: "none",
+          z: 21,
+          smooth: 0.3,
+          connectNulls: false,
+          animation: !prefersReducedMotion,
+          animationDuration: prefersReducedMotion ? 0 : 800,
+          animationEasing: 'cubicOut',
+          animationDelay: prefersReducedMotion ? 0 : 1200,
+          itemStyle: { color: "#2C3E50" },
+          lineStyle: { color: "#2C3E50", width: 2.5, type: "dashed" },
+          tooltip: { show: false },
+          legendHoverLink: false,
+          emphasis: { disabled: true }
+        },
+        {
+          name: "__cn50",
+          type: "line",
+          yAxisIndex: 1,
+          data: [null, null, null, null, 0.2064, 0.0415, 0.0058],
+          symbol: "circle",
+          symbolSize: 8,
+          z: 20,
+          smooth: 0.3,
+          connectNulls: false,
+          animation: !prefersReducedMotion,
+          animationDuration: prefersReducedMotion ? 0 : 1400,
+          animationEasing: 'cubicOut',
+          animationDelay: prefersReducedMotion ? 0 : 900,
+          itemStyle: { color: "#2C3E50", borderColor: "#fff", borderWidth: 2 },
+          lineStyle: { color: "#2C3E50", width: 2.5, shadowBlur: 6, shadowColor: 'rgba(44,62,80,0.2)' },
+          tooltip: { show: false },
+          legendHoverLink: false,
           emphasis: {
             scale: 1.5,
             itemStyle: { shadowBlur: 10, shadowColor: 'rgba(44,62,80,0.4)' }
@@ -3317,11 +3449,35 @@
 
     requestAnimationFrame(addDecorations);
 
+    // ENHANCED: Listen for number toggle events
+    if (containerWrap) {
+      containerWrap.addEventListener('kcn:numbers-toggle', function(e) {
+        var show = !!(e.detail && e.detail.showNumbers);
+        chart.setOption({
+          series: [
+            { label: { show: show && !compact } },
+            { label: { show: show && !compact } },
+            { label: { show: show && !compact } },
+            { label: { show: show && !compact } },
+            { label: { show: show && !compact } },
+            { label: { show: show && !compact } }
+          ]
+        }, { lazyUpdate: true });
+      });
+    }
+
     return {
       resize: function () {
         var wasCompact = compact;
         refreshCompact();
+        var show = containerWrap ? (containerWrap.getAttribute('data-show-numbers') !== 'false') : true;
         if (wasCompact !== compact) {
+          option.series[0].label.show = show && !compact;
+          option.series[1].label.show = show && !compact;
+          option.series[2].label.show = show && !compact;
+          option.series[3].label.show = show && !compact;
+          option.series[4].label.show = show && !compact;
+          option.series[5].label.show = show && !compact;
           chart.setOption(option, true);
         }
         chart.resize();
@@ -3949,6 +4105,38 @@
     sync();
   }
 
+  // ENHANCED: Generation Mix number toggle
+  function initGenMixControls() {
+    var wrap = document.getElementById('chart-container-genmix-wrap');
+    var toggle = document.getElementById('kcn-gen-number-toggle');
+    if (!wrap || !toggle || toggle.getAttribute('data-bound') === '1') return;
+
+    function readState() {
+      return wrap.getAttribute('data-show-numbers') !== 'false';
+    }
+
+    function sync() {
+      var showNumbers = readState();
+      toggle.setAttribute('aria-pressed', showNumbers ? 'true' : 'false');
+      toggle.setAttribute('aria-label', showNumbers ? 'Hide numbers' : 'Show numbers');
+      toggle.classList.toggle('is-on', showNumbers);
+    }
+
+    if (!wrap.hasAttribute('data-show-numbers')) {
+      wrap.setAttribute('data-show-numbers', 'true');
+    }
+
+    toggle.setAttribute('data-bound', '1');
+    toggle.addEventListener('click', function () {
+      if (toggle.disabled) return;
+      var next = !readState();
+      wrap.setAttribute('data-show-numbers', next ? 'true' : 'false');
+      sync();
+      wrap.dispatchEvent(new CustomEvent('kcn:numbers-toggle', { detail: { showNumbers: next } }));
+    });
+    sync();
+  }
+
   function initOne(el) {
     var key = el.getAttribute('data-chart');
     if (!key || el.getAttribute('data-done')) return;
@@ -4046,6 +4234,7 @@
     initScroll();
     initNav();
     initGrossDualControls();
+    initGenMixControls();
     var waited = 0;
     (function wait() {
       if (typeof echarts !== 'undefined') {
